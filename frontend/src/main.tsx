@@ -5,7 +5,6 @@ import StoryListPage from "./components/StoryListPage";
 import App from "./App";
 import LoginPage from "./LoginPage";
 import GlobalStyle from "./GlobalStyle";
-import { StrictMode, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 const rootElement = document.getElementById("root");
@@ -14,13 +13,6 @@ if (!rootElement) {
 }
 
 function MainRouter() {
-  const [stories, setStories] = useState<string[]>([]);
-
-  // App에서 새 스토리 생성 시 호출
-  const handleCreateStory = (story?: string) => {
-    if (story) setStories((prev) => [...prev, story]);
-  };
-
   return (
     <ClerkProvider
       publishableKey={
@@ -36,7 +28,6 @@ function MainRouter() {
             element={
               <ProtectedRoute>
                 <StoryListPage
-                  stories={stories}
                   onCreate={() => window.location.replace("/create")}
                 />
               </ProtectedRoute>
@@ -46,7 +37,7 @@ function MainRouter() {
             path="/create"
             element={
               <ProtectedRoute>
-                <App onStoryCreated={handleCreateStory} />
+                <App />
               </ProtectedRoute>
             }
           />
@@ -57,8 +48,4 @@ function MainRouter() {
   );
 }
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <MainRouter />
-  </StrictMode>
-);
+createRoot(rootElement).render(<MainRouter />);

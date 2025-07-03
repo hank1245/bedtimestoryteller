@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { createStory, useClerkApiToken } from "./services/client";
 import "./App.css";
 import { FormData, ProgressBarProps, Pronouns, STEPS } from "./types";
 import { generateStoryWithClaude } from "./services/anthropic";
@@ -67,7 +69,7 @@ const AppContainer = styled.div`
   margin: 0 auto;
 `;
 
-function App({ onStoryCreated }: { onStoryCreated?: (story: string) => void }) {
+function App() {
   const [currentStep, setCurrentStep] = useState(STEPS.AGE);
   const [formData, setFormData] = useState<FormData>({
     age: "",
@@ -79,6 +81,11 @@ function App({ onStoryCreated }: { onStoryCreated?: (story: string) => void }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const setToken = useClerkApiToken();
+  useEffect(() => {
+    setToken();
+  }, [setToken]);
 
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -113,8 +120,11 @@ function App({ onStoryCreated }: { onStoryCreated?: (story: string) => void }) {
         response = generateDemoStory(formData);
       }
       updateFormData("story", response);
+      // POST to backend
+      await createStory(response);
       setCurrentStep(STEPS.STORY);
-      if (onStoryCreated) onStoryCreated(response);
+      // Redirect to story list after short delay
+      setTimeout(() => navigate("/"), 1200);
     } catch (err) {
       setError(
         err instanceof Error

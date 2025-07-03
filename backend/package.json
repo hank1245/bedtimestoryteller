@@ -7,9 +7,10 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "sqlite3": "^5.1.6",
+    "@clerk/clerk-sdk-node": "^4.13.23",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "jsonwebtoken": "^9.0.2"
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.6"
   }
 }

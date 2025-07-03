@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import db from "./db.js";
 import { clerkAuthMiddleware } from "./clerkAuth.js";
 
@@ -7,6 +8,12 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // List stories for the authenticated user
 app.get("/api/stories", clerkAuthMiddleware, (req, res) => {
