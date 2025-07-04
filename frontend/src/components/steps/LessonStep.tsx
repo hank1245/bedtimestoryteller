@@ -1,19 +1,8 @@
 import { CardHeader, CardTitle, CardSubtitle } from "../Card";
 import { FormGroup, FormLabel, FormInput } from "../Form";
 import { Button } from "../Button";
+import { ErrorMessage } from "../Feedback";
 import { StepProps } from "../../types";
-import styled from "styled-components";
-
-const ErrorMessage = styled.div`
-  background: rgba(255, 107, 157, 0.1);
-  border: 1px solid rgba(255, 107, 157, 0.3);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
-  color: var(--accent-pink);
-  text-align: center;
-  font-size: 14px;
-`;
 
 export default function LessonStep({
   value,

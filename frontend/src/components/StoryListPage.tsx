@@ -12,7 +12,11 @@ const ListContainer = styled.div`
 const TopBar = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 8px;
+  margin-bottom: 24px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
 `;
 
 interface Story {
@@ -48,8 +52,15 @@ export default function StoryListPage({ onCreate }: { onCreate: () => void }) {
     <Card>
       <TopBar>
         <Button
-          $primary={false}
-          style={{ fontSize: 14, padding: "4px 14px" }}
+          $secondary
+          style={{
+            fontSize: 12,
+            padding: "6px 12px",
+            minHeight: "32px",
+            width: "auto",
+            margin: 0,
+            borderRadius: "8px",
+          }}
           onClick={() => signOut()}
         >
           Logout

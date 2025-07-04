@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createStory, useClerkApiToken } from "./services/client";
-import "./App.css";
 import { FormData, ProgressBarProps, Pronouns, STEPS } from "./types";
 import { generateStoryWithClaude } from "./services/anthropic";
 import styled from "styled-components";
@@ -65,7 +64,7 @@ The End. Sweet dreams! 🌙✨`;
 
 const AppContainer = styled.div`
   width: 100%;
-  max-width: 420px;
+  max-width: 480px; // 480px까지 확장 가능
   margin: 0 auto;
 `;
 

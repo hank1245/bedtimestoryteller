@@ -1,6 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 
-const GlobalStyle = createGlobalStyle`
+export const GlobalStyle = createGlobalStyle`
   :root {
     --primary-dark: #1a1a2e;
     --primary-medium: #16213e;
@@ -26,7 +26,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 50%, var(--primary-light) 100%);
     min-height: 100vh;
     color: var(--text-primary);
@@ -35,14 +35,13 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body::before {
-    content: '';
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: 
-      radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    background-image: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
       radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
       radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
       radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
@@ -61,49 +60,9 @@ const GlobalStyle = createGlobalStyle`
     padding: 20px;
   }
 
-  .app {
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-  }
-
-  .loading-spinner {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: var(--text-primary);
-    animation: spin 0.8s linear infinite;
-  }
-
   @keyframes spin {
     to {
       transform: rotate(360deg);
     }
   }
-
-  .fade-enter {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  .fade-enter-active {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  .fade-exit {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .fade-exit-active {
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
 `;
-
-export default GlobalStyle;

@@ -9,6 +9,29 @@ export const Card = styled.div`
   box-shadow: var(--shadow-medium);
   position: relative;
   overflow: hidden;
+  max-height: 600px; // 최대 높이 제한
+  overflow-y: auto; // 내용이 넘칠 경우 스크롤
+  box-sizing: border-box;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+  }
+
+  @media (max-width: 480px) {
+    margin: 0;
+    padding: 24px 16px;
+  }
 `;
 
 export const CardHeader = styled.div`
