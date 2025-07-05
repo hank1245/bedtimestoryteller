@@ -64,8 +64,15 @@ The End. Sweet dreams! 🌙✨`;
 
 const AppContainer = styled.div`
   width: 100%;
-  max-width: 480px; // 480px까지 확장 가능
+  max-width: 480px;
   margin: 0 auto;
+  min-height: 100vh;
+
+  @media (max-width: 480px) {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
 `;
 
 function App() {

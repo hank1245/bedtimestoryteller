@@ -58,12 +58,10 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
   }
 
   .app {
     width: 100%;
-    max-width: 420px;
     margin: 0 auto;
   }
 

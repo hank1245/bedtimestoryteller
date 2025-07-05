@@ -29,14 +29,14 @@ export async function generateStoryWithClaude(
     formData.style
   } in tone and naturally include a lesson about ${
     formData.lesson
-  }. Keep it 300-500 words, age-appropriate, and perfect for bedtime. Make it soothing and engaging.
+  }. Keep it 1000-1500 words, age-appropriate, and perfect for bedtime. Make it soothing and engaging.
 
 IMPORTANT: Do not include any introductory content in your response. Make the first line the title of the story and write the main story text after a line break.`;
 
   try {
     const message = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
-      max_tokens: 1000,
+      max_tokens: 2000,
       messages: [
         {
           role: "user",

@@ -58,7 +58,11 @@ export const GlobalStyle = createGlobalStyle`
     align-items: center;
     justify-content: center;
     padding: 20px;
-  }
+    
+    @media (max-width: 480px) {
+      padding: 0;
+      align-items: stretch;
+    }
 
   @keyframes spin {
     to {

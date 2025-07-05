@@ -9,6 +9,10 @@ export const StoryContainer = styled.div`
   margin-bottom: 24px;
   line-height: 1.8;
 
+  @media (max-width: 480px) {
+    max-height: 50vh;
+  }
+
   &::-webkit-scrollbar {
     width: 6px;
   }

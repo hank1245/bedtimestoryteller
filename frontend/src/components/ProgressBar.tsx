@@ -8,6 +8,10 @@ export const ProgressBarContainer = styled.div`
   display: flex;
   gap: 8px;
   z-index: 100;
+
+  @media (max-width: 480px) {
+    bottom: 16px;
+  }
 `;
 
 export const ProgressDot = styled.div<{

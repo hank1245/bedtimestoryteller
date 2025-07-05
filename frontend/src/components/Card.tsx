@@ -9,9 +9,11 @@ export const Card = styled.div`
   box-shadow: var(--shadow-medium);
   position: relative;
   overflow: hidden;
-  max-height: 600px; // 최대 높이 제한
-  overflow-y: auto; // 내용이 넘칠 경우 스크롤
+  height: 660px;
+  overflow-y: auto;
   box-sizing: border-box;
+  width: 100%;
+  max-width: 660px;
 
   &::before {
     content: "";
@@ -29,8 +31,14 @@ export const Card = styled.div`
   }
 
   @media (max-width: 480px) {
+    width: 100vw;
+    height: 100vh;
     margin: 0;
     padding: 24px 16px;
+    border-radius: 0;
+    backdrop-filter: blur(10px);
+    border: none;
+    max-width: none;
   }
 `;
 

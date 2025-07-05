@@ -7,6 +7,27 @@ import { useClerk } from "@clerk/clerk-react";
 
 const ListContainer = styled.div`
   margin-bottom: 32px;
+  flex: 1;
+`;
+
+const StoryPageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const ContentWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledCardHeader = styled(CardHeader)`
+  margin-top: 60px;
+
+  @media (max-width: 480px) {
+    margin-top: 40px;
+  }
 `;
 
 const TopBar = styled.div`
@@ -17,6 +38,11 @@ const TopBar = styled.div`
   top: 20px;
   right: 20px;
   z-index: 10;
+
+  @media (max-width: 480px) {
+    top: 16px;
+    right: 16px;
+  }
 `;
 
 interface Story {
@@ -66,44 +92,54 @@ export default function StoryListPage({ onCreate }: { onCreate: () => void }) {
           Logout
         </Button>
       </TopBar>
-      <CardHeader>
-        <CardTitle>📚 Your Bedtime Stories</CardTitle>
-        <CardSubtitle>Here are your previously created stories.</CardSubtitle>
-      </CardHeader>
-      <ListContainer>
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p style={{ color: "#e57373" }}>{error}</p>
-        ) : stories.length === 0 ? (
-          <p>No stories yet. Click below to create your first one!</p>
-        ) : (
-          <ul>
-            {stories.map((story) => {
-              const title = story.story.split("\n")[0].slice(0, 60);
-              return (
-                <li
-                  key={story.id}
-                  style={{
-                    marginBottom: 16,
-                    background: "rgba(255,255,255,0.03)",
-                    borderRadius: 8,
-                    padding: 12,
-                  }}
-                >
-                  <div style={{ fontWeight: 600, fontSize: 17 }}>{title}</div>
-                  <div style={{ fontSize: 13, color: "#aaa", marginTop: 2 }}>
-                    {new Date(story.created_at).toLocaleString()}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </ListContainer>
-      <Button $primary onClick={onCreate}>
-        Create Another Story
-      </Button>
+      <StoryPageWrapper>
+        <ContentWrapper>
+          <StyledCardHeader>
+            <CardTitle>📚 Your Bedtime Stories</CardTitle>
+            <CardSubtitle>
+              Here are your previously created stories.
+            </CardSubtitle>
+          </StyledCardHeader>
+          <ListContainer>
+            {loading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <p style={{ color: "#e57373" }}>{error}</p>
+            ) : stories.length === 0 ? (
+              <p>No stories yet. Click below to create your first one!</p>
+            ) : (
+              <ul>
+                {stories.map((story) => {
+                  const title = story.story.split("\n")[0].slice(0, 60);
+                  return (
+                    <li
+                      key={story.id}
+                      style={{
+                        marginBottom: 16,
+                        background: "rgba(255,255,255,0.03)",
+                        borderRadius: 8,
+                        padding: 12,
+                      }}
+                    >
+                      <div style={{ fontWeight: 600, fontSize: 17 }}>
+                        {title}
+                      </div>
+                      <div
+                        style={{ fontSize: 13, color: "#aaa", marginTop: 2 }}
+                      >
+                        {new Date(story.created_at).toLocaleString()}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </ListContainer>
+        </ContentWrapper>
+        <Button $primary onClick={onCreate}>
+          Create Another Story
+        </Button>
+      </StoryPageWrapper>
     </Card>
   );
 }
