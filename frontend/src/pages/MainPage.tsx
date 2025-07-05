@@ -115,10 +115,12 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
                     <li
                       key={story.id}
                       style={{
-                        marginBottom: 16,
+                        marginBottom: 24,
                         background: "rgba(255,255,255,0.03)",
                         borderRadius: 8,
-                        padding: 12,
+                        padding: 20,
+                        cursor: "pointer",
+                        listStyle: "none",
                       }}
                     >
                       <div style={{ fontWeight: 600, fontSize: 17 }}>

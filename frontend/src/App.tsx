@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainPage from "./pages/MainPage";
@@ -6,6 +12,41 @@ import GenerationPage from "./pages/GenerationPage";
 import StoryPage from "./pages/StoryPage";
 import LoginPage from "./LoginPage";
 import GlobalStyle from "./GlobalStyle";
+
+function AppRoutes() {
+  const navigate = useNavigate();
+
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <MainPage onCreate={() => navigate("/create")} />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/create"
+        element={
+          <ProtectedRoute>
+            <GenerationPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/story"
+        element={
+          <ProtectedRoute>
+            <StoryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  );
+}
 
 export default function App() {
   return (
@@ -16,34 +57,7 @@ export default function App() {
     >
       <BrowserRouter>
         <GlobalStyle />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <MainPage onCreate={() => window.location.replace("/create")} />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/create"
-            element={
-              <ProtectedRoute>
-                <GenerationPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/story"
-            element={
-              <ProtectedRoute>
-                <StoryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+        <AppRoutes />
       </BrowserRouter>
     </ClerkProvider>
   );

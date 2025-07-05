@@ -10,7 +10,6 @@ export const Card = styled.div`
   position: relative;
   overflow: hidden;
   height: 660px;
-  overflow-y: auto;
   box-sizing: border-box;
   width: 100%;
   max-width: 660px;

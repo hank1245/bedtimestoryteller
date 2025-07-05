@@ -65,7 +65,6 @@ const GenerationPageContainer = styled.div`
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  min-height: 100vh;
 
   @media (max-width: 480px) {
     max-width: none;
@@ -222,7 +221,7 @@ export default function GenerationPage() {
           />
         )}
       </Card>
-      <ProgressBar currentStep={getStepNumber()} totalSteps={4} />
+      <ProgressBar currentStep={getStepNumber()} totalSteps={5} />
     </GenerationPageContainer>
   );
 }

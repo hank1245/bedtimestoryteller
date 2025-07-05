@@ -31,7 +31,15 @@ export default function LessonStep({
           placeholder="e.g., being kind, sharing, courage..."
         />
       </FormGroup>
-      <div style={{ display: "flex", gap: "12px" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "12px",
+          position: "absolute",
+          bottom: "40px",
+          width: "86%",
+        }}
+      >
         <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
           Back
         </Button>

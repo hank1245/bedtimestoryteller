@@ -6,9 +6,8 @@ import styled from "styled-components";
 
 const StoryPageContainer = styled.div`
   width: 100%;
-  max-width: 480px;
+  max-width: 660px;
   margin: 0 auto;
-  min-height: 100vh;
 
   @media (max-width: 480px) {
     max-width: none;
