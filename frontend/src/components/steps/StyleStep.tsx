@@ -1,6 +1,7 @@
 import { CardHeader, CardTitle, CardSubtitle } from "../Card";
 import { ChoiceGrid, ChoiceButton } from "../Choice";
 import { Button } from "../Button";
+import { ButtonWrapper } from "../ButtonWrapper";
 import { StepProps, StyleOption } from "../../types";
 
 const STYLE_OPTIONS: StyleOption[] = [
@@ -9,6 +10,11 @@ const STYLE_OPTIONS: StyleOption[] = [
   { value: "adventurous", label: "Adventurous" },
   { value: "magical", label: "Magical" },
   { value: "educational", label: "Educational" },
+  { value: "heartwarming", label: "Heartwarming" },
+  { value: "mysterious", label: "Mysterious" },
+  { value: "fantasy", label: "Fantasy" },
+  { value: "realistic", label: "Realistic" },
+  { value: "silly", label: "Silly" },
 ];
 
 export default function StyleStep({
@@ -35,7 +41,7 @@ export default function StyleStep({
           </ChoiceButton>
         ))}
       </ChoiceGrid>
-      <div style={{ display: "flex", gap: "12px" }}>
+      <ButtonWrapper>
         <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
           Back
         </Button>
@@ -47,7 +53,7 @@ export default function StyleStep({
         >
           Next
         </Button>
-      </div>
+      </ButtonWrapper>
     </>
   );
 }

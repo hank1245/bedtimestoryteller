@@ -5,7 +5,7 @@ export const ChoiceGrid = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-bottom: 24px;
-  height: 70%;
+  max-height: 70%;
 `;
 
 export const ChoiceButton = styled.button<{

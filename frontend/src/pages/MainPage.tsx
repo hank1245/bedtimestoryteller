@@ -155,7 +155,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
             )}
           </ListContainer>
         </ContentWrapper>
-        <Button $primary onClick={onCreate}>
+        <Button $primary onClick={onCreate} style={{ bottom: -30 }}>
           Create Another Story
         </Button>
       </StoryPageWrapper>

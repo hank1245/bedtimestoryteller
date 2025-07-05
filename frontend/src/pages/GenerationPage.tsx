@@ -69,8 +69,8 @@ The End. Sweet dreams! 🌙✨`;
 
 const GenerationPageContainer = styled.div`
   width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
 
   @media (max-width: 480px) {
     max-width: none;

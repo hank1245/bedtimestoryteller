@@ -1,6 +1,7 @@
 import { CardHeader, CardTitle, CardSubtitle } from "../Card";
 import { ChoiceGrid, ChoiceButton } from "../Choice";
 import { Button } from "../Button";
+import { ButtonWrapper } from "../ButtonWrapper";
 import { StepProps } from "../../types";
 
 export default function GenderStep({
@@ -28,7 +29,7 @@ export default function GenderStep({
           </ChoiceButton>
         ))}
       </ChoiceGrid>
-      <div style={{ display: "flex", gap: "12px" }}>
+      <ButtonWrapper>
         <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
           Back
         </Button>
@@ -40,7 +41,7 @@ export default function GenderStep({
         >
           Next
         </Button>
-      </div>
+      </ButtonWrapper>
     </>
   );
 }

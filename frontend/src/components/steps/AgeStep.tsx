@@ -1,13 +1,13 @@
 import { CardHeader, CardTitle, CardSubtitle } from "../Card";
 import { FormGroup, FormLabel, FormInput } from "../Form";
 import { Button } from "../Button";
+import { ButtonWrapper } from "../ButtonWrapper";
 import { StepProps } from "../../types";
 import styled from "styled-components";
 
 const AgeStepWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 95%;
 `;
 
 const ContentWrapper = styled.div`
@@ -42,7 +42,7 @@ export default function AgeStep({
           />
         </FormGroup>
       </ContentWrapper>
-      <div style={{ display: "flex", gap: "12px" }}>
+      <ButtonWrapper>
         <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
           Back
         </Button>
@@ -54,7 +54,7 @@ export default function AgeStep({
         >
           Next
         </Button>
-      </div>
+      </ButtonWrapper>
     </AgeStepWrapper>
   );
 }

@@ -10,7 +10,7 @@ export const ProgressBarContainer = styled.div`
   z-index: 100;
 
   @media (max-width: 480px) {
-    bottom: 36px;
+    bottom: 20px;
   }
 `;
 
