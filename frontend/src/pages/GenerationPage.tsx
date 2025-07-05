@@ -12,7 +12,10 @@ import InterestsStep from "../components/steps/InterestsStep";
 import StyleStep from "../components/steps/StyleStep";
 import LessonStep from "../components/steps/LessonStep";
 
-function generateDemoStory(formData: FormData): string {
+function generateDemoStory(formData: FormData): {
+  title: string;
+  story: string;
+} {
   const { age, gender, interests, style, lesson } = formData;
   const pronouns: Pronouns =
     gender === "Girl"
@@ -30,7 +33,8 @@ function generateDemoStory(formData: FormData): string {
     educational: "with fascinating new things to learn",
   };
 
-  return `Once upon a time, in a land filled with ${mainInterest.toLowerCase()}, there lived a brave ${age}-year-old explorer named Sam. Every night before bed, Sam would look out ${
+  const title = `Sam's ${mainInterest} Adventure`;
+  const story = `Once upon a time, in a land filled with ${mainInterest.toLowerCase()}, there lived a brave ${age}-year-old explorer named Sam. Every night before bed, Sam would look out ${
     pronouns.their
   } window and dream of ${mainInterest.toLowerCase()} adventures.
 
@@ -59,6 +63,8 @@ When it was time to return home, Sam carried this important lesson in ${
 And so, Sam drifted off to sleep with happy dreams, ready for another day of wonder and discovery.
 
 The End. Sweet dreams! 🌙✨`;
+
+  return { title, story };
 }
 
 const GenerationPageContainer = styled.div`
@@ -116,7 +122,7 @@ export default function GenerationPage() {
     setLoading(true);
     setError("");
     try {
-      let response: string;
+      let response: { title: string; story: string };
       try {
         response = await generateStoryWithClaude(formData);
       } catch (apiError) {
@@ -124,11 +130,13 @@ export default function GenerationPage() {
         await new Promise((resolve) => setTimeout(resolve, 2000));
         response = generateDemoStory(formData);
       }
-      updateFormData("story", response);
-      // POST to backend
-      await createStory(response);
+      updateFormData("story", response.story);
+      // POST to backend with title and story separated
+      await createStory(response.title, response.story);
       // Navigate to story page with the generated story
-      navigate("/story", { state: { story: response } });
+      navigate("/story", {
+        state: { title: response.title, story: response.story },
+      });
     } catch (err) {
       setError(
         err instanceof Error

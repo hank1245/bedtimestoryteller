@@ -6,23 +6,26 @@ const anthropic = new Anthropic({
   dangerouslyAllowBrowser: true,
 });
 
-function formatStoryResponse(rawText: string): string {
+// Claude API 응답을 파싱해서 title과 story를 분리
+function parseStoryResponse(rawText: string): { title: string; story: string } {
   const lines = rawText.split("\n").filter((line) => line.trim());
 
-  if (lines.length === 0) return rawText;
+  if (lines.length === 0) {
+    return { title: "Untitled Story", story: rawText };
+  }
 
-  const title = lines[0].trim();
-  const restOfStory = lines.slice(1).join(" ").trim();
+  // 첫 번째 줄을 제목으로 사용 (마크다운 헤더 제거)
+  const title = lines[0].replace(/^#+\s*/, "").trim();
 
-  const sentences = restOfStory.split(/(?<=[.!?])\s+/);
-  const formattedStory = sentences.join("\n");
+  // 나머지를 스토리로 사용
+  const story = lines.slice(1).join("\n").trim();
 
-  return `## ${title}\n\n${formattedStory}`;
+  return { title, story };
 }
 
 export async function generateStoryWithClaude(
   formData: FormData
-): Promise<string> {
+): Promise<{ title: string; story: string }> {
   const prompt = `Write a bedtime story for a ${formData.age}-year-old ${
     formData.gender
   } child who loves ${formData.interests.join(", ")}. The story should be ${
@@ -31,7 +34,14 @@ export async function generateStoryWithClaude(
     formData.lesson
   }. Keep it 1000-1500 words, age-appropriate, and perfect for bedtime. Make it soothing and engaging.
 
-IMPORTANT: Do not include any introductory content in your response. Make the first line the title of the story and write the main story text after a line break.`;
+IMPORTANT: 
+- Make the first line ONLY the title of the story (without any markdown headers or extra formatting)
+- Write the main story content starting from the second line
+- Do not include any introductory content or explanations
+- The response should be in this exact format:
+[Title on first line]
+[Empty line]
+[Story content starting from third line]`;
 
   try {
     const message = await anthropic.messages.create({
@@ -47,7 +57,7 @@ IMPORTANT: Do not include any introductory content in your response. Make the fi
 
     const content = message.content[0];
     if (content.type === "text") {
-      return formatStoryResponse(content.text);
+      return parseStoryResponse(content.text);
     } else {
       throw new Error("Unexpected response format from Claude API");
     }

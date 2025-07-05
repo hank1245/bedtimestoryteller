@@ -19,6 +19,7 @@ const StoryPageContainer = styled.div`
 export default function StoryPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const title = location.state?.title || "Untitled Story";
   const story = location.state?.story || "No story available";
 
   const goToHome = () => {
@@ -33,7 +34,7 @@ export default function StoryPage() {
     <StoryPageContainer>
       <Card>
         <CardHeader>
-          <CardTitle>🌙 Your Bedtime Story</CardTitle>
+          <CardTitle>🌙 {title}</CardTitle>
           <CardSubtitle>Sweet dreams ahead!</CardSubtitle>
         </CardHeader>
         <StoryContainer>

@@ -15,10 +15,10 @@ app.use(
   })
 );
 
-// List stories for the authenticated user
+// List stories for the authenticated user (title만 반환)
 app.get("/api/stories", clerkAuthMiddleware, (req, res) => {
   db.all(
-    "SELECT * FROM stories WHERE user_id = ? ORDER BY created_at DESC",
+    "SELECT id, title, created_at FROM stories WHERE user_id = ? ORDER BY created_at DESC",
     [req.user.id],
     (err, rows) => {
       if (err) return res.status(500).json({ error: "DB error" });
@@ -27,16 +27,31 @@ app.get("/api/stories", clerkAuthMiddleware, (req, res) => {
   );
 });
 
+// Get specific story by ID (전체 스토리 내용 반환)
+app.get("/api/stories/:id", clerkAuthMiddleware, (req, res) => {
+  const storyId = req.params.id;
+  db.get(
+    "SELECT * FROM stories WHERE id = ? AND user_id = ?",
+    [storyId, req.user.id],
+    (err, row) => {
+      if (err) return res.status(500).json({ error: "DB error" });
+      if (!row) return res.status(404).json({ error: "Story not found" });
+      res.json(row);
+    }
+  );
+});
+
 // Create a new story for the authenticated user
 app.post("/api/stories", clerkAuthMiddleware, (req, res) => {
-  const { story } = req.body;
-  if (!story) return res.status(400).json({ error: "Missing story" });
+  const { title, story } = req.body;
+  if (!title || !story)
+    return res.status(400).json({ error: "Missing title or story" });
   db.run(
-    "INSERT INTO stories (user_id, story) VALUES (?, ?)",
-    [req.user.id, story],
+    "INSERT INTO stories (user_id, title, story) VALUES (?, ?, ?)",
+    [req.user.id, title, story],
     function (err) {
       if (err) return res.status(500).json({ error: "DB error" });
-      res.status(201).json({ id: this.lastID, story });
+      res.status(201).json({ id: this.lastID, title, story });
     }
   );
 });

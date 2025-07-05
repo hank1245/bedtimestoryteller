@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardSubtitle } from "../components/Card";
 import { Button } from "../components/Button";
 import styled from "styled-components";
-import { fetchStories, useClerkApiToken } from "../services/client";
+import {
+  fetchStories,
+  fetchStoryById,
+  useClerkApiToken,
+} from "../services/client";
 import { useClerk } from "@clerk/clerk-react";
 
 const ListContainer = styled.div`
@@ -47,7 +52,7 @@ const TopBar = styled.div`
 
 interface Story {
   id: number;
-  story: string;
+  title: string;
   created_at: string;
 }
 
@@ -57,6 +62,21 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
   const [error, setError] = useState("");
   const { signOut } = useClerk();
   const setToken = useClerkApiToken();
+  const navigate = useNavigate();
+
+  const handleStoryClick = async (storyId: number) => {
+    try {
+      const fullStory = await fetchStoryById(storyId);
+      navigate("/story", {
+        state: {
+          title: fullStory.title,
+          story: fullStory.story,
+        },
+      });
+    } catch (err) {
+      setError("Failed to load story");
+    }
+  };
 
   useEffect(() => {
     const loadStories = async () => {
@@ -109,31 +129,27 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
               <p>No stories yet. Click below to create your first one!</p>
             ) : (
               <ul>
-                {stories.map((story) => {
-                  const title = story.story.split("\n")[0].slice(0, 60);
-                  return (
-                    <li
-                      key={story.id}
-                      style={{
-                        marginBottom: 24,
-                        background: "rgba(255,255,255,0.03)",
-                        borderRadius: 8,
-                        padding: 20,
-                        cursor: "pointer",
-                        listStyle: "none",
-                      }}
-                    >
-                      <div style={{ fontWeight: 600, fontSize: 17 }}>
-                        {title}
-                      </div>
-                      <div
-                        style={{ fontSize: 13, color: "#aaa", marginTop: 2 }}
-                      >
-                        {new Date(story.created_at).toLocaleString()}
-                      </div>
-                    </li>
-                  );
-                })}
+                {stories.map((story) => (
+                  <li
+                    key={story.id}
+                    style={{
+                      marginBottom: 24,
+                      background: "rgba(255,255,255,0.03)",
+                      borderRadius: 8,
+                      padding: 20,
+                      cursor: "pointer",
+                      listStyle: "none",
+                    }}
+                    onClick={() => handleStoryClick(story.id)}
+                  >
+                    <div style={{ fontWeight: 600, fontSize: 17 }}>
+                      {story.title}
+                    </div>
+                    <div style={{ fontSize: 13, color: "#aaa", marginTop: 2 }}>
+                      {new Date(story.created_at).toLocaleString()}
+                    </div>
+                  </li>
+                ))}
               </ul>
             )}
           </ListContainer>

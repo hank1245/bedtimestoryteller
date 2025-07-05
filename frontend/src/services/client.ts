@@ -60,8 +60,13 @@ export async function fetchStories() {
   return res.data;
 }
 
-export async function createStory(story: string) {
-  const res = await client.post("/stories", { story });
+export async function fetchStoryById(id: number) {
+  const res = await client.get(`/stories/${id}`);
+  return res.data;
+}
+
+export async function createStory(title: string, story: string) {
+  const res = await client.post("/stories", { title, story });
   return res.data;
 }
 
