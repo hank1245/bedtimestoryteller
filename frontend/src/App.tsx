@@ -1,8 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import ProtectedRoute from "./components/ProtectedRoute";
-import StoryListPage from "./pages/StoryListPage";
 import MainPage from "./pages/MainPage";
+import GenerationPage from "./pages/GenerationPage";
+import StoryPage from "./pages/StoryPage";
 import LoginPage from "./LoginPage";
 import GlobalStyle from "./GlobalStyle";
 
@@ -21,9 +22,7 @@ export default function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <StoryListPage
-                  onCreate={() => window.location.replace("/create")}
-                />
+                <MainPage onCreate={() => window.location.replace("/create")} />
               </ProtectedRoute>
             }
           />
@@ -31,7 +30,15 @@ export default function App() {
             path="/create"
             element={
               <ProtectedRoute>
-                <MainPage />
+                <GenerationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/story"
+            element={
+              <ProtectedRoute>
+                <StoryPage />
               </ProtectedRoute>
             }
           />
