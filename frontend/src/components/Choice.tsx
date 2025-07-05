@@ -5,6 +5,7 @@ export const ChoiceGrid = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   margin-bottom: 24px;
+  height: 73%;
 `;
 
 export const ChoiceButton = styled.button<{
@@ -26,14 +27,19 @@ export const ChoiceButton = styled.button<{
   justify-content: center;
   min-height: 60px;
   position: ${({ $multiple }) => ($multiple ? "relative" : "static")};
+
+  &:focus {
+    outline: none;
+  }
+
   ${({ $selected, $multiple }) =>
     $selected &&
     $multiple &&
     css`
-      background: var(--button-primary);
-      border-color: var(--accent-blue);
+      background: var(--button-primary) !important;
+      border-color: var(--accent-blue) !important;
       &::after {
-        content: '"✓"';
+        content: "✓";
         position: absolute;
         top: 8px;
         right: 8px;
@@ -45,11 +51,12 @@ export const ChoiceButton = styled.button<{
     $selected &&
     !$multiple &&
     css`
-      background: var(--button-primary);
-      border-color: var(--accent-blue);
+      background: var(--button-primary) !important;
+      border-color: var(--accent-blue) !important;
     `}
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
+  &:hover:not(:disabled) {
+    background: ${({ $selected }) =>
+      $selected ? "var(--button-primary)" : "rgba(255, 255, 255, 0.1)"};
     transform: translateY(-1px);
   }
 `;

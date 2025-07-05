@@ -129,8 +129,6 @@ function App() {
       // POST to backend
       await createStory(response);
       setCurrentStep(STEPS.STORY);
-      // Redirect to story list after short delay
-      setTimeout(() => navigate("/"), 1200);
     } catch (err) {
       setError(
         err instanceof Error
@@ -153,6 +151,10 @@ function App() {
     });
     setCurrentStep(STEPS.AGE);
     setError("");
+  };
+
+  const goToStoryList = () => {
+    navigate("/");
   };
 
   const getStepNumber = (): number => {
@@ -189,6 +191,7 @@ function App() {
             value={formData.age}
             onChange={(value: number) => updateFormData("age", value)}
             onNext={nextStep}
+            onPrev={goToStoryList}
             canProceed={canProceed()}
           />
         )}

@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ClerkProvider } from "@clerk/clerk-react";
 import ProtectedRoute from "./components/ProtectedRoute";
-import StoryListPage from "./components/StoryListPage";
+import StoryListPage from "./pages/StoryListPage";
 import App from "./App";
 import LoginPage from "./LoginPage";
 import GlobalStyle from "./GlobalStyle";

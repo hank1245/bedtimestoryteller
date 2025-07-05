@@ -29,7 +29,7 @@ export default function GenderStep({
         ))}
       </ChoiceGrid>
       <div style={{ display: "flex", gap: "12px" }}>
-        <Button $secondary onClick={onPrev}>
+        <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
           Back
         </Button>
         <Button

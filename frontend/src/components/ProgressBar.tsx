@@ -2,15 +2,15 @@ import styled, { css } from "styled-components";
 
 export const ProgressBarContainer = styled.div`
   position: fixed;
-  bottom: 32px;
+  bottom: 52px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 8px;
+  gap: 12px;
   z-index: 100;
 
   @media (max-width: 480px) {
-    bottom: 16px;
+    bottom: 36px;
   }
 `;
 
