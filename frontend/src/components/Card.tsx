@@ -9,10 +9,10 @@ export const Card = styled.div`
   box-shadow: var(--shadow-medium);
   position: relative;
   overflow: hidden;
-  height: 660px;
+  height: 720px;
   box-sizing: border-box;
   width: 100%;
-  max-width: 660px;
+  max-width: 720px;
 
   &::before {
     content: "";

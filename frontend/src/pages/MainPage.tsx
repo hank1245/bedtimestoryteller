@@ -28,7 +28,7 @@ const ContentWrapper = styled.div`
 `;
 
 const StyledCardHeader = styled(CardHeader)`
-  margin-top: 60px;
+  margin-top: 40px;
 
   @media (max-width: 480px) {
     margin-top: 40px;

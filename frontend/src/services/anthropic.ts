@@ -18,7 +18,28 @@ function parseStoryResponse(rawText: string): { title: string; story: string } {
   const title = lines[0].replace(/^#+\s*/, "").trim();
 
   // 나머지를 스토리로 사용
-  const story = lines.slice(1).join("\n").trim();
+  let story = lines.slice(1).join("\n").trim();
+
+  // 플레이스홀더 감지 및 경고 (개발 환경에서만)
+  if (story.includes("[") && story.includes("]")) {
+    console.warn(
+      "Story contains placeholders - Claude API may need better prompting"
+    );
+
+    // 간단한 플레이스홀더 대체 (백업 처리)
+    story = story
+      .replace(/\[name\]/gi, "Alex")
+      .replace(/\[character\]/gi, "Sam")
+      .replace(/\[place\]/gi, "Dreamland")
+      .replace(/\[location\]/gi, "the magical kingdom")
+      .replace(/\[age\]/gi, "young")
+      .replace(/\[child\]/gi, "little one");
+  }
+
+  // "The End"로 끝나지 않는다면 추가
+  if (!story.toLowerCase().includes("the end")) {
+    story += "\n\nThe End";
+  }
 
   return { title, story };
 }
@@ -34,14 +55,26 @@ export async function generateStoryWithClaude(
     formData.lesson
   }. Keep it 1000-1500 words, age-appropriate, and perfect for bedtime. Make it soothing and engaging.
 
-IMPORTANT: 
+CRITICAL REQUIREMENTS:
+- Create a COMPLETE story with NO placeholders, brackets, or [variables]
+- Use specific names for all characters (e.g., "Luna", "Oliver", "Maya" - NOT "[name]" or "[character]")
+- Use specific locations (e.g., "Moonbeam Village", "Crystal Forest" - NOT "[place]" or "[location]")
+- Fill in ALL details - the story must be 100% complete and ready to read
+- Do NOT use any brackets [ ] or placeholders anywhere in the story
 - Make the first line ONLY the title of the story (without any markdown headers or extra formatting)
+- Start the story with a classic bedtime story opening like "Once upon a time" or "Long ago" or "In a faraway land"
 - Write the main story content starting from the second line
 - Do not include any introductory content or explanations
-- The response should be in this exact format:
+- The story MUST end with "The End" as the final line
+
+FORMAT:
 [Title on first line]
 [Empty line]
-[Story content starting from third line]`;
+[Story opening paragraph starting with "Once upon a time" or similar]
+[Story continues with complete details and specific names...]
+[Final line: "The End"]
+
+Remember: NO brackets, NO placeholders, NO [variables] - only complete, specific content!`;
 
   try {
     const message = await anthropic.messages.create({
