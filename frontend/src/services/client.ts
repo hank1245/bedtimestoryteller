@@ -70,5 +70,10 @@ export async function createStory(title: string, story: string) {
   return res.data;
 }
 
+export async function deleteStory(id: number) {
+  const res = await client.delete(`/stories/${id}`);
+  return res.data;
+}
+
 // (필요시) story 삭제/수정 함수도 추가 가능
 export default client;

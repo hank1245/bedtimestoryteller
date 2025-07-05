@@ -56,6 +56,22 @@ app.post("/api/stories", clerkAuthMiddleware, (req, res) => {
   );
 });
 
+// Delete a story for the authenticated user
+app.delete("/api/stories/:id", clerkAuthMiddleware, (req, res) => {
+  const storyId = req.params.id;
+  db.run(
+    "DELETE FROM stories WHERE id = ? AND user_id = ?",
+    [storyId, req.user.id],
+    function (err) {
+      if (err) return res.status(500).json({ error: "DB error" });
+      if (this.changes === 0) {
+        return res.status(404).json({ error: "Story not found" });
+      }
+      res.json({ message: "Story deleted successfully" });
+    }
+  );
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Backend listening on port ${PORT}`);

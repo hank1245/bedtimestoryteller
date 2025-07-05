@@ -69,6 +69,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
       const fullStory = await fetchStoryById(storyId);
       navigate("/story", {
         state: {
+          id: storyId,
           title: fullStory.title,
           story: fullStory.story,
         },

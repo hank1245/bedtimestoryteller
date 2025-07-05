@@ -3,7 +3,8 @@ import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { StoryContainer } from "../components/StoryContainer";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { deleteStory, useClerkApiToken } from "../services/client";
 
 const StoryPageContainer = styled.div`
   width: 100%;
@@ -24,10 +25,13 @@ const CompactHeader = styled.div`
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-direction: column;
+  gap: 12px;
 
   h1 {
+    font-family: fantasy, serif;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 800;
     color: var(--text-primary);
     margin: 0;
     flex: 1;
@@ -41,6 +45,21 @@ const CompactHeader = styled.div`
     h1 {
       font-size: 18px;
     }
+  }
+`;
+
+const TopBar = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+
+  @media (max-width: 480px) {
+    top: 16px;
+    right: 16px;
   }
 `;
 
@@ -73,8 +92,10 @@ const FontSizeControls = styled.div`
 `;
 
 const StoryText = styled.div<{ $fontSize: number }>`
+  font-family: fantasy, serif;
   font-size: ${(props) => props.$fontSize}px;
   line-height: 1.8;
+  font-weight: 800;
   color: var(--text-primary);
 
   p {
@@ -84,8 +105,9 @@ const StoryText = styled.div<{ $fontSize: number }>`
 
   /* 마크다운 헤더 스타일링 */
   h2 {
+    font-family: fantasy, serif;
     font-size: ${(props) => props.$fontSize + 4}px;
-    font-weight: 600;
+    font-weight: 800;
     color: var(--accent-blue);
     margin-bottom: 20px;
     text-align: center;
@@ -103,7 +125,7 @@ const StoryText = styled.div<{ $fontSize: number }>`
   p:first-of-type,
   p.story-beginning {
     font-size: ${(props) => props.$fontSize + 2}px;
-    font-weight: 500;
+    font-weight: 800;
     color: var(--accent-blue);
     margin-top: 8px;
     text-indent: 0;
@@ -113,7 +135,7 @@ const StoryText = styled.div<{ $fontSize: number }>`
   p:last-of-type,
   p.story-ending {
     text-align: center;
-    font-weight: 500;
+    font-weight: 800;
     color: var(--accent-blue);
     margin-top: 24px;
     font-size: ${(props) => props.$fontSize}px;
@@ -142,12 +164,36 @@ const StoryText = styled.div<{ $fontSize: number }>`
   }
 `;
 
+const Buttons = styled.div`
+  display: flex;
+  gap: 12px;
+  position: absolute;
+  bottom: 40px;
+  left: 20px;
+  width: calc(100% - 40px);
+`;
+
 export default function StoryPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const title = location.state?.title || "Untitled Story";
   const story = location.state?.story || "No story available";
+  const storyId = location.state?.id;
   const [fontSize, setFontSize] = useState(16);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const setToken = useClerkApiToken();
+
+  // 토큰 설정
+  useEffect(() => {
+    const initializeToken = async () => {
+      try {
+        await setToken();
+      } catch (error) {
+        console.error("Failed to set token:", error);
+      }
+    };
+    initializeToken();
+  }, [setToken]);
 
   const goToHome = () => {
     navigate("/");
@@ -155,6 +201,25 @@ export default function StoryPage() {
 
   const createAnother = () => {
     navigate("/create");
+  };
+
+  const handleDelete = async () => {
+    if (!storyId) return;
+
+    if (window.confirm("Are you sure you want to delete this story?")) {
+      setIsDeleting(true);
+      try {
+        // 토큰을 다시 설정하여 최신 상태로 업데이트
+        await setToken();
+        await deleteStory(storyId);
+        navigate("/", { replace: true });
+      } catch (error) {
+        console.error("Error deleting story:", error);
+        alert("Error deleting story. Please try again.");
+      } finally {
+        setIsDeleting(false);
+      }
+    }
   };
 
   const increaseFontSize = () => {
@@ -213,6 +278,25 @@ export default function StoryPage() {
   return (
     <StoryPageContainer>
       <Card>
+        {storyId && (
+          <TopBar>
+            <Button
+              $secondary
+              style={{
+                fontSize: 12,
+                padding: "6px 12px",
+                minHeight: "32px",
+                width: "auto",
+                margin: 0,
+                borderRadius: "8px",
+              }}
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </Button>
+          </TopBar>
+        )}
         <CompactHeader>
           <h1>{title}</h1>
           <FontSizeControls>
@@ -224,14 +308,14 @@ export default function StoryPage() {
         <StoryContainer>
           <StoryText $fontSize={fontSize}>{formatStory(story)}</StoryText>
         </StoryContainer>
-        <div style={{ display: "flex", gap: "12px" }}>
+        <Buttons>
           <Button $secondary onClick={goToHome} style={{ flex: 1 }}>
             Back to Stories
           </Button>
           <Button $primary onClick={createAnother} style={{ flex: 1 }}>
             Create Another
           </Button>
-        </div>
+        </Buttons>
       </Card>
     </StoryPageContainer>
   );
