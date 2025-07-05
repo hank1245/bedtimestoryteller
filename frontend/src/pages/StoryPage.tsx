@@ -22,7 +22,7 @@ const CompactHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   flex-direction: column;
@@ -60,6 +60,13 @@ const TopBar = styled.div`
   @media (max-width: 480px) {
     top: 16px;
     right: 16px;
+  }
+`;
+
+const DeleteButton = styled(Button)`
+  @media (max-width: 480px) {
+    position: relative !important;
+    top: 47px !important;
   }
 `;
 
@@ -168,7 +175,7 @@ const Buttons = styled.div`
   display: flex;
   gap: 12px;
   position: absolute;
-  bottom: 40px;
+  bottom: 20px;
   left: 20px;
   width: calc(100% - 40px);
 `;
@@ -280,7 +287,7 @@ export default function StoryPage() {
       <Card>
         {storyId && (
           <TopBar>
-            <Button
+            <DeleteButton
               $secondary
               style={{
                 fontSize: 12,
@@ -294,7 +301,7 @@ export default function StoryPage() {
               disabled={isDeleting}
             >
               {isDeleting ? "Deleting..." : "Delete"}
-            </Button>
+            </DeleteButton>
           </TopBar>
         )}
         <CompactHeader>

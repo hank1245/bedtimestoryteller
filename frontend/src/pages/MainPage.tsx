@@ -11,8 +11,41 @@ import {
 import { useClerk } from "@clerk/clerk-react";
 
 const ListContainer = styled.div`
-  margin-bottom: 32px;
   flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+`;
+
+const StoryList = styled.ul`
+  flex: 1;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+
+  /* 스크롤바 스타일링 */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  @media (max-width: 480px) {
+    max-height: 380px;
+  }
 `;
 
 const StoryPageWrapper = styled.div`
@@ -129,7 +162,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
             ) : stories.length === 0 ? (
               <p>No stories yet. Click below to create your first one!</p>
             ) : (
-              <ul>
+              <StoryList>
                 {stories.map((story) => (
                   <li
                     key={story.id}
@@ -151,7 +184,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
                     </div>
                   </li>
                 ))}
-              </ul>
+              </StoryList>
             )}
           </ListContainer>
         </ContentWrapper>
