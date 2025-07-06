@@ -30,7 +30,7 @@ const CompactHeader = styled.div`
 
   h1 {
     font-family: fantasy, serif;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 800;
     color: var(--text-primary);
     margin: 0;
@@ -43,7 +43,7 @@ const CompactHeader = styled.div`
     gap: 12px;
 
     h1 {
-      font-size: 18px;
+      font-size: 21px;
     }
   }
 `;
@@ -99,10 +99,10 @@ const FontSizeControls = styled.div`
 `;
 
 const StoryText = styled.div<{ $fontSize: number }>`
-  font-family: fantasy, serif;
+  font-family: verdana, serif;
   font-size: ${(props) => props.$fontSize}px;
   line-height: 1.8;
-  font-weight: 800;
+  font-weight: 600;
   color: var(--text-primary);
 
   p {
@@ -112,9 +112,9 @@ const StoryText = styled.div<{ $fontSize: number }>`
 
   /* 마크다운 헤더 스타일링 */
   h2 {
-    font-family: fantasy, serif;
+    font-family: verdana, serif;
     font-size: ${(props) => props.$fontSize + 4}px;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--accent-blue);
     margin-bottom: 20px;
     text-align: center;
