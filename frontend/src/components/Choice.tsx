@@ -1,9 +1,11 @@
 import styled, { css } from "styled-components";
 
-export const ChoiceGrid = styled.div`
+export const ChoiceGrid = styled.div<{
+  $large?: boolean;
+}>`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: ${({ $large }) => ($large ? "16px" : "12px")};
   margin-bottom: 24px;
   max-height: 70%;
 `;
@@ -11,13 +13,14 @@ export const ChoiceGrid = styled.div`
 export const ChoiceButton = styled.button<{
   $selected?: boolean;
   $multiple?: boolean;
+  $large?: boolean;
 }>`
-  padding: 16px 12px;
+  padding: ${({ $large }) => ($large ? "24px 16px" : "16px 12px")};
   background: var(--button-secondary);
   border: 1px solid var(--card-border);
   border-radius: 12px;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: ${({ $large }) => ($large ? "16px" : "14px")};
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -25,7 +28,7 @@ export const ChoiceButton = styled.button<{
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 60px;
+  min-height: ${({ $large }) => ($large ? "160px" : "60px")};
   position: ${({ $multiple }) => ($multiple ? "relative" : "static")};
 
   &:focus {

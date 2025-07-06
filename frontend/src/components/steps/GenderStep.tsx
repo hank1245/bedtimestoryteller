@@ -18,11 +18,12 @@ export default function GenderStep({
         <CardTitle>Tell us about your child</CardTitle>
         <CardSubtitle>This helps us personalize the story</CardSubtitle>
       </CardHeader>
-      <ChoiceGrid>
+      <ChoiceGrid $large>
         {options.map((option) => (
           <ChoiceButton
             key={option}
             $selected={value === option}
+            $large
             onClick={() => onChange?.(option)}
           >
             {option}

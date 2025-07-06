@@ -1,9 +1,19 @@
 import { CardHeader, CardTitle, CardSubtitle } from "../Card";
 import { FormGroup, FormLabel, FormInput } from "../Form";
+import { ChoiceGrid, ChoiceButton } from "../Choice";
 import { Button } from "../Button";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { ErrorMessage } from "../Feedback";
 import { StepProps } from "../../types";
+
+const LESSON_OPTIONS = [
+  "Being Kind",
+  "Sharing",
+  "Courage",
+  "Honesty",
+  "Friendship",
+  "Perseverance",
+];
 
 export default function LessonStep({
   value,
@@ -14,6 +24,10 @@ export default function LessonStep({
   loading,
   error,
 }: StepProps) {
+  const handleLessonChoice = (lesson: string) => {
+    onChange?.(lesson);
+  };
+
   return (
     <>
       <CardHeader>
@@ -21,6 +35,20 @@ export default function LessonStep({
         <CardSubtitle>What would you like your child to learn?</CardSubtitle>
       </CardHeader>
       {error && <ErrorMessage>{error}</ErrorMessage>}
+      <FormGroup>
+        <FormLabel>Choose a common value or write your own</FormLabel>
+        <ChoiceGrid>
+          {LESSON_OPTIONS.map((lesson) => (
+            <ChoiceButton
+              key={lesson}
+              $selected={value === lesson}
+              onClick={() => handleLessonChoice(lesson)}
+            >
+              {lesson}
+            </ChoiceButton>
+          ))}
+        </ChoiceGrid>
+      </FormGroup>
       <FormGroup>
         <FormLabel>Lesson or Value</FormLabel>
         <FormInput
