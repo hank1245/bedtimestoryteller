@@ -6,7 +6,8 @@ import { generateStoryWithClaude } from "../services/anthropic";
 import styled from "styled-components";
 import { Card } from "../components/Card";
 import { ProgressBarContainer, ProgressDot } from "../components/ProgressBar";
-import AgeStep from "../components/steps/AgeStep";
+import StoryLoading from "../components/StoryLoading";
+import AgeAndLengthStep from "../components/steps/AgeAndLengthStep";
 import GenderStep from "../components/steps/GenderStep";
 import InterestsStep from "../components/steps/InterestsStep";
 import StyleStep from "../components/steps/StyleStep";
@@ -34,7 +35,9 @@ function generateDemoStory(formData: FormData): {
   };
 
   const title = `Sam's ${mainInterest} Adventure`;
-  const story = `Once upon a time, in a land filled with ${mainInterest.toLowerCase()}, there lived a brave ${age}-year-old explorer named Sam. Every night before bed, Sam would look out ${
+
+  // Create different story lengths based on the length parameter
+  const baseStory = `Once upon a time, in a land filled with ${mainInterest.toLowerCase()}, there lived a brave ${age}-year-old explorer named Sam. Every night before bed, Sam would look out ${
     pronouns.their
   } window and dream of ${mainInterest.toLowerCase()} adventures.
 
@@ -64,7 +67,9 @@ And so, Sam drifted off to sleep with happy dreams, ready for another day of won
 
 The End. Sweet dreams! 🌙✨`;
 
-  return { title, story };
+  // For demo purposes, we'll use the base story for all lengths
+  // In a real implementation, you'd generate different length stories
+  return { title, story: baseStory };
 }
 
 const GenerationPageContainer = styled.div`
@@ -83,6 +88,7 @@ export default function GenerationPage() {
   const [currentStep, setCurrentStep] = useState(STEPS.AGE);
   const [formData, setFormData] = useState<FormData>({
     age: "",
+    length: "",
     gender: "",
     interests: [],
     style: "",
@@ -163,7 +169,8 @@ export default function GenerationPage() {
         return (
           typeof formData.age === "number" &&
           formData.age >= 2 &&
-          formData.age <= 12
+          formData.age <= 12 &&
+          formData.length.length > 0
         );
       case STEPS.GENDER:
         return formData.gender.length > 0;
@@ -181,55 +188,67 @@ export default function GenerationPage() {
   return (
     <GenerationPageContainer>
       <Card>
-        {currentStep === STEPS.AGE && (
-          <AgeStep
-            value={formData.age}
-            onChange={(value: number) => updateFormData("age", value)}
-            onNext={nextStep}
-            onPrev={goToHome}
-            canProceed={canProceed()}
-          />
-        )}
-        {currentStep === STEPS.GENDER && (
-          <GenderStep
-            value={formData.gender}
-            onChange={(value: string) => updateFormData("gender", value)}
-            onNext={nextStep}
-            onPrev={prevStep}
-            canProceed={canProceed()}
-          />
-        )}
-        {currentStep === STEPS.INTERESTS && (
-          <InterestsStep
-            values={formData.interests}
-            onChange={(values: string[]) => updateFormData("interests", values)}
-            onNext={nextStep}
-            onPrev={prevStep}
-            canProceed={canProceed()}
-          />
-        )}
-        {currentStep === STEPS.STYLE && (
-          <StyleStep
-            value={formData.style}
-            onChange={(value: string) => updateFormData("style", value)}
-            onNext={nextStep}
-            onPrev={prevStep}
-            canProceed={canProceed()}
-          />
-        )}
-        {currentStep === STEPS.LESSON && (
-          <LessonStep
-            value={formData.lesson}
-            onChange={(value: string) => updateFormData("lesson", value)}
-            onGenerate={generateStory}
-            onPrev={prevStep}
-            canProceed={canProceed()}
-            loading={loading}
-            error={error}
-          />
+        {loading ? (
+          <StoryLoading />
+        ) : (
+          <>
+            {currentStep === STEPS.AGE && (
+              <AgeAndLengthStep
+                value={formData.age}
+                onChange={(value: number) => updateFormData("age", value)}
+                lengthValue={formData.length}
+                onLengthChange={(value: string) =>
+                  updateFormData("length", value)
+                }
+                onNext={nextStep}
+                onPrev={goToHome}
+                canProceed={canProceed()}
+              />
+            )}
+            {currentStep === STEPS.GENDER && (
+              <GenderStep
+                value={formData.gender}
+                onChange={(value: string) => updateFormData("gender", value)}
+                onNext={nextStep}
+                onPrev={prevStep}
+                canProceed={canProceed()}
+              />
+            )}
+            {currentStep === STEPS.INTERESTS && (
+              <InterestsStep
+                values={formData.interests}
+                onChange={(values: string[]) =>
+                  updateFormData("interests", values)
+                }
+                onNext={nextStep}
+                onPrev={prevStep}
+                canProceed={canProceed()}
+              />
+            )}
+            {currentStep === STEPS.STYLE && (
+              <StyleStep
+                value={formData.style}
+                onChange={(value: string) => updateFormData("style", value)}
+                onNext={nextStep}
+                onPrev={prevStep}
+                canProceed={canProceed()}
+              />
+            )}
+            {currentStep === STEPS.LESSON && (
+              <LessonStep
+                value={formData.lesson}
+                onChange={(value: string) => updateFormData("lesson", value)}
+                onGenerate={generateStory}
+                onPrev={prevStep}
+                canProceed={canProceed()}
+                loading={loading}
+                error={error}
+              />
+            )}
+          </>
         )}
       </Card>
-      <ProgressBar currentStep={getStepNumber()} totalSteps={5} />
+      {!loading && <ProgressBar currentStep={getStepNumber()} totalSteps={5} />}
     </GenerationPageContainer>
   );
 }

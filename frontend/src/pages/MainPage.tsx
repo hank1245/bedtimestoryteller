@@ -19,7 +19,7 @@ const ListContainer = styled.div`
 
 const StoryList = styled.ul`
   flex: 1;
-  max-height: 420px;
+  max-height: 450px;
   overflow-y: auto;
   padding: 0;
   margin: 0;
@@ -44,7 +44,7 @@ const StoryList = styled.ul`
   }
 
   @media (max-width: 480px) {
-    max-height: 380px;
+    max-height: 400px;
   }
 `;
 

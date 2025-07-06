@@ -1,5 +1,6 @@
 export interface FormData {
   age: number | string;
+  length: string;
   gender: string;
   interests: string[];
   style: string;
@@ -37,13 +38,19 @@ export interface Pronouns {
   their: string;
 }
 
-export type StepType = 'age' | 'gender' | 'interests' | 'style' | 'lesson' | 'story';
+export type StepType =
+  | "age"
+  | "gender"
+  | "interests"
+  | "style"
+  | "lesson"
+  | "story";
 
 export const STEPS: Record<string, StepType> = {
-  AGE: 'age',
-  GENDER: 'gender',
-  INTERESTS: 'interests',
-  STYLE: 'style',
-  LESSON: 'lesson',
-  STORY: 'story'
+  AGE: "age",
+  GENDER: "gender",
+  INTERESTS: "interests",
+  STYLE: "style",
+  LESSON: "lesson",
+  STORY: "story",
 } as const;

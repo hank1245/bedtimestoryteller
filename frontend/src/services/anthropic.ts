@@ -47,13 +47,27 @@ function parseStoryResponse(rawText: string): { title: string; story: string } {
 export async function generateStoryWithClaude(
   formData: FormData
 ): Promise<{ title: string; story: string }> {
+  // Map length to word count and max_tokens
+  const lengthMapping = {
+    "very-short": { words: "400", tokens: 600 },
+    short: { words: "600", tokens: 900 },
+    medium: { words: "1200", tokens: 1800 },
+    long: { words: "1800", tokens: 2500 },
+  };
+
+  const lengthConfig =
+    lengthMapping[formData.length as keyof typeof lengthMapping] ||
+    lengthMapping["medium"];
+
   const prompt = `Write a bedtime story for a ${formData.age}-year-old ${
     formData.gender
   } child who loves ${formData.interests.join(", ")}. The story should be ${
     formData.style
   } in tone and naturally include a lesson about ${
     formData.lesson
-  }. Keep it 1000-1500 words, age-appropriate, and perfect for bedtime. Make it soothing and engaging.
+  }. Keep it around ${
+    lengthConfig.words
+  } words, age-appropriate, and perfect for bedtime. Make it soothing and engaging.
 
 CRITICAL REQUIREMENTS:
 - Create a COMPLETE story with NO placeholders, brackets, or [variables]
@@ -66,6 +80,7 @@ CRITICAL REQUIREMENTS:
 - Write the main story content starting from the second line
 - Do not include any introductory content or explanations
 - The story MUST end with "The End" as the final line
+- Target approximately ${lengthConfig.words} words for the story content
 
 FORMAT:
 [Title on first line]
@@ -79,7 +94,7 @@ Remember: NO brackets, NO placeholders, NO [variables] - only complete, specific
   try {
     const message = await anthropic.messages.create({
       model: "claude-3-haiku-20240307",
-      max_tokens: 2000,
+      max_tokens: lengthConfig.tokens,
       messages: [
         {
           role: "user",
