@@ -61,10 +61,10 @@ const ContentWrapper = styled.div`
 `;
 
 const StyledCardHeader = styled(CardHeader)`
-  margin-top: 40px;
+  margin-top: 20px;
 
   @media (max-width: 480px) {
-    margin-top: 40px;
+    margin-top: 30px;
   }
 `;
 
@@ -170,16 +170,16 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
                       marginBottom: 24,
                       background: "rgba(255,255,255,0.03)",
                       borderRadius: 8,
-                      padding: 20,
+                      padding: 22,
                       cursor: "pointer",
                       listStyle: "none",
                     }}
                     onClick={() => handleStoryClick(story.id)}
                   >
-                    <div style={{ fontWeight: 600, fontSize: 17 }}>
+                    <div style={{ fontWeight: 600, fontSize: 18 }}>
                       {story.title}
                     </div>
-                    <div style={{ fontSize: 13, color: "#aaa", marginTop: 2 }}>
+                    <div style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}>
                       {new Date(story.created_at).toLocaleString()}
                     </div>
                   </li>

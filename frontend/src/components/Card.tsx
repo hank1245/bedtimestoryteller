@@ -43,11 +43,11 @@ export const Card = styled.div`
 
 export const CardHeader = styled.div`
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 30px;
 `;
 
 export const CardTitle = styled.h2`
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 600;
   margin-bottom: 8px;
   background: linear-gradient(
@@ -62,6 +62,6 @@ export const CardTitle = styled.h2`
 
 export const CardSubtitle = styled.p`
   color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 400;
+  font-size: 16px;
+  font-weight: 600;
 `;
