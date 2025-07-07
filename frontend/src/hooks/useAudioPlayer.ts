@@ -120,28 +120,46 @@ export const useAudioPlayer = ({
     }
   }, [selectedVoice, currentAudio, isPlaying, currentVoice]);
 
-  // Clean text for speech synthesis
+  // Clean text for speech synthesis (non-SSML version with more pauses)
   const cleanTextForSpeech = (text: string): string => {
-    return text
+    // 먼저 기본 텍스트 정리
+    let cleanText = text
       .replace(/##\s*/g, "") // Remove markdown headers
       .replace(/\*/g, "") // Remove asterisks
-      .replace(/\n\n+/g, ". ") // Replace multiple newlines with period and space
-      .replace(/\n/g, ". ") // Replace single newlines with period and space
+      .replace(/\n\n+/g, "\n\n") // Keep paragraph breaks
       .replace(/\.\s*\./g, ".") // Remove duplicate periods
-      .replace(/([.!?])\s*([A-Z])/g, "$1.......... $2") // Add very long pauses between sentences
-      .replace(/,\s*([A-Z])/g, ",..... $1") // Add longer pause after commas before capitals
-      .replace(/([.!?])\s*$/, "$1..........") // Add very long pause at the end
-      .replace(/\band\b/g, "and,....") // Add longer comma after "and" for natural pause
-      .replace(/\bbut\b/g, "but,....") // Add longer comma after "but" for natural pause
-      .replace(/\bonce upon a time\b/gi, "Once upon a time,....") // Add longer pause after opening
-      .replace(/\bthe end\b/gi, ".......... The End.") // Add very long dramatic pause before ending
-      .replace(/\bthen\b/g, "then,....") // Add pause after "then"
-      .replace(/\bso\b/g, "so,....") // Add pause after "so"
-      .replace(/\bafter\b/g, "after,....") // Add pause after "after"
-      .replace(/\bsuddenly\b/g, "suddenly,....") // Add pause after "suddenly"
-      .replace(/\bwhen\b/g, "when,....") // Add pause after "when"
-      .replace(/\bwhile\b/g, "while,....") // Add pause after "while"
       .trim();
+
+    // 점들을 이용한 자연스러운 휴식 추가
+    cleanText = cleanText
+      // 문장 끝 후 긴 휴식 (마침표, 느낌표, 물음표)
+      .replace(/([.!?])\s*([A-Z])/g, "$1 ............... $2")
+      // 문단 끝 후 더 긴 휴식
+      .replace(/([.!?])\s*\n\n/g, "$1 ................... \n\n")
+      // 쉼표 후 휴식
+      .replace(/,\s*([A-Z])/g, ", ........ $1")
+      .replace(/,\s*([a-z])/g, ", .... $1")
+      // 연결어 후 자연스러운 휴식
+      .replace(
+        /\b(and|but|then|so|after|suddenly|when|while|now|later)\b/gi,
+        (match) => `${match} ......`
+      )
+      // 특별한 구문들
+      .replace(/\bonce upon a time\b/gi, "Once upon a time ............")
+      .replace(/\blong ago\b/gi, "Long ago ............")
+      .replace(/\bin a faraway land\b/gi, "In a faraway land ............")
+      .replace(/\bthe end\b/gi, "............ The End .....................")
+      // 대화나 인용구 주변에 휴식
+      .replace(/"/g, " .... ")
+      // 줄바꿈을 적절한 휴식으로 변환
+      .replace(/\n/g, " ...... ")
+      // 콜론과 세미콜론 후 휴식
+      .replace(/:/g, ": ......")
+      .replace(/;/g, "; ......")
+      // 여러 개의 연속된 점들을 정리
+      .replace(/\.{4,}/g, "........"); // 4개 이상의 점은 8개로 통일
+
+    return cleanText;
   };
 
   // Safe play function to handle AbortError
