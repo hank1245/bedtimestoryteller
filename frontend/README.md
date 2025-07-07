@@ -1,12 +1,51 @@
-# React + Vite
+# Bedtime Storyteller Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the Bedtime Storyteller application, built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Story Generation**: Create personalized bedtime stories
+- **Story Reading**: View and read saved stories
+- **Text-to-Speech**: Listen to stories with ElevenLabs AI voices
+- **Font Size Control**: Adjust text size for comfortable reading
+- **Voice Selection**: Choose between Amelia (female) and Archimedes (male) voices
+- **Audio Controls**: Play, pause, stop, and restart audio playback
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Set up environment variables:
+   Create a `.env` file in the root directory and add:
+
+```
+VITE_ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
+```
+
+3. Run the development server:
+
+```bash
+npm run dev
+```
+
+## Audio Features
+
+The app includes text-to-speech functionality powered by ElevenLabs:
+
+- **Voice Selection**: Choose between two multilingual voices
+- **Audio Generation**: Stories are converted to speech on demand
+- **Playback Controls**: Standard audio controls (play/pause/stop/restart)
+- **Loading States**: Visual feedback during audio generation
+
+## Tech Stack
+
+- React 19
+- TypeScript
+- Styled Components
+- Vite
+- ElevenLabs SDK
+- Clerk Authentication

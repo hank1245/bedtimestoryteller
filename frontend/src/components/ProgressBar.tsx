@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 
 export const ProgressBarContainer = styled.div`
   position: fixed;
-  bottom: 52px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;

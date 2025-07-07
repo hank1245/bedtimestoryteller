@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createStory, useClerkApiToken } from "../services/client";
 import { FormData, ProgressBarProps, Pronouns, STEPS } from "../types";
 import { generateStoryWithClaude } from "../services/anthropic";
 import styled from "styled-components";
@@ -12,6 +11,8 @@ import GenderStep from "../components/steps/GenderStep";
 import InterestsStep from "../components/steps/InterestsStep";
 import StyleStep from "../components/steps/StyleStep";
 import LessonStep from "../components/steps/LessonStep";
+import { useCreateStory } from "../hooks/useStories";
+import { useToast } from "../stores/toastStore";
 
 function generateDemoStory(formData: FormData): {
   title: string;
@@ -98,11 +99,8 @@ export default function GenerationPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const setToken = useClerkApiToken();
-
-  useEffect(() => {
-    setToken();
-  }, [setToken]);
+  const createStoryMutation = useCreateStory();
+  const { addToast } = useToast();
 
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -137,18 +135,30 @@ export default function GenerationPage() {
         response = generateDemoStory(formData);
       }
       updateFormData("story", response.story);
-      // POST to backend with title and story separated
-      await createStory(response.title, response.story);
+
+      // React Query 뮤테이션으로 스토리 생성
+      const newStory = await createStoryMutation.mutateAsync({
+        title: response.title,
+        story: response.story,
+      });
+
+      addToast("success", "Story created successfully!");
+
       // Navigate to story page with the generated story
       navigate("/story", {
-        state: { title: response.title, story: response.story },
+        state: {
+          id: newStory.id,
+          title: response.title,
+          story: response.story,
+        },
       });
     } catch (err) {
-      setError(
+      const errorMessage =
         err instanceof Error
           ? err.message
-          : "Unable to generate story. Please try again."
-      );
+          : "Unable to generate story. Please try again.";
+      setError(errorMessage);
+      addToast("error", errorMessage);
     } finally {
       setLoading(false);
     }
@@ -247,8 +257,10 @@ export default function GenerationPage() {
             )}
           </>
         )}
+        {!loading && (
+          <ProgressBar currentStep={getStepNumber()} totalSteps={5} />
+        )}
       </Card>
-      {!loading && <ProgressBar currentStep={getStepNumber()} totalSteps={5} />}
     </GenerationPageContainer>
   );
 }

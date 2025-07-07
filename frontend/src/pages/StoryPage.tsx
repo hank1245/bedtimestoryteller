@@ -3,8 +3,11 @@ import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { StoryContainer } from "../components/StoryContainer";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
-import { deleteStory, useClerkApiToken } from "../services/client";
+import { useState } from "react";
+import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
+import { useStory, useDeleteStory } from "../hooks/useStories";
+import { useToast } from "../stores/toastStore";
+import { useAudioPlayer } from "../hooks/useAudioPlayer";
 
 const StoryPageContainer = styled.div`
   width: 100%;
@@ -98,6 +101,100 @@ const FontSizeControls = styled.div`
   }
 `;
 
+const ControlsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+`;
+
+const AudioControls = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+`;
+
+const VoiceSelector = styled.select`
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: var(--text-primary);
+  padding: 5px 9px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  option {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+`;
+
+const AudioButton = styled.button<{ $isActive?: boolean }>`
+  background: ${(props) =>
+    props.$isActive ? "rgba(59, 130, 246, 0.2)" : "rgba(255, 255, 255, 0.1)"};
+  border: 1px solid
+    ${(props) =>
+      props.$isActive ? "rgba(59, 130, 246, 0.4)" : "rgba(255, 255, 255, 0.2)"};
+  border-radius: 8px;
+  color: ${(props) =>
+    props.$isActive ? "var(--accent-blue)" : "var(--text-primary)"};
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: ${(props) =>
+      props.$isActive ? "rgba(59, 130, 246, 0.3)" : "rgba(255, 255, 255, 0.2)"};
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+const LoadingSpinner = styled.div`
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
 const StoryText = styled.div<{ $fontSize: number }>`
   font-family: verdana, serif;
   font-size: ${(props) => props.$fontSize}px;
@@ -183,24 +280,42 @@ const Buttons = styled.div`
 export default function StoryPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const title = location.state?.title || "Untitled Story";
-  const story = location.state?.story || "No story available";
+  const { addToast, addConfirmToast } = useToast();
   const storyId = location.state?.id;
   const [fontSize, setFontSize] = useState(16);
   const [isDeleting, setIsDeleting] = useState(false);
-  const setToken = useClerkApiToken();
 
-  // 토큰 설정
-  useEffect(() => {
-    const initializeToken = async () => {
-      try {
-        await setToken();
-      } catch (error) {
-        console.error("Failed to set token:", error);
-      }
-    };
-    initializeToken();
-  }, [setToken]);
+  // React Query로 스토리 데이터 가져오기
+  const { data: storyData } = useStory(storyId);
+  const deleteStoryMutation = useDeleteStory();
+
+  const title = storyData?.title || location.state?.title || "Untitled Story";
+  const story =
+    storyData?.story || location.state?.story || "No story available";
+
+  // Voice configurations
+  const voices = {
+    amelia: {
+      voiceId: "pMsXgVXv3BLzUgSXRplE",
+      name: "Amelia (Female)",
+    },
+    archimedes: {
+      voiceId: "JBFqnCBsd6RMkjVDRZzb",
+      name: "Archimedes (Male)",
+    },
+  };
+
+  // 새로운 오디오 훅 사용
+  const {
+    isGeneratingAudio,
+    isPlaying,
+    currentAudio,
+    selectedVoice,
+    generateAndPlayAudio,
+    togglePlayPause,
+    restartAudio,
+    setSelectedVoice,
+  } = useAudioPlayer({ voices, storyId, story });
 
   const goToHome = () => {
     navigate("/");
@@ -213,20 +328,27 @@ export default function StoryPage() {
   const handleDelete = async () => {
     if (!storyId) return;
 
-    if (window.confirm("Are you sure you want to delete this story?")) {
-      setIsDeleting(true);
-      try {
-        // 토큰을 다시 설정하여 최신 상태로 업데이트
-        await setToken();
-        await deleteStory(storyId);
-        navigate("/", { replace: true });
-      } catch (error) {
-        console.error("Error deleting story:", error);
-        alert("Error deleting story. Please try again.");
-      } finally {
-        setIsDeleting(false);
+    addConfirmToast(
+      "Are you sure you want to delete this story? This action cannot be undone.",
+      async () => {
+        // 확인 버튼 클릭 시 실행되는 함수
+        setIsDeleting(true);
+        try {
+          await deleteStoryMutation.mutateAsync(storyId);
+          addToast("success", "Story deleted successfully");
+          navigate("/", { replace: true });
+        } catch (error) {
+          console.error("Error deleting story:", error);
+          addToast("error", "Error deleting story. Please try again.");
+        } finally {
+          setIsDeleting(false);
+        }
+      },
+      () => {
+        // 취소 버튼 클릭 시 실행되는 함수 (선택사항)
+        console.log("Delete cancelled");
       }
-    }
+    );
   };
 
   const increaseFontSize = () => {
@@ -306,11 +428,51 @@ export default function StoryPage() {
         )}
         <CompactHeader>
           <h1>{title}</h1>
-          <FontSizeControls>
-            <button onClick={decreaseFontSize}>A-</button>
-            <span>Font Size</span>
-            <button onClick={increaseFontSize}>A+</button>
-          </FontSizeControls>
+          <ControlsContainer>
+            <FontSizeControls>
+              <button onClick={decreaseFontSize}>A-</button>
+              <span>Font Size</span>
+              <button onClick={increaseFontSize}>A+</button>
+            </FontSizeControls>
+            <AudioControls>
+              <VoiceSelector
+                value={selectedVoice}
+                onChange={(e) => setSelectedVoice(e.target.value)}
+              >
+                <option value="amelia">Amelia (Female)</option>
+                <option value="archimedes">Archimedes (Male)</option>
+              </VoiceSelector>
+
+              {!currentAudio ? (
+                <AudioButton
+                  onClick={async () => {
+                    console.log("🖱️ Volume button clicked - starting playback");
+                    try {
+                      await generateAndPlayAudio();
+                    } catch (error) {
+                      console.error("Error in generateAndPlayAudio:", error);
+                      addToast(
+                        "error",
+                        "Failed to generate audio. Please try again."
+                      );
+                    }
+                  }}
+                  disabled={isGeneratingAudio}
+                >
+                  {isGeneratingAudio ? <LoadingSpinner /> : <Volume2 />}
+                </AudioButton>
+              ) : (
+                <>
+                  <AudioButton onClick={togglePlayPause} $isActive={isPlaying}>
+                    {isPlaying ? <Pause /> : <Play />}
+                  </AudioButton>
+                  <AudioButton onClick={restartAudio}>
+                    <RotateCcw />
+                  </AudioButton>
+                </>
+              )}
+            </AudioControls>
+          </ControlsContainer>
         </CompactHeader>
         <StoryContainer>
           <StoryText $fontSize={fontSize}>{formatStory(story)}</StoryText>

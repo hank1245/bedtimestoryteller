@@ -1,14 +1,11 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardSubtitle } from "../components/Card";
 import { Button } from "../components/Button";
 import styled from "styled-components";
-import {
-  fetchStories,
-  fetchStoryById,
-  useClerkApiToken,
-} from "../services/client";
 import { useClerk } from "@clerk/clerk-react";
+import { useStories } from "../hooks/useStories";
+import { useToast } from "../stores/toastStore";
 
 const ListContainer = styled.div`
   flex: 1;
@@ -83,50 +80,30 @@ const TopBar = styled.div`
   }
 `;
 
-interface Story {
-  id: number;
-  title: string;
-  created_at: string;
-}
-
 export default function MainPage({ onCreate }: { onCreate: () => void }) {
-  const [stories, setStories] = useState<Story[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const { signOut } = useClerk();
-  const setToken = useClerkApiToken();
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
-  const handleStoryClick = async (storyId: number) => {
-    try {
-      const fullStory = await fetchStoryById(storyId);
-      navigate("/story", {
-        state: {
-          id: storyId,
-          title: fullStory.title,
-          story: fullStory.story,
-        },
-      });
-    } catch (err) {
-      setError("Failed to load story");
-    }
+  // React Query를 사용하여 스토리 목록 가져오기
+  const { data: stories = [], isLoading: loading, error } = useStories();
+
+  const handleStoryClick = (storyId: number, title: string) => {
+    // 스토리 페이지로 이동 시 ID만 전달하고, 해당 페이지에서 데이터 로드
+    navigate("/story", {
+      state: {
+        id: storyId,
+        title: title,
+      },
+    });
   };
 
+  // 에러 상태 처리 (컴포넌트가 마운트된 후에만 실행)
   useEffect(() => {
-    const loadStories = async () => {
-      try {
-        await setToken(); // 토큰 설정
-        const data = await fetchStories();
-        setStories(data);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load stories");
-        setLoading(false);
-      }
-    };
-
-    loadStories();
-  }, [setToken]);
+    if (error) {
+      addToast("error", "Failed to load stories");
+    }
+  }, [error, addToast]);
 
   return (
     <Card>
@@ -158,12 +135,12 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
             {loading ? (
               <p>Loading...</p>
             ) : error ? (
-              <p style={{ color: "#e57373" }}>{error}</p>
+              <p style={{ color: "#e57373" }}>{error.message}</p>
             ) : stories.length === 0 ? (
               <p>No stories yet. Click below to create your first one!</p>
             ) : (
               <StoryList>
-                {stories.map((story) => (
+                {stories.map((story: any) => (
                   <li
                     key={story.id}
                     style={{
@@ -174,7 +151,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
                       cursor: "pointer",
                       listStyle: "none",
                     }}
-                    onClick={() => handleStoryClick(story.id)}
+                    onClick={() => handleStoryClick(story.id, story.title)}
                   >
                     <div style={{ fontWeight: 600, fontSize: 18 }}>
                       {story.title}

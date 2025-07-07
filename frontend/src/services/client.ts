@@ -1,19 +1,36 @@
 import axios from "axios";
-import { useAuth } from "@clerk/clerk-react";
 
-// 백엔드 주소에 맞게 baseURL 설정 (예: http://localhost:4000/api)
+// 환경변수에서 API URL 가져오기
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+
+// 백엔드 주소에 맞게 baseURL 설정
 const client = axios.create({
-  baseURL: "http://localhost:4000/api",
+  baseURL: `${API_BASE_URL}/api`,
   timeout: 10000,
 });
+
+// 토큰을 저장할 변수
+let authToken: string | null = null;
+
+// 토큰 설정 함수
+export const setAuthToken = (token: string | null) => {
+  authToken = token;
+};
 
 // 요청 인터셉터: Bearer 토큰 자동 첨부
 client.interceptors.request.use(
   async (config) => {
     // 토큰이 있으면 헤더에 첨부
-    if (typeof window !== "undefined" && window.__clerkAuthToken) {
+    if (authToken) {
       config.headers = config.headers || {};
-      config.headers["Authorization"] = `Bearer ${window.__clerkAuthToken}`;
+      config.headers["Authorization"] = `Bearer ${authToken}`;
+      console.log(
+        "Request with auth token:",
+        authToken?.substring(0, 20) + "..."
+      );
+    } else {
+      console.log("No auth token available for request");
     }
     return config;
   },
@@ -34,25 +51,6 @@ client.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-// Clerk 토큰을 window에 저장하는 helper (App 루트에서 사용)
-export function useClerkApiToken() {
-  const { getToken } = useAuth();
-
-  async function setToken() {
-    try {
-      const token = await getToken();
-      if (token) {
-        window.__clerkAuthToken = token;
-        window.__clerkGetToken = getToken;
-      }
-    } catch (error) {
-      console.error("Failed to set Clerk token:", error);
-    }
-  }
-
-  return setToken;
-}
 
 // CRUD API 함수들
 export async function fetchStories() {
