@@ -371,12 +371,6 @@ export const useAudioPlayer = ({
   const setupAudioEventListeners = (audioElement: HTMLAudioElement) => {
     const handleEnded = () => {
       setIsPlaying(false);
-      // 오디오가 끝났을 때도 currentAudio를 유지하여 재생 버튼을 계속 표시
-      // setCurrentAudio(null);
-      // if (cleanupRef.current) {
-      //   cleanupRef.current();
-      //   cleanupRef.current = null;
-      // }
     };
 
     const handlePause = () => {

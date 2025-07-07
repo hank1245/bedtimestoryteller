@@ -81,6 +81,72 @@ const TopBar = styled.div`
   }
 `;
 
+const EmptyStateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+  padding: 40px 20px;
+  flex: 1;
+
+  @media (max-width: 480px) {
+    min-height: 250px;
+    padding: 30px 16px;
+  }
+`;
+
+const EmptyStateEmoji = styled.div`
+  font-size: 72px;
+  margin-bottom: 24px;
+  opacity: 0.9;
+  animation: float 3s ease-in-out infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    font-size: 56px;
+    margin-bottom: 20px;
+  }
+`;
+
+const EmptyStateTitle = styled.h3`
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  max-width: 400px;
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 10px;
+    max-width: 280px;
+  }
+`;
+
+const EmptyStateSubtitle = styled.p`
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+  max-width: 450px;
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+    line-height: 1.5;
+    max-width: 300px;
+  }
+`;
+
 export default function MainPage({ onCreate }: { onCreate: () => void }) {
   const { signOut } = useClerk();
   const navigate = useNavigate();
@@ -138,7 +204,14 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
             ) : error ? (
               <p style={{ color: "#e57373" }}>{error.message}</p>
             ) : stories.length === 0 ? (
-              <p>No stories yet. Click below to create your first one!</p>
+              <EmptyStateContainer>
+                <EmptyStateEmoji>✨</EmptyStateEmoji>
+                <EmptyStateTitle>Your Story Collection Awaits</EmptyStateTitle>
+                <EmptyStateSubtitle>
+                  Start your magical journey by creating your first bedtime
+                  story!
+                </EmptyStateSubtitle>
+              </EmptyStateContainer>
             ) : (
               <StoryList>
                 {stories.map((story: any) => (
