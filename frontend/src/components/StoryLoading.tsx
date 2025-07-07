@@ -56,7 +56,11 @@ const LoadingSubtext = styled.div`
   }
 `;
 
-export default function StoryLoading() {
+interface StoryLoadingProps {
+  subtext?: string;
+}
+
+export default function StoryLoading({ subtext }: StoryLoadingProps) {
   const [dots, setDots] = useState(1);
 
   useEffect(() => {
@@ -71,14 +75,14 @@ export default function StoryLoading() {
     return ".".repeat(dots);
   };
 
+  const defaultSubtext =
+    "We're loading a magical bedtime story just for you. This might take a moment!";
+
   return (
     <LoadingContainer>
       <BookEmoji>📚</BookEmoji>
       <LoadingText>Creating your story{getDots()}</LoadingText>
-      <LoadingSubtext>
-        We're crafting a magical bedtime story just for you. This might take a
-        moment!
-      </LoadingSubtext>
+      <LoadingSubtext>{subtext || defaultSubtext}</LoadingSubtext>
     </LoadingContainer>
   );
 }

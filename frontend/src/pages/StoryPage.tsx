@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
 import { StoryContainer } from "../components/StoryContainer";
+import StoryLoading from "../components/StoryLoading";
 import styled from "styled-components";
 import { useState } from "react";
 import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
@@ -286,7 +287,7 @@ export default function StoryPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   // React Query로 스토리 데이터 가져오기
-  const { data: storyData } = useStory(storyId);
+  const { data: storyData, isLoading } = useStory(storyId);
   const deleteStoryMutation = useDeleteStory();
 
   const title = storyData?.title || location.state?.title || "Untitled Story";
@@ -407,84 +408,98 @@ export default function StoryPage() {
   return (
     <StoryPageContainer>
       <Card>
-        {storyId && (
-          <TopBar>
-            <DeleteButton
-              $secondary
-              style={{
-                fontSize: 12,
-                padding: "6px 12px",
-                minHeight: "32px",
-                width: "auto",
-                margin: 0,
-                borderRadius: "8px",
-              }}
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </DeleteButton>
-          </TopBar>
-        )}
-        <CompactHeader>
-          <h1>{title}</h1>
-          <ControlsContainer>
-            <FontSizeControls>
-              <button onClick={decreaseFontSize}>A-</button>
-              <span>Font Size</span>
-              <button onClick={increaseFontSize}>A+</button>
-            </FontSizeControls>
-            <AudioControls>
-              <VoiceSelector
-                value={selectedVoice}
-                onChange={(e) => setSelectedVoice(e.target.value)}
-              >
-                <option value="amelia">Amelia (Female)</option>
-                <option value="archimedes">Archimedes (Male)</option>
-              </VoiceSelector>
-
-              {!currentAudio ? (
-                <AudioButton
-                  onClick={async () => {
-                    console.log("🖱️ Volume button clicked - starting playback");
-                    try {
-                      await generateAndPlayAudio();
-                    } catch (error) {
-                      console.error("Error in generateAndPlayAudio:", error);
-                      addToast(
-                        "error",
-                        "Failed to generate audio. Please try again."
-                      );
-                    }
+        {isLoading ? (
+          <StoryLoading subtext="Loading your magical story... Almost ready for reading and listening!" />
+        ) : (
+          <>
+            {storyId && (
+              <TopBar>
+                <DeleteButton
+                  $secondary
+                  style={{
+                    fontSize: 12,
+                    padding: "6px 12px",
+                    minHeight: "32px",
+                    width: "auto",
+                    margin: 0,
+                    borderRadius: "8px",
                   }}
-                  disabled={isGeneratingAudio}
+                  onClick={handleDelete}
+                  disabled={isDeleting}
                 >
-                  {isGeneratingAudio ? <LoadingSpinner /> : <Volume2 />}
-                </AudioButton>
-              ) : (
-                <>
-                  <AudioButton onClick={togglePlayPause} $isActive={isPlaying}>
-                    {isPlaying ? <Pause /> : <Play />}
-                  </AudioButton>
-                  <AudioButton onClick={restartAudio}>
-                    <RotateCcw />
-                  </AudioButton>
-                </>
-              )}
-            </AudioControls>
-          </ControlsContainer>
-        </CompactHeader>
-        <StoryContainer>
-          <StoryText $fontSize={fontSize}>{formatStory(story)}</StoryText>
-        </StoryContainer>
-        <Buttons>
-          <Button $secondary onClick={goToHome} style={{ flex: 1 }}>
-            Back to Stories
-          </Button>
-          <Button $primary onClick={createAnother} style={{ flex: 1 }}>
-            Create Another
-          </Button>
-        </Buttons>
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </DeleteButton>
+              </TopBar>
+            )}
+            <CompactHeader>
+              <h1>{title}</h1>
+              <ControlsContainer>
+                <FontSizeControls>
+                  <button onClick={decreaseFontSize}>A-</button>
+                  <span>Font Size</span>
+                  <button onClick={increaseFontSize}>A+</button>
+                </FontSizeControls>
+                <AudioControls>
+                  <VoiceSelector
+                    value={selectedVoice}
+                    onChange={(e) => setSelectedVoice(e.target.value)}
+                  >
+                    <option value="amelia">Amelia (Female)</option>
+                    <option value="archimedes">Archimedes (Male)</option>
+                  </VoiceSelector>
+
+                  {!currentAudio ? (
+                    <AudioButton
+                      onClick={async () => {
+                        console.log(
+                          "🖱️ Volume button clicked - starting playback"
+                        );
+                        try {
+                          await generateAndPlayAudio();
+                        } catch (error) {
+                          console.error(
+                            "Error in generateAndPlayAudio:",
+                            error
+                          );
+                          addToast(
+                            "error",
+                            "Failed to generate audio. Please try again."
+                          );
+                        }
+                      }}
+                      disabled={isGeneratingAudio}
+                    >
+                      {isGeneratingAudio ? <LoadingSpinner /> : <Volume2 />}
+                    </AudioButton>
+                  ) : (
+                    <>
+                      <AudioButton
+                        onClick={togglePlayPause}
+                        $isActive={isPlaying}
+                      >
+                        {isPlaying ? <Pause /> : <Play />}
+                      </AudioButton>
+                      <AudioButton onClick={restartAudio}>
+                        <RotateCcw />
+                      </AudioButton>
+                    </>
+                  )}
+                </AudioControls>
+              </ControlsContainer>
+            </CompactHeader>
+            <StoryContainer>
+              <StoryText $fontSize={fontSize}>{formatStory(story)}</StoryText>
+            </StoryContainer>
+            <Buttons>
+              <Button $secondary onClick={goToHome} style={{ flex: 1 }}>
+                Back to Stories
+              </Button>
+              <Button $primary onClick={createAnother} style={{ flex: 1 }}>
+                Create Another
+              </Button>
+            </Buttons>
+          </>
+        )}
       </Card>
     </StoryPageContainer>
   );

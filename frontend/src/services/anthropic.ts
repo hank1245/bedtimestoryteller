@@ -47,12 +47,12 @@ function parseStoryResponse(rawText: string): { title: string; story: string } {
 export async function generateStoryWithClaude(
   formData: FormData
 ): Promise<{ title: string; story: string }> {
-  // Map length to word count and max_tokens
+  // Map length to word count and max_tokens (천천히 읽기 위해 단어 수 조정)
   const lengthMapping = {
-    "very-short": { words: "400", tokens: 600 },
-    short: { words: "600", tokens: 900 },
-    medium: { words: "1200", tokens: 1800 },
-    long: { words: "1800", tokens: 2500 },
+    "very-short": { words: "300", tokens: 600 }, // 3분 목표: 300 단어
+    short: { words: "500", tokens: 800 }, // 5분 목표: 500 단어
+    medium: { words: "1000", tokens: 1500 }, // 10분 목표: 1000 단어
+    long: { words: "1500", tokens: 2000 }, // 15분 목표: 1500 단어
   };
 
   const lengthConfig =

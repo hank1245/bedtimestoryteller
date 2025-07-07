@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { useClerk } from "@clerk/clerk-react";
 import { useStories } from "../hooks/useStories";
 import { useToast } from "../stores/toastStore";
+import StoryLoading from "../components/StoryLoading";
 
 const ListContainer = styled.div`
   flex: 1;
@@ -133,7 +134,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
           </StyledCardHeader>
           <ListContainer>
             {loading ? (
-              <p>Loading...</p>
+              <StoryLoading subtext="Loading your magical bedtime stories... Just a moment!" />
             ) : error ? (
               <p style={{ color: "#e57373" }}>{error.message}</p>
             ) : stories.length === 0 ? (

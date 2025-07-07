@@ -26,7 +26,7 @@ export const useAudioPlayer = ({
     null
   );
   const [selectedVoice, setSelectedVoice] = useState<string>("amelia");
-  const [currentVoice, setCurrentVoice] = useState<string>("amelia"); // 현재 로드된 오디오의 음성 추적
+  const [currentVoice, setCurrentVoice] = useState<string>("amelia");
   const [savedAudioUrls, setSavedAudioUrls] = useState<Record<string, string>>(
     {}
   );
@@ -58,13 +58,18 @@ export const useAudioPlayer = ({
           );
           if (response.ok) {
             const storyData = await response.json();
+            console.log("📂 Story data received:", storyData);
             if (storyData.audio_urls) {
+              console.log("🎵 Audio URLs found:", storyData.audio_urls);
               // Convert relative URLs to absolute URLs
               const absoluteUrls: Record<string, string> = {};
               Object.entries(storyData.audio_urls).forEach(([voice, url]) => {
                 absoluteUrls[voice] = `${API_BASE_URL}${url}`;
               });
               setSavedAudioUrls(absoluteUrls);
+              console.log("✅ Saved audio URLs updated:", absoluteUrls);
+            } else {
+              console.log("ℹ️ No audio URLs found for this story");
             }
           }
         } catch (error) {
@@ -123,7 +128,19 @@ export const useAudioPlayer = ({
       .replace(/\n\n+/g, ". ") // Replace multiple newlines with period and space
       .replace(/\n/g, ". ") // Replace single newlines with period and space
       .replace(/\.\s*\./g, ".") // Remove duplicate periods
-      .replace(/([.!?])\s*([A-Z])/g, "$1... $2") // Add pauses between sentences
+      .replace(/([.!?])\s*([A-Z])/g, "$1.......... $2") // Add very long pauses between sentences
+      .replace(/,\s*([A-Z])/g, ",..... $1") // Add longer pause after commas before capitals
+      .replace(/([.!?])\s*$/, "$1..........") // Add very long pause at the end
+      .replace(/\band\b/g, "and,....") // Add longer comma after "and" for natural pause
+      .replace(/\bbut\b/g, "but,....") // Add longer comma after "but" for natural pause
+      .replace(/\bonce upon a time\b/gi, "Once upon a time,....") // Add longer pause after opening
+      .replace(/\bthe end\b/gi, ".......... The End.") // Add very long dramatic pause before ending
+      .replace(/\bthen\b/g, "then,....") // Add pause after "then"
+      .replace(/\bso\b/g, "so,....") // Add pause after "so"
+      .replace(/\bafter\b/g, "after,....") // Add pause after "after"
+      .replace(/\bsuddenly\b/g, "suddenly,....") // Add pause after "suddenly"
+      .replace(/\bwhen\b/g, "when,....") // Add pause after "when"
+      .replace(/\bwhile\b/g, "while,....") // Add pause after "while"
       .trim();
   };
 
@@ -257,9 +274,10 @@ export const useAudioPlayer = ({
           modelId: "eleven_turbo_v2_5",
           outputFormat: "mp3_44100_128",
           voiceSettings: {
-            stability: 0.75,
-            similarityBoost: 0.85,
-            style: 0.0,
+            stability: 0.85,
+            similarityBoost: 0.75,
+            style: 0.35,
+            speed: 0.82,
             useSpeakerBoost: true,
           },
         }
