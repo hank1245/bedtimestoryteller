@@ -20,7 +20,7 @@ export const ChoiceButton = styled.button<{
   border: 1px solid var(--card-border);
   border-radius: 12px;
   color: var(--text-primary);
-  font-size: ${({ $large }) => ($large ? "16px" : "14px")};
+  font-size: ${({ $large }) => ($large ? "20px" : "14px")};
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
