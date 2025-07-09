@@ -15,12 +15,17 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(
-  cors({
-    origin: true, // 모든 origin 허용 (개발환경)
-    credentials: true,
-  })
-);
+
+// CORS 설정 - 환경별로 분리
+const corsOptions = {
+  origin:
+    process.env.NODE_ENV === "production"
+      ? [process.env.FRONTEND_URL, "https://*.railway.app"]
+      : true, // 개발환경에서는 모든 origin 허용
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, "uploads");
@@ -30,6 +35,24 @@ if (!fs.existsSync(uploadsDir)) {
 
 // Serve static files from uploads directory
 app.use("/uploads", express.static(uploadsDir));
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
+  });
+});
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({
+    message: "Storyteller API",
+    version: "1.0.0",
+    status: "running",
+  });
+});
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -219,6 +242,28 @@ app.delete("/api/stories/:id", clerkAuthMiddleware, (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
+
+// 프로덕션 환경 체크
+if (process.env.NODE_ENV === "production") {
+  console.log("🚀 Running in production mode");
+
+  // 필수 환경 변수 체크
+  const requiredEnvVars = ["CLERK_SECRET_KEY", "FRONTEND_URL"];
+  const missingEnvVars = requiredEnvVars.filter(
+    (varName) => !process.env[varName]
+  );
+
+  if (missingEnvVars.length > 0) {
+    console.error("❌ Missing required environment variables:", missingEnvVars);
+    process.exit(1);
+  }
+
+  console.log("✅ All required environment variables are set");
+} else {
+  console.log("🔧 Running in development mode");
+}
+
 app.listen(PORT, () => {
-  console.log(`Backend listening on port ${PORT}`);
+  console.log(`🌐 Backend listening on port ${PORT}`);
+  console.log(`📁 Uploads directory: ${uploadsDir}`);
 });

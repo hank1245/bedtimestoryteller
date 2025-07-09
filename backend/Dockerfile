@@ -13,8 +13,11 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Create uploads directory
-RUN mkdir -p uploads
+# Create uploads directory and database directory
+RUN mkdir -p uploads data
+
+# Set proper permissions
+RUN chmod 755 uploads data
 
 # Expose port
 EXPOSE 4000

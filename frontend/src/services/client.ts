@@ -2,12 +2,18 @@ import axios from "axios";
 
 // 환경변수에서 API URL 가져오기
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.MODE === "production"
+    ? "" // 프로덕션에서는 같은 도메인 사용
+    : "http://localhost:4000");
+
+console.log("🌐 API Base URL:", API_BASE_URL);
+console.log("🔧 Environment:", import.meta.env.MODE);
 
 // 백엔드 주소에 맞게 baseURL 설정
 const client = axios.create({
   baseURL: `${API_BASE_URL}/api`,
-  timeout: 10000,
+  timeout: 30000, // 프로덕션에서 더 긴 타임아웃
 });
 
 // 토큰을 저장할 변수

@@ -1,6 +1,13 @@
 import sqlite3 from "sqlite3";
+import path from "path";
 
-const db = new sqlite3.Database("stories.db");
+// 프로덕션에서는 영속적인 경로 사용
+const dbPath =
+  process.env.NODE_ENV === "production"
+    ? path.join(process.cwd(), "data", "stories.db")
+    : "stories.db";
+
+const db = new sqlite3.Database(dbPath);
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS stories (
