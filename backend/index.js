@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: true, // 모든 origin 허용 (개발환경)
     credentials: true,
   })
 );

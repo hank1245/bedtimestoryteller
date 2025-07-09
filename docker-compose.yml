@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: storyteller-backend
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/stories.db:/app/stories.db
+    networks:
+      - storyteller-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: storyteller-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:4000
+    depends_on:
+      - backend
+    networks:
+      - storyteller-network
+    restart: unless-stopped
+
+networks:
+  storyteller-network:
+    driver: bridge
+
+volumes:
+  uploads:
+  database:
