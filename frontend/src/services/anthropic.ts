@@ -49,10 +49,10 @@ export async function generateStoryWithClaude(
 ): Promise<{ title: string; story: string }> {
   // Map length to word count and max_tokens (천천히 읽기 위해 단어 수 조정)
   const lengthMapping = {
-    "very-short": { words: "300", tokens: 600 }, // 3분 목표: 300 단어
-    short: { words: "500", tokens: 800 }, // 5분 목표: 500 단어
-    medium: { words: "1000", tokens: 1500 }, // 10분 목표: 1000 단어
-    long: { words: "1500", tokens: 2000 }, // 15분 목표: 1500 단어
+    "very-short": { words: "320-350", tokens: 500 }, // 3분 목표: 330단어 (110×3)
+    short: { words: "530-570", tokens: 800 }, // 5분 목표: 550단어 (110×5)
+    medium: { words: "750-790", tokens: 1100 }, // 7분 목표: 770단어 (110×7)
+    long: { words: "1050-1100", tokens: 1600 }, // 10분 목표: 1100단어 (110×10)
   };
 
   const lengthConfig =

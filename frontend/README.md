@@ -6,9 +6,9 @@ This is the frontend for the Bedtime Storyteller application, built with React, 
 
 - **Story Generation**: Create personalized bedtime stories
 - **Story Reading**: View and read saved stories
-- **Text-to-Speech**: Listen to stories with ElevenLabs AI voices
+- **Text-to-Speech**: Listen to stories with OpenAI TTS voices
 - **Font Size Control**: Adjust text size for comfortable reading
-- **Voice Selection**: Choose between Amelia (female) and Archimedes (male) voices
+- **Voice Selection**: Choose between multiple OpenAI voices
 - **Audio Controls**: Play, pause, stop, and restart audio playback
 
 ## Setup
@@ -23,7 +23,7 @@ npm install
    Create a `.env` file in the root directory and add:
 
 ```
-VITE_ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
+VITE_OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 3. Run the development server:
@@ -34,10 +34,10 @@ npm run dev
 
 ## Audio Features
 
-The app includes text-to-speech functionality powered by ElevenLabs:
+The app includes text-to-speech functionality powered by OpenAI TTS:
 
-- **Voice Selection**: Choose between two multilingual voices
-- **Audio Generation**: Stories are converted to speech on demand
+- **Voice Selection**: Choose between multiple OpenAI voices (Coral, Onyx)
+- **Audio Generation**: Stories are converted to speech on demand using GPT-4o-mini-TTS
 - **Playback Controls**: Standard audio controls (play/pause/stop/restart)
 - **Loading States**: Visual feedback during audio generation
 
@@ -47,5 +47,5 @@ The app includes text-to-speech functionality powered by ElevenLabs:
 - TypeScript
 - Styled Components
 - Vite
-- ElevenLabs SDK
+- OpenAI TTS (GPT-4o-mini-TTS)
 - Clerk Authentication

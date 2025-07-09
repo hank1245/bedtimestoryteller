@@ -296,13 +296,13 @@ export default function StoryPage() {
 
   // Voice configurations
   const voices = {
-    amelia: {
-      voiceId: "pMsXgVXv3BLzUgSXRplE",
-      name: "Amelia (Female)",
+    coral: {
+      voiceId: "coral",
+      name: "Coral (Warm Female)",
     },
-    archimedes: {
-      voiceId: "JBFqnCBsd6RMkjVDRZzb",
-      name: "Archimedes (Male)",
+    onyx: {
+      voiceId: "onyx",
+      name: "Onyx (Deep Male)",
     },
   };
 
@@ -444,8 +444,8 @@ export default function StoryPage() {
                     value={selectedVoice}
                     onChange={(e) => setSelectedVoice(e.target.value)}
                   >
-                    <option value="amelia">Amelia (Female)</option>
-                    <option value="archimedes">Archimedes (Male)</option>
+                    <option value="coral">Coral (Warm Female)</option>
+                    <option value="onyx">Onyx (Deep Male)</option>
                   </VoiceSelector>
 
                   {!currentAudio ? (

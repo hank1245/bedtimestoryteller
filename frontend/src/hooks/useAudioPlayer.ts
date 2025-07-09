@@ -1,5 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
+import {
+  generateSpeechWithOpenAI,
+  cleanTextForSpeech,
+  voices as openaiVoices,
+} from "../services/openai-tts";
 import { useUploadAudio } from "./useStories";
 import { useToast } from "../stores/toastStore";
 import { useAuth } from "@clerk/clerk-react";
@@ -25,8 +29,8 @@ export const useAudioPlayer = ({
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
     null
   );
-  const [selectedVoice, setSelectedVoice] = useState<string>("amelia");
-  const [currentVoice, setCurrentVoice] = useState<string>("amelia");
+  const [selectedVoice, setSelectedVoice] = useState<string>("coral");
+  const [currentVoice, setCurrentVoice] = useState<string>("coral");
   const [savedAudioUrls, setSavedAudioUrls] = useState<Record<string, string>>(
     {}
   );
@@ -119,48 +123,6 @@ export const useAudioPlayer = ({
       }
     }
   }, [selectedVoice, currentAudio, isPlaying, currentVoice]);
-
-  // Clean text for speech synthesis (non-SSML version with more pauses)
-  const cleanTextForSpeech = (text: string): string => {
-    // 먼저 기본 텍스트 정리
-    let cleanText = text
-      .replace(/##\s*/g, "") // Remove markdown headers
-      .replace(/\*/g, "") // Remove asterisks
-      .replace(/\n\n+/g, "\n\n") // Keep paragraph breaks
-      .replace(/\.\s*\./g, ".") // Remove duplicate periods
-      .trim();
-
-    // 점들을 이용한 자연스러운 휴식 추가
-    cleanText = cleanText
-      // 문장 끝 후 긴 휴식 (마침표, 느낌표, 물음표)
-      .replace(/([.!?])\s*([A-Z])/g, "$1 ............... $2")
-      // 문단 끝 후 더 긴 휴식
-      .replace(/([.!?])\s*\n\n/g, "$1 ................... \n\n")
-      // 쉼표 후 휴식
-      .replace(/,\s*([A-Z])/g, ", ........ $1")
-      .replace(/,\s*([a-z])/g, ", .... $1")
-      // 연결어 후 자연스러운 휴식
-      .replace(
-        /\b(and|but|then|so|after|suddenly|when|while|now|later)\b/gi,
-        (match) => `${match} ......`
-      )
-      // 특별한 구문들
-      .replace(/\bonce upon a time\b/gi, "Once upon a time ............")
-      .replace(/\blong ago\b/gi, "Long ago ............")
-      .replace(/\bin a faraway land\b/gi, "In a faraway land ............")
-      .replace(/\bthe end\b/gi, "............ The End .....................")
-      // 대화나 인용구 주변에 휴식
-      .replace(/"/g, " .... ")
-      // 줄바꿈을 적절한 휴식으로 변환
-      .replace(/\n/g, " ...... ")
-      // 콜론과 세미콜론 후 휴식
-      .replace(/:/g, ": ......")
-      .replace(/;/g, "; ......")
-      // 여러 개의 연속된 점들을 정리
-      .replace(/\.{4,}/g, "........"); // 4개 이상의 점은 8개로 통일
-
-    return cleanText;
-  };
 
   // Safe play function to handle AbortError
   const safePlay = async (audioElement: HTMLAudioElement): Promise<void> => {
@@ -259,9 +221,9 @@ export const useAudioPlayer = ({
     }
 
     // Check if API key is available
-    if (!import.meta.env.VITE_ELEVENLABS_API_KEY) {
-      console.error("❌ ElevenLabs API key is not configured");
-      addToast("error", "ElevenLabs API key is not configured");
+    if (!import.meta.env.VITE_OPENAI_API_KEY) {
+      console.error("❌ OpenAI API key is not configured");
+      addToast("error", "OpenAI API key is not configured");
       return;
     }
 
@@ -269,10 +231,6 @@ export const useAudioPlayer = ({
     console.log("🎙️ Starting audio generation...");
 
     try {
-      const elevenlabs = new ElevenLabsClient({
-        apiKey: import.meta.env.VITE_ELEVENLABS_API_KEY,
-      });
-
       const cleanText = cleanTextForSpeech(story);
       const selectedVoiceConfig = voices[selectedVoice];
 
@@ -285,24 +243,16 @@ export const useAudioPlayer = ({
 
       addToast("info", "Generating audio...");
 
-      const audio = await elevenlabs.textToSpeech.convert(
-        selectedVoiceConfig.voiceId,
-        {
-          text: cleanText,
-          modelId: "eleven_turbo_v2_5",
-          outputFormat: "mp3_44100_128",
-          voiceSettings: {
-            stability: 0.85,
-            similarityBoost: 0.75,
-            style: 0.35,
-            speed: 0.82,
-            useSpeakerBoost: true,
-          },
-        }
-      );
+      // Generate audio with slow, calm speed optimized for bedtime stories
+      const audioBlob = await generateSpeechWithOpenAI({
+        text: cleanText,
+        voice: selectedVoice as keyof typeof openaiVoices,
+        speed: 0.9, // Slow speed for calm bedtime reading
+        instructions:
+          "A tone for reading bedtime stories to children. Calm and very slowly, with emotion in each word, pausing for 1.5 second between sentences or paragraphs.",
+      });
 
-      console.log("✅ Audio generated from ElevenLabs");
-      const audioBlob = await convertAudioStreamToBlob(audio);
+      console.log("✅ Audio generated from OpenAI");
       console.log("📦 Audio blob created:", audioBlob.size, "bytes");
 
       // Upload audio to server if storyId exists
@@ -402,30 +352,6 @@ export const useAudioPlayer = ({
       audioElement.removeEventListener("play", handlePlay);
       audioElement.removeEventListener("error", handleError);
     };
-  };
-
-  const convertAudioStreamToBlob = async (
-    audio: ReadableStream
-  ): Promise<Blob> => {
-    const reader = audio.getReader();
-    const chunks: Uint8Array[] = [];
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      chunks.push(value);
-    }
-
-    const audioBuffer = new Uint8Array(
-      chunks.reduce((acc, chunk) => acc + chunk.length, 0)
-    );
-    let offset = 0;
-    for (const chunk of chunks) {
-      audioBuffer.set(chunk, offset);
-      offset += chunk.length;
-    }
-
-    return new Blob([audioBuffer], { type: "audio/mpeg" });
   };
 
   const togglePlayPause = async () => {
