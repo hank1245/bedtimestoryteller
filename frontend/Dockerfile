@@ -28,7 +28,7 @@ RUN npm install -g serve
 COPY --from=build /app/dist ./dist
 
 # Expose port
-EXPOSE $PORT
+EXPOSE 5173
 
 # Start serve
-CMD ["sh", "-c", "serve -s dist -l $PORT"]
+CMD ["sh", "-c", "serve -s dist -p ${PORT:-5173}"]
