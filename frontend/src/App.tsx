@@ -14,6 +14,7 @@ import GenerationPage from "./pages/GenerationPage";
 import StoryPage from "./pages/StoryPage";
 import LoginPage from "./LoginPage";
 import GlobalStyle from "./GlobalStyle";
+import LandingPage from "./pages/LandingPage";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -31,17 +32,18 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
-        path="/"
+        path="/app"
         element={
           <ProtectedRoute>
-            <MainPage onCreate={() => navigate("/create")} />
+            <MainPage onCreate={() => navigate("/app/create")} />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/create"
+        path="/app/create"
         element={
           <ProtectedRoute>
             <GenerationPage />
@@ -49,14 +51,14 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/story"
+        path="/app/story"
         element={
           <ProtectedRoute>
             <StoryPage />
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
@@ -69,7 +71,9 @@ export default function App() {
     clerkKey: clerkPublishableKey ? "✅ Set" : "❌ Missing",
     openaiKey: import.meta.env.VITE_OPENAI_API_KEY ? "✅ Set" : "❌ Missing",
     apiUrl: import.meta.env.VITE_API_BASE_URL || "❌ Missing",
-    anthropicKey: import.meta.env.VITE_ANTHROPIC_API_KEY ? "✅ Set" : "❌ Missing",
+    anthropicKey: import.meta.env.VITE_ANTHROPIC_API_KEY
+      ? "✅ Set"
+      : "❌ Missing",
   });
 
   if (!clerkPublishableKey) {

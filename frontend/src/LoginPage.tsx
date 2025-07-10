@@ -1,20 +1,11 @@
-import { SignIn, SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
+import { SignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
+import { Navigate } from "react-router-dom";
 
 function LoginPage() {
   return (
     <>
       <SignedIn>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: 100,
-          }}
-        >
-          <h2>Welcome!</h2>
-          <UserButton />
-        </div>
+        <Navigate to="/app" replace />
       </SignedIn>
       <SignedOut>
         <div
