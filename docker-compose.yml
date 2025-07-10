@@ -26,7 +26,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_BASE_URL=http://localhost:4000
+      - VITE_API_BASE_URL=https://exemplary-growth-production.up.railway.app
     depends_on:
       - backend
     networks:

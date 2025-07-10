@@ -18,10 +18,7 @@ app.use(express.json());
 
 // CORS 설정 - 환경별로 분리
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? [process.env.FRONTEND_URL, "https://*.railway.app"]
-      : true, // 개발환경에서는 모든 origin 허용
+  origin: true,
   credentials: true,
 };
 
@@ -228,6 +225,7 @@ app.delete("/api/stories/:id", clerkAuthMiddleware, (req, res) => {
                     if (fs.existsSync(audioPath)) {
                       fs.unlinkSync(audioPath);
                     }
+                    ㅐ;
                   }
 
                   res.json({ message: "Story deleted successfully" });
