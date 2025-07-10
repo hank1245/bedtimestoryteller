@@ -2,10 +2,7 @@ import axios from "axios";
 
 // 환경변수에서 API URL 가져오기
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.MODE === "production"
-    ? "" // 프로덕션에서는 같은 도메인 사용
-    : "http://localhost:4000");
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
 
 console.log("🌐 API Base URL:", API_BASE_URL);
 console.log("🔧 Environment:", import.meta.env.MODE);
