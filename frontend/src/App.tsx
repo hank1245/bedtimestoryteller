@@ -5,14 +5,14 @@ import {
   Navigate,
   useNavigate,
 } from "react-router-dom";
-import { ClerkProvider } from "@clerk/clerk-react";
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "./components/ToastProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainPage from "./pages/MainPage";
 import GenerationPage from "./pages/GenerationPage";
 import StoryPage from "./pages/StoryPage";
-import LoginPage from "./LoginPage";
+import LoginPage from "./pages/LoginPage";
 import GlobalStyle from "./GlobalStyle";
 import LandingPage from "./pages/LandingPage";
 
@@ -27,12 +27,25 @@ const queryClient = new QueryClient({
   },
 });
 
+function HomeRoute() {
+  return (
+    <>
+      <SignedIn>
+        <Navigate to="/app" replace />
+      </SignedIn>
+      <SignedOut>
+        <LandingPage />
+      </SignedOut>
+    </>
+  );
+}
+
 function AppRoutes() {
   const navigate = useNavigate();
 
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<HomeRoute />} />
       <Route path="/login" element={<LoginPage />} />
       <Route
         path="/app"

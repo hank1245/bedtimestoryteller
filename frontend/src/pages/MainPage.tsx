@@ -7,6 +7,7 @@ import { useClerk } from "@clerk/clerk-react";
 import { useStories } from "../hooks/useStories";
 import { useToast } from "../stores/toastStore";
 import StoryLoading from "../components/StoryLoading";
+import ThreeBackground from "../components/ThreeBackground";
 
 const ListContainer = styled.div`
   flex: 1;
@@ -157,7 +158,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
 
   const handleStoryClick = (storyId: number, title: string) => {
     // 스토리 페이지로 이동 시 ID만 전달하고, 해당 페이지에서 데이터 로드
-    navigate("/story", {
+    navigate("/app/story", {
       state: {
         id: storyId,
         title: title,
@@ -173,76 +174,87 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
   }, [error, addToast]);
 
   return (
-    <Card>
-      <TopBar>
-        <Button
-          $secondary
-          style={{
-            fontSize: 12,
-            padding: "6px 12px",
-            minHeight: "32px",
-            width: "auto",
-            margin: 0,
-            borderRadius: "8px",
-          }}
-          onClick={() => signOut()}
-        >
-          Logout
-        </Button>
-      </TopBar>
-      <StoryPageWrapper>
-        <ContentWrapper>
-          <StyledCardHeader>
-            <CardTitle>📚 Your Bedtime Stories</CardTitle>
-            <CardSubtitle>
-              Here are your previously created stories.
-            </CardSubtitle>
-          </StyledCardHeader>
-          <ListContainer>
-            {loading ? (
-              <StoryLoading subtext="Loading your magical bedtime stories... Just a moment!" />
-            ) : error ? (
-              <p style={{ color: "#e57373" }}>{error.message}</p>
-            ) : stories.length === 0 ? (
-              <EmptyStateContainer>
-                <EmptyStateEmoji>✨</EmptyStateEmoji>
-                <EmptyStateTitle>Your Story Collection Awaits</EmptyStateTitle>
-                <EmptyStateSubtitle>
-                  Start your magical journey by creating your first bedtime
-                  story!
-                </EmptyStateSubtitle>
-              </EmptyStateContainer>
-            ) : (
-              <StoryList>
-                {stories.map((story: any) => (
-                  <li
-                    key={story.id}
-                    style={{
-                      marginBottom: 24,
-                      background: "rgba(255,255,255,0.03)",
-                      borderRadius: 8,
-                      padding: 22,
-                      cursor: "pointer",
-                      listStyle: "none",
-                    }}
-                    onClick={() => handleStoryClick(story.id, story.title)}
-                  >
-                    <div style={{ fontWeight: 600, fontSize: 18 }}>
-                      {story.title}
-                    </div>
-                    <div style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}>
-                      {new Date(story.created_at).toLocaleString()}
-                    </div>
-                  </li>
-                ))}
-              </StoryList>
-            )}
-          </ListContainer>
-        </ContentWrapper>
-        <Button $primary onClick={onCreate} style={{ bottom: -30 }}>
-          Create Another Story
-        </Button>
-      </StoryPageWrapper>
-    </Card>
+    <>
+      <ThreeBackground
+        intensity={0.4}
+        moonPosition={[5, 6, -10]}
+        starsCount={100}
+      />
+      <Card>
+        <TopBar>
+          <Button
+            $secondary
+            style={{
+              fontSize: 12,
+              padding: "6px 12px",
+              minHeight: "32px",
+              width: "auto",
+              margin: 0,
+              borderRadius: "8px",
+            }}
+            onClick={() => signOut()}
+          >
+            Logout
+          </Button>
+        </TopBar>
+        <StoryPageWrapper>
+          <ContentWrapper>
+            <StyledCardHeader>
+              <CardTitle>📚 Your Bedtime Stories</CardTitle>
+              <CardSubtitle>
+                Here are your previously created stories.
+              </CardSubtitle>
+            </StyledCardHeader>
+            <ListContainer>
+              {loading ? (
+                <StoryLoading subtext="Loading your magical bedtime stories... Just a moment!" />
+              ) : error ? (
+                <p style={{ color: "#e57373" }}>{error.message}</p>
+              ) : stories.length === 0 ? (
+                <EmptyStateContainer>
+                  <EmptyStateEmoji>✨</EmptyStateEmoji>
+                  <EmptyStateTitle>
+                    Your Story Collection Awaits
+                  </EmptyStateTitle>
+                  <EmptyStateSubtitle>
+                    Start your magical journey by creating your first bedtime
+                    story!
+                  </EmptyStateSubtitle>
+                </EmptyStateContainer>
+              ) : (
+                <StoryList>
+                  {stories.map((story: any) => (
+                    <li
+                      key={story.id}
+                      style={{
+                        marginBottom: 24,
+                        background: "rgba(255,255,255,0.03)",
+                        borderRadius: 8,
+                        padding: 22,
+                        cursor: "pointer",
+                        listStyle: "none",
+                      }}
+                      onClick={() => handleStoryClick(story.id, story.title)}
+                    >
+                      <div style={{ fontWeight: 600, fontSize: 18 }}>
+                        {story.title}
+                      </div>
+                      <div
+                        style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}
+                      >
+                        {new Date(story.created_at).toLocaleString()}
+                      </div>
+                    </li>
+                  ))}
+                </StoryList>
+              )}
+            </ListContainer>
+          </ContentWrapper>
+          <Button $primary onClick={onCreate} style={{ bottom: -30 }}>
+            Create Another Story
+          </Button>
+        </StoryPageWrapper>
+      </Card>
+    </>
   );
 }

@@ -9,6 +9,7 @@ import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
 import { useStory, useDeleteStory } from "../hooks/useStories";
 import { useToast } from "../stores/toastStore";
 import { useAudioPlayer } from "../hooks/useAudioPlayer";
+import ThreeBackground from "../components/ThreeBackground";
 
 const StoryPageContainer = styled.div`
   width: 100%;
@@ -319,11 +320,11 @@ export default function StoryPage() {
   } = useAudioPlayer({ voices, storyId, story });
 
   const goToHome = () => {
-    navigate("/");
+    navigate("/app");
   };
 
   const createAnother = () => {
-    navigate("/create");
+    navigate("/app/create");
   };
 
   const handleDelete = async () => {
@@ -337,7 +338,7 @@ export default function StoryPage() {
         try {
           await deleteStoryMutation.mutateAsync(storyId);
           addToast("success", "Story deleted successfully");
-          navigate("/", { replace: true });
+          navigate("/app", { replace: true });
         } catch (error) {
           console.error("Error deleting story:", error);
           addToast("error", "Error deleting story. Please try again.");
@@ -407,6 +408,11 @@ export default function StoryPage() {
 
   return (
     <StoryPageContainer>
+      <ThreeBackground
+        intensity={0.3}
+        moonPosition={[3, 6, -15]}
+        starsCount={80}
+      />
       <Card>
         {isLoading ? (
           <StoryLoading subtext="Loading your magical story... Almost ready for reading and listening!" />

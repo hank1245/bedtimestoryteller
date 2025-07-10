@@ -13,6 +13,7 @@ import StyleStep from "../components/steps/StyleStep";
 import LessonStep from "../components/steps/LessonStep";
 import { useCreateStory } from "../hooks/useStories";
 import { useToast } from "../stores/toastStore";
+import ThreeBackground from "../components/ThreeBackground";
 
 function generateDemoStory(formData: FormData): {
   title: string;
@@ -197,6 +198,7 @@ export default function GenerationPage() {
 
   return (
     <GenerationPageContainer>
+      <ThreeBackground intensity={0.5} moonPosition={[-4, 7, -12]} starsCount={120} />
       <Card>
         {loading ? (
           <StoryLoading />
