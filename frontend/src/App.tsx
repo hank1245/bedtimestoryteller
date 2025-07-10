@@ -64,6 +64,14 @@ function AppRoutes() {
 export default function App() {
   const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
+  // 환경변수 디버깅 (배포 후 제거)
+  console.log("🔧 Environment variables check:", {
+    clerkKey: clerkPublishableKey ? "✅ Set" : "❌ Missing",
+    openaiKey: import.meta.env.VITE_OPENAI_API_KEY ? "✅ Set" : "❌ Missing",
+    apiUrl: import.meta.env.VITE_API_BASE_URL || "❌ Missing",
+    anthropicKey: import.meta.env.VITE_ANTHROPIC_API_KEY ? "✅ Set" : "❌ Missing",
+  });
+
   if (!clerkPublishableKey) {
     throw new Error("Missing Clerk Publishable Key");
   }
