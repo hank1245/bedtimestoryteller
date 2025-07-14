@@ -18,7 +18,7 @@ const IconWrapper = styled.div`
   opacity: 0.3;
   transition: opacity 0.2s ease;
   position: absolute;
-  top: -30px;
+  top: -40px;
 `;
 
 const StyledChoiceButton = styled(ChoiceButton)`

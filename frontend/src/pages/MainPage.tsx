@@ -42,6 +42,10 @@ const StoryList = styled.ul`
     background: rgba(255, 255, 255, 0.5);
   }
 
+  @media (min-width: 768px) {
+    max-height: 520px;
+  }
+
   @media (max-width: 480px) {
     max-height: 400px;
   }
@@ -223,11 +227,11 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
                 </EmptyStateContainer>
               ) : (
                 <StoryList>
-                  {stories.map((story: any) => (
+                  {stories.map((story: any, index: number) => (
                     <li
                       key={story.id}
                       style={{
-                        marginBottom: 24,
+                        marginBottom: index === stories.length - 1 ? 0 : 24,
                         background: "rgba(255,255,255,0.03)",
                         borderRadius: 8,
                         padding: 22,

@@ -458,6 +458,7 @@ export default function LandingPage() {
         <CreateButton onClick={handleCreateStories}>
           Create Stories
         </CreateButton>
+        <div style={{ paddingBottom: "2rem" }}></div>
       </Section>
     </LandingContainer>
   );
