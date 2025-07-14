@@ -66,13 +66,79 @@ export async function fetchStoryById(id: number) {
   return res.data;
 }
 
-export async function createStory(title: string, story: string) {
-  const res = await client.post("/stories", { title, story });
+export async function createStory(title: string, story: string, age?: string, length?: string) {
+  const res = await client.post("/stories", { title, story, age, length });
   return res.data;
 }
 
 export async function deleteStory(id: number) {
   const res = await client.delete(`/stories/${id}`);
+  return res.data;
+}
+
+// Subscription API functions
+export async function fetchSubscription() {
+  const res = await client.get("/subscription");
+  return res.data;
+}
+
+export async function updateSubscription(subscriptionData: any) {
+  const res = await client.put("/subscription", subscriptionData);
+  return res.data;
+}
+
+export async function cancelSubscription() {
+  const res = await client.post("/subscription/cancel");
+  return res.data;
+}
+
+export async function fetchPaymentHistory() {
+  const res = await client.get("/payments");
+  return res.data;
+}
+
+export async function createPaymentRecord(paymentData: any) {
+  const res = await client.post("/payments", paymentData);
+  return res.data;
+}
+
+export async function deleteUserAccount() {
+  const res = await client.delete("/user/account");
+  return res.data;
+}
+
+export async function fetchUserStats() {
+  const res = await client.get("/user/stats");
+  return res.data;
+}
+
+export async function fetchUserProfile() {
+  const res = await client.get("/user/profile");
+  return res.data;
+}
+
+export async function fetchUserPreferences() {
+  const res = await client.get("/user/preferences");
+  return res.data;
+}
+
+export async function updateUserPreferences(preferences: any) {
+  const res = await client.put("/user/preferences", preferences);
+  return res.data;
+}
+
+export async function exportUserData() {
+  const res = await client.get("/user/export");
+  return res.data;
+}
+
+export async function createSubscription(subscriptionData: any) {
+  const res = await client.post("/subscription/create", subscriptionData);
+  return res.data;
+}
+
+export async function fetchSubscriptionLimits() {
+  const res = await client.get("/subscription/limits");
   return res.data;
 }
 

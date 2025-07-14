@@ -13,7 +13,7 @@ import StyleStep from "../components/steps/StyleStep";
 import LessonStep from "../components/steps/LessonStep";
 import { useCreateStory } from "../hooks/useStories";
 import { useToast } from "../stores/toastStore";
-import ThreeBackground from "../components/ThreeBackground";
+import PageContainer from "../components/shared/PageContainer";
 
 function generateDemoStory(formData: FormData): {
   title: string;
@@ -86,6 +86,10 @@ const GenerationPageContainer = styled.div`
   }
 `;
 
+const StepContainer = styled.div`
+  width: 100%;
+`;
+
 export default function GenerationPage() {
   const [currentStep, setCurrentStep] = useState(STEPS.AGE);
   const [formData, setFormData] = useState<FormData>({
@@ -141,6 +145,8 @@ export default function GenerationPage() {
       const newStory = await createStoryMutation.mutateAsync({
         title: response.title,
         story: response.story,
+        age: formData.age?.toString(),
+        length: formData.length,
       });
 
       addToast("success", "Story created successfully!");
@@ -196,73 +202,92 @@ export default function GenerationPage() {
     }
   };
 
+  const renderCurrentStep = () => {
+    if (loading) {
+      return <StoryLoading />;
+    }
+
+    switch (currentStep) {
+      case STEPS.AGE:
+        return (
+          <AgeAndLengthStep
+            value={formData.age}
+            onChange={(value: number) => updateFormData("age", value)}
+            lengthValue={formData.length}
+            onLengthChange={(value: string) =>
+              updateFormData("length", value)
+            }
+            onNext={nextStep}
+            onPrev={goToHome}
+            canProceed={canProceed()}
+          />
+        );
+      case STEPS.GENDER:
+        return (
+          <GenderStep
+            value={formData.gender}
+            onChange={(value: string) => updateFormData("gender", value)}
+            onNext={nextStep}
+            onPrev={prevStep}
+            canProceed={canProceed()}
+          />
+        );
+      case STEPS.INTERESTS:
+        return (
+          <InterestsStep
+            values={formData.interests}
+            onChange={(values: string[]) =>
+              updateFormData("interests", values)
+            }
+            onNext={nextStep}
+            onPrev={prevStep}
+            canProceed={canProceed()}
+          />
+        );
+      case STEPS.STYLE:
+        return (
+          <StyleStep
+            value={formData.style}
+            onChange={(value: string) => updateFormData("style", value)}
+            onNext={nextStep}
+            onPrev={prevStep}
+            canProceed={canProceed()}
+          />
+        );
+      case STEPS.LESSON:
+        return (
+          <LessonStep
+            value={formData.lesson}
+            onChange={(value: string) => updateFormData("lesson", value)}
+            onGenerate={generateStory}
+            onPrev={prevStep}
+            canProceed={canProceed()}
+            loading={loading}
+            error={error}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <GenerationPageContainer>
-      <ThreeBackground intensity={0.5} moonPosition={[-4, 7, -12]} starsCount={120} />
-      <Card>
-        {loading ? (
-          <StoryLoading />
-        ) : (
-          <>
-            {currentStep === STEPS.AGE && (
-              <AgeAndLengthStep
-                value={formData.age}
-                onChange={(value: number) => updateFormData("age", value)}
-                lengthValue={formData.length}
-                onLengthChange={(value: string) =>
-                  updateFormData("length", value)
-                }
-                onNext={nextStep}
-                onPrev={goToHome}
-                canProceed={canProceed()}
-              />
-            )}
-            {currentStep === STEPS.GENDER && (
-              <GenderStep
-                value={formData.gender}
-                onChange={(value: string) => updateFormData("gender", value)}
-                onNext={nextStep}
-                onPrev={prevStep}
-                canProceed={canProceed()}
-              />
-            )}
-            {currentStep === STEPS.INTERESTS && (
-              <InterestsStep
-                values={formData.interests}
-                onChange={(values: string[]) =>
-                  updateFormData("interests", values)
-                }
-                onNext={nextStep}
-                onPrev={prevStep}
-                canProceed={canProceed()}
-              />
-            )}
-            {currentStep === STEPS.STYLE && (
-              <StyleStep
-                value={formData.style}
-                onChange={(value: string) => updateFormData("style", value)}
-                onNext={nextStep}
-                onPrev={prevStep}
-                canProceed={canProceed()}
-              />
-            )}
-            {currentStep === STEPS.LESSON && (
-              <LessonStep
-                value={formData.lesson}
-                onChange={(value: string) => updateFormData("lesson", value)}
-                onGenerate={generateStory}
-                onPrev={prevStep}
-                canProceed={canProceed()}
-                loading={loading}
-                error={error}
-              />
-            )}
-          </>
-        )}
-        {!loading && (
-          <ProgressBar currentStep={getStepNumber()} totalSteps={5} />
-        )}
-      </Card>
+      <PageContainer
+        backgroundProps={{
+          intensity: 0.5,
+          moonPosition: [-4, 7, -12],
+          starsCount: 120,
+        }}
+        topBarProps={{ showSettings: false }}
+      >
+        <StepContainer>
+          {renderCurrentStep()}
+          {!loading && (
+            <ProgressBar currentStep={getStepNumber()} totalSteps={5} />
+          )}
+        </StepContainer>
+      </PageContainer>
     </GenerationPageContainer>
   );
 }

@@ -51,10 +51,10 @@ export const useCreateStory = () => {
   const { getToken } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ title, story }: { title: string; story: string }) => {
+    mutationFn: async ({ title, story, age, length }: { title: string; story: string; age?: string; length?: string }) => {
       const token = await getToken();
       setAuthToken(token);
-      return createStory(title, story);
+      return createStory(title, story, age, length);
     },
     onSuccess: () => {
       // Invalidate and refetch stories list

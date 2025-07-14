@@ -13,6 +13,8 @@ import MainPage from "./pages/MainPage";
 import GenerationPage from "./pages/GenerationPage";
 import StoryPage from "./pages/StoryPage";
 import LoginPage from "./pages/LoginPage";
+import SettingsPage from "./pages/SettingsPage";
+import FolderPage from "./pages/FolderPage";
 import GlobalStyle from "./GlobalStyle";
 import LandingPage from "./pages/LandingPage";
 
@@ -64,10 +66,26 @@ function AppRoutes() {
         }
       />
       <Route
+        path="/app/settings"
+        element={
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/app/story"
         element={
           <ProtectedRoute>
             <StoryPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/app/folder/:folderId"
+        element={
+          <ProtectedRoute>
+            <FolderPage />
           </ProtectedRoute>
         }
       />
