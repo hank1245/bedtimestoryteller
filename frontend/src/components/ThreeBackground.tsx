@@ -12,7 +12,7 @@ const BackgroundContainer = styled.div<{ $intensity?: number }>`
   width: 100%;
   height: 100%;
   z-index: -1;
-  opacity: ${(props) => props.$intensity || 1};
+  opacity: 1;
   pointer-events: none;
 `;
 
