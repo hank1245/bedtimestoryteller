@@ -435,18 +435,20 @@ export default function StoryPage() {
           starsCount: 80,
         }}
         topBarProps={{
-          variant: 'split',
-          leftContent: <BackButton to="/app" text="← Back to Stories" />,
+          variant: "split",
+          leftContent: <BackButton to="/app" text="Back to Stories" />,
           showSettings: false,
         }}
       >
         <>
           {deleteButton && (
-            <div style={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
+            <div
+              style={{ position: "absolute", top: 20, right: 20, zIndex: 10 }}
+            >
               {deleteButton}
             </div>
           )}
-          
+
           <CompactHeader>
             <h1>{title}</h1>
             <ControlsContainer>
@@ -473,10 +475,7 @@ export default function StoryPage() {
                       try {
                         await generateAndPlayAudio();
                       } catch (error) {
-                        console.error(
-                          "Error in generateAndPlayAudio:",
-                          error
-                        );
+                        console.error("Error in generateAndPlayAudio:", error);
                         addToast(
                           "error",
                           "Failed to generate audio. Please try again."
@@ -503,11 +502,11 @@ export default function StoryPage() {
               </AudioControls>
             </ControlsContainer>
           </CompactHeader>
-          
+
           <StoryContainer>
             <StoryText $fontSize={fontSize}>{formatStory(story)}</StoryText>
           </StoryContainer>
-          
+
           <Buttons>
             <Button $secondary onClick={goToHome} style={{ flex: 1 }}>
               Back to Stories

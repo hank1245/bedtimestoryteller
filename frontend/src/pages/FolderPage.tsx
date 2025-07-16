@@ -3,7 +3,11 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import { Card, CardHeader, CardTitle, CardSubtitle } from "../components/Card";
 import { Button } from "../components/Button";
-import { useFolderStories, useFolders, useRemoveStoryFromFolder } from "../hooks/useFolders";
+import {
+  useFolderStories,
+  useFolders,
+  useRemoveStoryFromFolder,
+} from "../hooks/useFolders";
 import { useToast } from "../stores/toastStore";
 import ThreeBackground from "../components/ThreeBackground";
 import StoryList from "../components/StoryList";
@@ -48,7 +52,7 @@ const TopBar = styled.div`
 
 const BackButton = styled(Button)`
   font-size: 12px;
-  padding: 6px 12px;
+  padding: 10px 12px;
   min-height: 32px;
   width: auto;
   margin: 0;
@@ -59,20 +63,24 @@ export default function FolderPage() {
   const navigate = useNavigate();
   const { folderId } = useParams<{ folderId: string }>();
   const { addToast } = useToast();
-  
+
   const folderIdNum = folderId ? parseInt(folderId) : 0;
-  const { data: folderStories = [], isLoading: loading, error } = useFolderStories(folderIdNum);
+  const {
+    data: folderStories = [],
+    isLoading: loading,
+    error,
+  } = useFolderStories(folderIdNum);
   const { data: folders = [] } = useFolders();
   const removeStoryMutation = useRemoveStoryFromFolder();
 
-  const currentFolder = folders.find(f => f.id === folderIdNum);
+  const currentFolder = folders.find((f) => f.id === folderIdNum);
 
   const handleRemoveStory = async (storyId: number) => {
     try {
       await removeStoryMutation.mutateAsync({ folderId: folderIdNum, storyId });
-      addToast('success', 'Story removed from folder');
+      addToast("success", "Story removed from folder");
     } catch (error) {
-      addToast('error', 'Failed to remove story from folder');
+      addToast("error", "Failed to remove story from folder");
     }
   };
 
@@ -100,11 +108,8 @@ export default function FolderPage() {
       />
       <Card>
         <TopBar>
-          <BackButton
-            $secondary
-            onClick={() => navigate("/app")}
-          >
-            ← Back to Stories
+          <BackButton $secondary onClick={() => navigate("/app")}>
+            Back to Stories
           </BackButton>
           <Button
             $secondary
@@ -121,21 +126,22 @@ export default function FolderPage() {
             Settings
           </Button>
         </TopBar>
-        
+
         <StoryPageWrapper>
           <ContentWrapper>
             <StyledCardHeader>
               <CardTitle>
-                <span className="emoji-color">📁</span> {currentFolder?.name || 'Folder'}
+                <span className="emoji-color">📁</span>{" "}
+                {currentFolder?.name || "Folder"}
               </CardTitle>
               <CardSubtitle>
-                {currentFolder?.description || 'Stories in this folder'}
+                {currentFolder?.description || "Stories in this folder"}
               </CardSubtitle>
             </StyledCardHeader>
 
-            <StoryList 
-              stories={folderStories} 
-              loading={loading} 
+            <StoryList
+              stories={folderStories}
+              loading={loading}
               error={error}
               showRemoveButton={true}
               onRemoveStory={handleRemoveStory}

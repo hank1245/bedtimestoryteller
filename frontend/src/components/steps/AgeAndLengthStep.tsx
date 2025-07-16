@@ -67,7 +67,13 @@ export default function AgeAndLengthStep({
               >
                 <div>
                   <div>{option.label}</div>
-                  <div style={{ fontSize: "12px", color: "#aaa", marginTop: "4px" }}>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#aaa",
+                      marginTop: "4px",
+                    }}
+                  >
                     {option.description}
                   </div>
                 </div>

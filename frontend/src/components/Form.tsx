@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
 export const FormGroup = styled.div`
-  margin-bottom: 24px;
+  margin-bottom: 30px;
 `;
 
 export const FormLabel = styled.label`
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 20px;
   font-weight: 500;
   color: var(--text-primary);
 `;

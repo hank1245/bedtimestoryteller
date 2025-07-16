@@ -4,7 +4,7 @@ import { Button } from "../Button";
 
 const StyledBackButton = styled(Button)`
   font-size: 12px;
-  padding: 6px 12px;
+  padding: 12px 12px;
   min-height: 32px;
   width: auto;
   margin: 0;
@@ -17,10 +17,10 @@ interface BackButtonProps {
   onClick?: () => void;
 }
 
-export default function BackButton({ 
-  to = "/app", 
-  text = "← Back", 
-  onClick 
+export default function BackButton({
+  to = "/app",
+  text = "← Back",
+  onClick,
 }: BackButtonProps) {
   const navigate = useNavigate();
 

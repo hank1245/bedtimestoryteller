@@ -8,10 +8,10 @@ export const Button = styled.button<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 24px;
+  padding: 18px 24px;
   border: none;
   border-radius: 12px;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
