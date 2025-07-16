@@ -7,6 +7,7 @@ import {
   EmptyStateEmoji,
   EmptyStateTitle,
   EmptyStateSubtitle,
+  scrollableContainerStyles,
 } from "./shared/SharedStyles";
 import StoryLoading from "./StoryLoading";
 import { Folder } from "../hooks/useFolders";
@@ -21,37 +22,7 @@ const AddFolderButton = styled(Button)`
 `;
 
 const FolderListContainer = styled.div`
-  flex: 1;
-  overflow-y: auto;
-  padding: 0;
-  margin: 0;
-
-  /* 스크롤바 스타일링 */
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-  }
-
-  @media (min-width: 768px) {
-    max-height: 350px;
-  }
-
-  @media (max-width: 480px) {
-    max-height: 400px;
-  }
+  ${scrollableContainerStyles}
 `;
 
 const FolderItem = styled.div`

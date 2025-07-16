@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useClerk } from "@clerk/clerk-react";
 import styled from "styled-components";
-import { Card, CardTitle, CardSubtitle } from "../components/Card";
+import { CardTitle, CardSubtitle } from "../components/Card";
 import { Button } from "../components/Button";
 import { useToast } from "../stores/toastStore";
 import PageContainer from "../components/shared/PageContainer";
@@ -17,16 +17,15 @@ import {
   useUserProfile,
 } from "../hooks/useSubscription";
 
-
-const SettingsCard = styled(Card)`
-  width: 100%;
-  max-width: 800px;
-  background: rgba(20, 25, 40, 0.85);
-  backdrop-filter: blur(20px);
-  max-height: 90vh;
+const SectionContainer = styled.div`
+  margin-top: 40px;
+  flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-right: 8px;
 
-  /* 스크롤바 스타일링 */
+  /* 스크롤바 스타일 */
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -45,7 +44,6 @@ const SettingsCard = styled(Card)`
     background: rgba(255, 255, 255, 0.5);
   }
 `;
-
 
 const SettingsSection = styled.div`
   margin-bottom: 32px;
@@ -169,8 +167,10 @@ export default function SettingsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Use custom hooks
-  const { data: subscription, isLoading: subscriptionLoading } = useSubscription();
-  const { data: paymentHistory = [], isLoading: paymentsLoading } = usePaymentHistory();
+  const { data: subscription, isLoading: subscriptionLoading } =
+    useSubscription();
+  const { data: paymentHistory = [], isLoading: paymentsLoading } =
+    usePaymentHistory();
   const { data: userStats, isLoading: statsLoading } = useUserStats();
   const { data: userProfile, isLoading: profileLoading } = useUserProfile();
   const cancelSubscriptionMutation = useCancelSubscription();
@@ -209,7 +209,9 @@ export default function SettingsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `storyteller-data-${new Date().toISOString().split("T")[0]}.json`;
+      a.download = `storyteller-data-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -240,197 +242,209 @@ export default function SettingsPage() {
         starsCount: 100,
       }}
       topBarProps={{
-        variant: 'split',
-        leftContent: <BackButton to="/app" text="← Back to Stories" />,
+        variant: "split",
+        leftContent: <BackButton to="/app" text="Back to Stories" />,
         showSettings: false,
       }}
     >
-      <SettingsCard>
-          <div style={{ padding: '20px' }}>
-            <div style={{ marginBottom: '32px' }}>
-              <CardTitle>
-                <span className="emoji-color">⚙️</span> Settings
-              </CardTitle>
-              <CardSubtitle>Manage your account and subscription</CardSubtitle>
-            </div>
+      <SectionContainer>
+        <div style={{ marginBottom: "32px", paddingTop: "20px" }}>
+          <CardTitle>
+            <span className="emoji-color">⚙️</span> Settings
+          </CardTitle>
+          <CardSubtitle>Manage your account and subscription</CardSubtitle>
+        </div>
 
-            {/* Account Overview */}
-            <SettingsSection>
-              <SectionTitle>
-                <span>👤</span> Account Overview
-              </SectionTitle>
-              <SectionContent>
-                {profileLoading || statsLoading ? (
-                  <div>Loading account info...</div>
-                ) : (
-                  <StatsGrid>
-                    <StatCard>
-                      <StatLabel>Total Stories</StatLabel>
-                      <StatValue>{userStats?.story_count || 0}</StatValue>
-                    </StatCard>
-                    <StatCard>
-                      <StatLabel>Active Days</StatLabel>
-                      <StatValue>{userStats?.active_days || 0}</StatValue>
-                    </StatCard>
-                    <StatCard>
-                      <StatLabel>Member Since</StatLabel>
-                      <StatValue className="small">
-                        {userStats?.member_since ? formatDate(userStats.member_since) : "N/A"}
-                      </StatValue>
-                    </StatCard>
-                    {userProfile?.email && (
-                      <StatCard>
-                        <StatLabel>Email</StatLabel>
-                        <StatValue className="small" style={{ wordBreak: "break-all" }}>
-                          {userProfile.email}
-                        </StatValue>
-                      </StatCard>
-                    )}
-                  </StatsGrid>
+        {/* Account Overview */}
+        <SettingsSection>
+          <SectionTitle>
+            <span>👤</span> Account Overview
+          </SectionTitle>
+          <SectionContent>
+            {profileLoading || statsLoading ? (
+              <div>Loading account info...</div>
+            ) : (
+              <StatsGrid>
+                <StatCard>
+                  <StatLabel>Total Stories</StatLabel>
+                  <StatValue>{userStats?.story_count || 0}</StatValue>
+                </StatCard>
+                <StatCard>
+                  <StatLabel>Active Days</StatLabel>
+                  <StatValue>{userStats?.active_days || 0}</StatValue>
+                </StatCard>
+                <StatCard>
+                  <StatLabel>Member Since</StatLabel>
+                  <StatValue className="small">
+                    {userStats?.member_since
+                      ? formatDate(userStats.member_since)
+                      : "N/A"}
+                  </StatValue>
+                </StatCard>
+                {userProfile?.email && (
+                  <StatCard>
+                    <StatLabel>Email</StatLabel>
+                    <StatValue
+                      className="small"
+                      style={{ wordBreak: "break-all" }}
+                    >
+                      {userProfile.email}
+                    </StatValue>
+                  </StatCard>
                 )}
-              </SectionContent>
-            </SettingsSection>
+              </StatsGrid>
+            )}
+          </SectionContent>
+        </SettingsSection>
 
-            {/* Subscription Status */}
-            <SettingsSection>
-              <SectionTitle>
-                <span>💳</span> Subscription Status
-              </SectionTitle>
-              <SectionContent>
-                {subscriptionLoading ? (
-                  <div>Loading subscription info...</div>
-                ) : subscription ? (
-                  <div>
-                    <div style={{ marginBottom: "12px" }}>
-                      <strong>Plan:</strong> {subscription.plan_type}{" "}
-                      <StatusBadge $status={subscription.status}>
-                        {subscription.status}
+        {/* Subscription Status */}
+        <SettingsSection>
+          <SectionTitle>
+            <span>💳</span> Subscription Status
+          </SectionTitle>
+          <SectionContent>
+            {subscriptionLoading ? (
+              <div>Loading subscription info...</div>
+            ) : subscription ? (
+              <div>
+                <div style={{ marginBottom: "12px" }}>
+                  <strong>Plan:</strong> {subscription.plan_type}{" "}
+                  <StatusBadge $status={subscription.status}>
+                    {subscription.status}
+                  </StatusBadge>
+                </div>
+                {subscription.expires_at && (
+                  <div style={{ marginBottom: "12px" }}>
+                    <strong>Expires:</strong>{" "}
+                    {formatDate(subscription.expires_at)}
+                  </div>
+                )}
+                <div style={{ marginBottom: "16px" }}>
+                  <strong>Started:</strong>{" "}
+                  {formatDate(subscription.started_at)}
+                </div>
+                {subscription.status === "active" &&
+                  subscription.plan_type !== "free" && (
+                    <Button
+                      $secondary
+                      onClick={() => setShowCancelModal(true)}
+                      disabled={cancelSubscriptionMutation.isPending}
+                      style={{ marginRight: "12px" }}
+                    >
+                      {cancelSubscriptionMutation.isPending
+                        ? "Cancelling..."
+                        : "Cancel Subscription"}
+                    </Button>
+                  )}
+                {subscription.plan_type === "free" && (
+                  <div
+                    style={{
+                      background: "rgba(76, 175, 80, 0.1)",
+                      padding: "16px",
+                      borderRadius: "8px",
+                      marginTop: "16px",
+                    }}
+                  >
+                    <div style={{ marginBottom: "12px", fontWeight: "600" }}>
+                      Upgrade to Premium
+                    </div>
+                    <div style={{ marginBottom: "12px", fontSize: "14px" }}>
+                      ✨ Unlimited stories
+                    </div>
+                    <Button
+                      onClick={() =>
+                        addToast("info", "Payment integration coming soon!")
+                      }
+                      style={{ background: "#4CAF50" }}
+                    >
+                      Upgrade Now - $9.99/month
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div>No subscription found</div>
+            )}
+          </SectionContent>
+        </SettingsSection>
+
+        {/* Payment History */}
+        <SettingsSection>
+          <SectionTitle>
+            <span>📋</span> Payment History
+          </SectionTitle>
+          <SectionContent>
+            {paymentsLoading ? (
+              <div>Loading payment history...</div>
+            ) : paymentHistory.length > 0 ? (
+              <PaymentHistoryTable>
+                <PaymentHeader>
+                  <div>Description</div>
+                  <div>Amount</div>
+                  <div>Status</div>
+                  <div>Date</div>
+                </PaymentHeader>
+                {paymentHistory.map((payment: any) => (
+                  <PaymentRow key={payment.id}>
+                    <div>{payment.description || "Subscription Payment"}</div>
+                    <div>{formatAmount(payment.amount, payment.currency)}</div>
+                    <div>
+                      <StatusBadge $status={payment.status}>
+                        {payment.status}
                       </StatusBadge>
                     </div>
-                    {subscription.expires_at && (
-                      <div style={{ marginBottom: "12px" }}>
-                        <strong>Expires:</strong> {formatDate(subscription.expires_at)}
-                      </div>
-                    )}
-                    <div style={{ marginBottom: "16px" }}>
-                      <strong>Started:</strong> {formatDate(subscription.started_at)}
-                    </div>
-                    {subscription.status === "active" && subscription.plan_type !== "free" && (
-                      <Button
-                        $secondary
-                        onClick={() => setShowCancelModal(true)}
-                        disabled={cancelSubscriptionMutation.isPending}
-                        style={{ marginRight: "12px" }}
-                      >
-                        {cancelSubscriptionMutation.isPending ? "Cancelling..." : "Cancel Subscription"}
-                      </Button>
-                    )}
-                    {subscription.plan_type === "free" && (
-                      <div
-                        style={{
-                          background: "rgba(76, 175, 80, 0.1)",
-                          padding: "16px",
-                          borderRadius: "8px",
-                          marginTop: "16px",
-                        }}
-                      >
-                        <div style={{ marginBottom: "12px", fontWeight: "600" }}>
-                          Upgrade to Premium
-                        </div>
-                        <div style={{ marginBottom: "12px", fontSize: "14px" }}>
-                          ✨ Unlimited stories
-                        </div>
-                        <Button
-                          onClick={() => addToast("info", "Payment integration coming soon!")}
-                          style={{ background: "#4CAF50" }}
-                        >
-                          Upgrade Now - $9.99/month
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div>No subscription found</div>
-                )}
-              </SectionContent>
-            </SettingsSection>
+                    <div>{formatDate(payment.payment_date)}</div>
+                  </PaymentRow>
+                ))}
+              </PaymentHistoryTable>
+            ) : (
+              <EmptyState>No payment history found</EmptyState>
+            )}
+          </SectionContent>
+        </SettingsSection>
 
-            {/* Payment History */}
-            <SettingsSection>
-              <SectionTitle>
-                <span>📋</span> Payment History
-              </SectionTitle>
-              <SectionContent>
-                {paymentsLoading ? (
-                  <div>Loading payment history...</div>
-                ) : paymentHistory.length > 0 ? (
-                  <PaymentHistoryTable>
-                    <PaymentHeader>
-                      <div>Description</div>
-                      <div>Amount</div>
-                      <div>Status</div>
-                      <div>Date</div>
-                    </PaymentHeader>
-                    {paymentHistory.map((payment: any) => (
-                      <PaymentRow key={payment.id}>
-                        <div>{payment.description || "Subscription Payment"}</div>
-                        <div>{formatAmount(payment.amount, payment.currency)}</div>
-                        <div>
-                          <StatusBadge $status={payment.status}>
-                            {payment.status}
-                          </StatusBadge>
-                        </div>
-                        <div>{formatDate(payment.payment_date)}</div>
-                      </PaymentRow>
-                    ))}
-                  </PaymentHistoryTable>
-                ) : (
-                  <EmptyState>No payment history found</EmptyState>
-                )}
-              </SectionContent>
-            </SettingsSection>
+        {/* Account Management */}
+        <SettingsSection>
+          <SectionTitle>
+            <span>👤</span> Account Management
+          </SectionTitle>
+          <SectionContent>
+            <div style={{ marginBottom: "16px" }}>
+              Manage your account settings and account deletion.
+            </div>
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+              <Button $secondary onClick={() => signOut()}>
+                Logout
+              </Button>
+              <DangerButton
+                onClick={() => setShowDeleteModal(true)}
+                disabled={deleteAccountMutation.isPending}
+              >
+                {deleteAccountMutation.isPending
+                  ? "Deleting..."
+                  : "Delete Account"}
+              </DangerButton>
+            </div>
+          </SectionContent>
+        </SettingsSection>
 
-            {/* Account Management */}
-            <SettingsSection>
-              <SectionTitle>
-                <span>👤</span> Account Management
-              </SectionTitle>
-              <SectionContent>
-                <div style={{ marginBottom: "16px" }}>
-                  Manage your account settings and account deletion.
-                </div>
-                <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                  <Button $secondary onClick={() => signOut()}>
-                    Logout
-                  </Button>
-                  <DangerButton
-                    onClick={() => setShowDeleteModal(true)}
-                    disabled={deleteAccountMutation.isPending}
-                  >
-                    {deleteAccountMutation.isPending ? "Deleting..." : "Delete Account"}
-                  </DangerButton>
-                </div>
-              </SectionContent>
-            </SettingsSection>
-
-            {/* Data Management */}
-            <SettingsSection>
-              <SectionTitle>
-                <span>📁</span> Data Management
-              </SectionTitle>
-              <SectionContent>
-                <div style={{ marginBottom: "16px" }}>
-                  Export your data for backup or migration purposes.
-                </div>
-                <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-                  <Button $secondary onClick={handleExportData}>
-                    Export My Data
-                  </Button>
-                </div>
-              </SectionContent>
-            </SettingsSection>
-          </div>
-      </SettingsCard>
+        {/* Data Management */}
+        <SettingsSection>
+          <SectionTitle>
+            <span>📁</span> Data Management
+          </SectionTitle>
+          <SectionContent>
+            <div style={{ marginBottom: "16px" }}>
+              Export your data for backup or migration purposes.
+            </div>
+            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+              <Button $secondary onClick={handleExportData}>
+                Export My Data
+              </Button>
+            </div>
+          </SectionContent>
+        </SettingsSection>
+      </SectionContainer>
 
       {/* Modals */}
       <ConfirmationModal

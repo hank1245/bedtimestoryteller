@@ -1,19 +1,7 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-export const ListContainer = styled.div`
-  flex: 1;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-`;
-
-export const StoryList = styled.ul`
-  flex: 1;
-  overflow-y: auto;
-  padding: 0;
-  margin: 0;
-
-  /* 스크롤바 스타일링 */
+// 공통 스크롤바 스타일
+export const scrollbarStyles = css`
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -31,6 +19,15 @@ export const StoryList = styled.ul`
   &::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.5);
   }
+`;
+
+// 공통 스크롤 가능한 컨테이너 스타일
+export const scrollableContainerStyles = css`
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
+  ${scrollbarStyles}
 
   @media (min-width: 768px) {
     max-height: 450px;
@@ -39,6 +36,17 @@ export const StoryList = styled.ul`
   @media (max-width: 480px) {
     max-height: 400px;
   }
+`;
+
+export const ListContainer = styled.div`
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+`;
+
+export const StoryList = styled.ul`
+  ${scrollableContainerStyles}
 `;
 
 export const EmptyStateContainer = styled.div`
@@ -210,6 +218,7 @@ export const ContentWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 // Emoji styling that's used across multiple pages

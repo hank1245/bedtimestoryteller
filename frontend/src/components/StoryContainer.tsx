@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { scrollbarStyles } from "./shared/SharedStyles";
 
 export const StoryContainer = styled.div`
   max-height: 500px;
@@ -26,21 +27,5 @@ export const StoryContainer = styled.div`
     padding: 20px;
   }
 
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-  }
+  ${scrollbarStyles}
 `;
