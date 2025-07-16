@@ -36,7 +36,6 @@ export const useAudioPlayer = ({
   );
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
-  const isUnmountedRef = useRef(false);
 
   const uploadAudioMutation = useUploadAudio();
   const { addToast } = useToast();
@@ -88,17 +87,10 @@ export const useAudioPlayer = ({
   // Cleanup audio on unmount
   useEffect(() => {
     return () => {
-      // 컴포넌트가 언마운트됨을 표시
-      isUnmountedRef.current = true;
-
-      // 음성 생성 중단
-      setIsGeneratingAudio(false);
-
       if (currentAudio) {
         try {
           currentAudio.pause();
           currentAudio.currentTime = 0;
-          setIsPlaying(false);
           // Clean up object URL to prevent memory leaks
           if (currentAudio.src && currentAudio.src.startsWith("blob:")) {
             URL.revokeObjectURL(currentAudio.src);
@@ -134,12 +126,6 @@ export const useAudioPlayer = ({
 
   // Safe play function to handle AbortError
   const safePlay = async (audioElement: HTMLAudioElement): Promise<void> => {
-    // 컴포넌트가 언마운트된 경우 재생하지 않음
-    if (isUnmountedRef.current) {
-      console.log("❌ Component unmounted, not playing audio");
-      return;
-    }
-
     try {
       console.log("🎵 Attempting to play audio...");
       const playPromise = audioElement.play();
@@ -157,9 +143,7 @@ export const useAudioPlayer = ({
         }
         // Handle other errors
         console.error("🔥 Audio play error:", error);
-        if (!isUnmountedRef.current) {
-          addToast("error", `Failed to play audio: ${error.message}`);
-        }
+        addToast("error", `Failed to play audio: ${error.message}`);
       }
     }
   };
@@ -172,12 +156,6 @@ export const useAudioPlayer = ({
       selectedVoice,
       savedAudioUrls: Object.keys(savedAudioUrls),
     });
-
-    // 컴포넌트가 언마운트된 경우 실행하지 않음
-    if (isUnmountedRef.current) {
-      console.log("❌ Component unmounted, aborting audio generation");
-      return;
-    }
 
     if (isGeneratingAudio) {
       console.log("⏸️ Already generating audio, returning");
@@ -210,12 +188,6 @@ export const useAudioPlayer = ({
     if (savedUrl && (!currentAudio || selectedVoice !== currentVoice)) {
       console.log("📂 Loading saved audio from:", savedUrl);
       try {
-        // 컴포넌트가 언마운트된 경우 중단
-        if (isUnmountedRef.current) {
-          console.log("❌ Component unmounted during saved audio loading");
-          return;
-        }
-
         const audioElement = new Audio();
         audioElement.crossOrigin = "anonymous";
         audioElement.preload = "auto";
@@ -230,13 +202,6 @@ export const useAudioPlayer = ({
           audioElement.addEventListener("error", reject, { once: true });
           audioElement.load();
         });
-
-        // 컴포넌트가 언마운트된 경우 중단
-        if (isUnmountedRef.current) {
-          console.log("❌ Component unmounted during saved audio preparation");
-          audioElement.pause();
-          return;
-        }
 
         audioRef.current = audioElement;
         setCurrentAudio(audioElement);
@@ -266,12 +231,6 @@ export const useAudioPlayer = ({
     console.log("🎙️ Starting audio generation...");
 
     try {
-      // 컴포넌트가 언마운트된 경우 중단
-      if (isUnmountedRef.current) {
-        console.log("❌ Component unmounted before audio generation");
-        return;
-      }
-
       const cleanText = cleanTextForSpeech(story);
       const selectedVoiceConfig = voices[selectedVoice];
 
@@ -292,29 +251,6 @@ export const useAudioPlayer = ({
         instructions:
           "A tone for reading bedtime stories to children. Calm and very slowly, with emotion in each word, pausing for 1.5 second between sentences or paragraphs.",
       });
-
-      // 컴포넌트가 언마운트된 경우 음성은 서버에 저장하되 재생하지 않음
-      if (isUnmountedRef.current) {
-        console.log(
-          "❌ Component unmounted after audio generation, saving but not playing"
-        );
-
-        // Upload audio to server if storyId exists
-        if (storyId) {
-          console.log("⬆️ Uploading audio to server (unmounted)...");
-          try {
-            await uploadAudioMutation.mutateAsync({
-              storyId,
-              audioBlob,
-              voice: selectedVoice,
-            });
-            console.log("✅ Audio uploaded successfully (unmounted)");
-          } catch (error) {
-            console.error("❌ Failed to upload audio (unmounted):", error);
-          }
-        }
-        return;
-      }
 
       console.log("✅ Audio generated from OpenAI");
       console.log("📦 Audio blob created:", audioBlob.size, "bytes");
@@ -343,12 +279,6 @@ export const useAudioPlayer = ({
         }
       }
 
-      // 컴포넌트가 언마운트된 경우 재생하지 않음
-      if (isUnmountedRef.current) {
-        console.log("❌ Component unmounted after audio upload, not playing");
-        return;
-      }
-
       const audioUrl = URL.createObjectURL(audioBlob);
       console.log("🔗 Audio URL created:", audioUrl);
 
@@ -367,16 +297,6 @@ export const useAudioPlayer = ({
         audioElement.load();
       });
 
-      // 컴포넌트가 언마운트된 경우 재생하지 않음
-      if (isUnmountedRef.current) {
-        console.log(
-          "❌ Component unmounted after audio preparation, not playing"
-        );
-        audioElement.pause();
-        URL.revokeObjectURL(audioUrl);
-        return;
-      }
-
       audioRef.current = audioElement;
       setCurrentAudio(audioElement);
       setCurrentVoice(selectedVoice);
@@ -388,53 +308,36 @@ export const useAudioPlayer = ({
       setIsPlaying(true);
       addToast("success", "Audio generated and playing");
     } catch (error) {
-      // 컴포넌트가 언마운트된 경우 에러 토스트도 표시하지 않음
-      if (isUnmountedRef.current) {
-        console.log("❌ Component unmounted, suppressing error toast");
-        return;
-      }
-
       console.error("❌ Error generating audio:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       addToast("error", `Failed to generate audio: ${errorMessage}`);
     } finally {
-      // 컴포넌트가 언마운트되지 않은 경우에만 상태 업데이트
-      if (!isUnmountedRef.current) {
-        setIsGeneratingAudio(false);
-      }
+      setIsGeneratingAudio(false);
       console.log("🏁 Audio generation completed");
     }
   };
 
   const setupAudioEventListeners = (audioElement: HTMLAudioElement) => {
     const handleEnded = () => {
-      if (!isUnmountedRef.current) {
-        setIsPlaying(false);
-      }
+      setIsPlaying(false);
     };
 
     const handlePause = () => {
       console.log("🎵 Audio paused event");
-      if (!isUnmountedRef.current) {
-        setIsPlaying(false);
-      }
+      setIsPlaying(false);
     };
 
     const handlePlay = () => {
       console.log("🎵 Audio play event");
-      if (!isUnmountedRef.current) {
-        setIsPlaying(true);
-      }
+      setIsPlaying(true);
     };
 
     const handleError = (error: Event) => {
       console.error("Audio error:", error);
-      if (!isUnmountedRef.current) {
-        setIsPlaying(false);
-        setCurrentAudio(null);
-        addToast("error", "Audio playback error");
-      }
+      setIsPlaying(false);
+      setCurrentAudio(null);
+      addToast("error", "Audio playback error");
     };
 
     audioElement.addEventListener("ended", handleEnded);
@@ -452,7 +355,7 @@ export const useAudioPlayer = ({
   };
 
   const togglePlayPause = async () => {
-    if (!currentAudio || isUnmountedRef.current) return;
+    if (!currentAudio) return;
 
     console.log("🎵 togglePlayPause called, current state:", {
       isPlaying,
@@ -476,7 +379,7 @@ export const useAudioPlayer = ({
   };
 
   const stopAudio = () => {
-    if (currentAudio && !isUnmountedRef.current) {
+    if (currentAudio) {
       try {
         currentAudio.pause();
         // 정지 시 currentTime을 0으로 설정하지 않음 - 현재 위치를 유지
@@ -489,7 +392,7 @@ export const useAudioPlayer = ({
   };
 
   const restartAudio = async () => {
-    if (currentAudio && !isUnmountedRef.current) {
+    if (currentAudio) {
       try {
         console.log("🔄 Restarting audio from beginning");
         currentAudio.currentTime = 0;
