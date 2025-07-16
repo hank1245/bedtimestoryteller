@@ -3,6 +3,7 @@ import { ChoiceGrid, ChoiceButton } from "../Choice";
 import { Button } from "../Button";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { StepProps, StyleOption } from "../../types";
+import BackButton from "../shared/BackButton";
 
 const STYLE_OPTIONS: StyleOption[] = [
   { value: "funny", label: "Funny" },
@@ -42,9 +43,12 @@ export default function StyleStep({
         ))}
       </ChoiceGrid>
       <ButtonWrapper>
-        <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
-          Back
-        </Button>
+        <BackButton
+          onClick={onPrev}
+          text="Back"
+          variant="normal"
+          style={{ flex: 1 }}
+        />
         <Button
           $primary
           onClick={onNext}

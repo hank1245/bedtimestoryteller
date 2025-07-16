@@ -4,6 +4,7 @@ import { ChoiceGrid, ChoiceButton } from "../Choice";
 import { Button } from "../Button";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { StepProps } from "../../types";
+import BackButton from "../shared/BackButton";
 import styled from "styled-components";
 
 const AgeAndLengthStepWrapper = styled.div`
@@ -83,9 +84,12 @@ export default function AgeAndLengthStep({
         </FormGroup>
       </ContentWrapper>
       <ButtonWrapper>
-        <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
-          Back
-        </Button>
+        <BackButton
+          onClick={onPrev}
+          text="Back"
+          variant="normal"
+          style={{ flex: 1 }}
+        />
         <Button
           $primary
           onClick={onNext}

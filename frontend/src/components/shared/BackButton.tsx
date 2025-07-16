@@ -1,26 +1,22 @@
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import { Button } from "../Button";
-
-const StyledBackButton = styled(Button)`
-  font-size: 12px;
-  padding: 12px 12px;
-  min-height: 32px;
-  width: auto;
-  margin: 0;
-  border-radius: 8px;
-`;
 
 interface BackButtonProps {
   to?: string;
   text?: string;
   onClick?: () => void;
+  variant?: "small" | "normal";
+  style?: React.CSSProperties;
+  className?: string;
 }
 
 export default function BackButton({
   to = "/app",
   text = "← Back",
   onClick,
+  variant = "small",
+  style,
+  className,
 }: BackButtonProps) {
   const navigate = useNavigate();
 
@@ -32,9 +28,17 @@ export default function BackButton({
     }
   };
 
+  const isSmall = variant === "small";
+
   return (
-    <StyledBackButton $secondary onClick={handleClick}>
+    <Button
+      $secondary
+      $small={isSmall}
+      onClick={handleClick}
+      style={style}
+      className={className}
+    >
       {text}
-    </StyledBackButton>
+    </Button>
   );
 }

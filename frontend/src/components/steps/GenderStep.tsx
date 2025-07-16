@@ -4,6 +4,7 @@ import { Button } from "../Button";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { StepProps } from "../../types";
 import { Mars, Venus, NonBinary } from "lucide-react";
+import BackButton from "../shared/BackButton";
 import styled from "styled-components";
 
 const IconContainer = styled.div`
@@ -83,9 +84,12 @@ export default function GenderStep({
         ))}
       </ChoiceGrid>
       <ButtonWrapper>
-        <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
-          Back
-        </Button>
+        <BackButton
+          onClick={onPrev}
+          text="Back"
+          variant="normal"
+          style={{ flex: 1 }}
+        />
         <Button
           $primary
           onClick={onNext}

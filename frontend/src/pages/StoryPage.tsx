@@ -117,8 +117,8 @@ const VoiceSelector = styled.select`
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: var(--text-primary);
-  padding: 5px 9px;
-  font-size: 12px;
+  padding: 6px 9px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
 
@@ -303,10 +303,6 @@ export default function StoryPage() {
     restartAudio,
     setSelectedVoice,
   } = useAudioPlayer({ voices, storyId, story });
-
-  const goToHome = () => {
-    navigate("/app");
-  };
 
   const createAnother = () => {
     navigate("/app/create");
@@ -508,9 +504,12 @@ export default function StoryPage() {
           </StoryContainer>
 
           <Buttons>
-            <Button $secondary onClick={goToHome} style={{ flex: 1 }}>
-              Back to Stories
-            </Button>
+            <BackButton
+              to="/app"
+              text="Back to Stories"
+              variant="normal"
+              style={{ flex: 1 }}
+            />
             <Button $primary onClick={createAnother} style={{ flex: 1 }}>
               Create Another
             </Button>

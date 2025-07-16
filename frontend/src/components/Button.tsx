@@ -4,21 +4,23 @@ import styled, { css } from "styled-components";
 export const Button = styled.button<{
   $primary?: boolean;
   $secondary?: boolean;
+  $small?: boolean;
 }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 18px 24px;
+  padding: ${({ $small }) => ($small ? "10px 14px" : "18px 24px")};
   border: none;
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: 500;
+  border-radius: ${({ $small }) => ($small ? "8px" : "12px")};
+  font-size: ${({ $small }) => ($small ? "12px" : "18px")};
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 48px;
+  min-height: ${({ $small }) => ($small ? "32px" : "48px")};
   position: relative;
   overflow: hidden;
-  width: 100%;
+  width: ${({ $small }) => ($small ? "auto" : "100%")};
+  margin: ${({ $small }) => ($small ? "0" : "initial")};
   ${({ $primary }) =>
     $primary &&
     css`

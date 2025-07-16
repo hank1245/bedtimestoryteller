@@ -5,6 +5,7 @@ import { Button } from "../Button";
 import { ButtonWrapper } from "../ButtonWrapper";
 import { ErrorMessage } from "../Feedback";
 import { StepProps } from "../../types";
+import BackButton from "../shared/BackButton";
 
 const LESSON_OPTIONS = [
   "Being Kind",
@@ -61,9 +62,12 @@ export default function LessonStep({
         />
       </FormGroup>
       <ButtonWrapper>
-        <Button $secondary onClick={onPrev} style={{ flex: 1 }}>
-          Back
-        </Button>
+        <BackButton
+          onClick={onPrev}
+          text="Back"
+          variant="normal"
+          style={{ flex: 1 }}
+        />
         <Button
           $primary
           onClick={onGenerate}
