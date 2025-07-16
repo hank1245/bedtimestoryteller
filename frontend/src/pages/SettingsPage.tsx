@@ -7,10 +7,10 @@ import { useToast } from "../stores/toastStore";
 import PageContainer from "../components/shared/PageContainer";
 import BackButton from "../components/shared/BackButton";
 import ConfirmationModal from "../components/modals/ConfirmationModal";
+import PaymentNotReadyModal from "../components/modals/PaymentNotReadyModal";
 import { exportUserData } from "../services/client";
 import {
   useSubscription,
-  usePaymentHistory,
   useCancelSubscription,
   useDeleteAccount,
   useUserStats,
@@ -165,12 +165,14 @@ export default function SettingsPage() {
   const { addToast } = useToast();
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   // Use custom hooks
   const { data: subscription, isLoading: subscriptionLoading } =
     useSubscription();
-  const { data: paymentHistory = [], isLoading: paymentsLoading } =
-    usePaymentHistory();
+  // Temporarily disable payment history loading since payment system isn't ready
+  const paymentHistory: any[] = [];
+  const paymentsLoading = false;
   const { data: userStats, isLoading: statsLoading } = useUserStats();
   const { data: userProfile, isLoading: profileLoading } = useUserProfile();
   const cancelSubscriptionMutation = useCancelSubscription();
@@ -352,12 +354,10 @@ export default function SettingsPage() {
                       ✨ Unlimited stories
                     </div>
                     <Button
-                      onClick={() =>
-                        addToast("info", "Payment integration coming soon!")
-                      }
+                      onClick={() => setShowPaymentModal(true)}
                       style={{ background: "#4CAF50" }}
                     >
-                      Upgrade Now - $9.99/month
+                      Upgrade Now - $3.99/month
                     </Button>
                   </div>
                 )}
@@ -469,6 +469,11 @@ export default function SettingsPage() {
         cancelText="Cancel"
         isLoading={deleteAccountMutation.isPending}
         isDanger={true}
+      />
+
+      <PaymentNotReadyModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
       />
     </PageContainer>
   );

@@ -330,35 +330,55 @@ app.post("/api/subscription/create", clerkAuthMiddleware, (req, res) => {
      VALUES (?, ?, 'active', ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
     [userId, plan_type, expires_at, payment_provider, subscription_id],
     function (err) {
-      if (err) return res.status(500).json({ error: "DB error" });
+      if (err) {
+        console.error("Subscription creation error:", err);
+        return res.status(500).json({ error: "Failed to create subscription" });
+      }
 
       // Create payment record
-      const amount = plan_type === "premium" ? 9.99 : 19.99; // Basic pricing
-
       db.run(
         `INSERT INTO payment_history 
          (user_id, subscription_id, amount, currency, status, payment_provider, transaction_id, description) 
-         VALUES (?, ?, ?, 'USD', 'completed', ?, ?, ?)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           userId,
           this.lastID,
-          amount,
+          plan_type === "premium" ? 3.99 : 0,
+          "USD",
+          "completed",
           payment_provider,
-          subscription_id,
+          `txn_${Date.now()}`,
           `${plan_type} subscription payment`,
         ],
-        function (err) {
+        (err) => {
           if (err) {
             console.error("Payment record error:", err);
             // Continue even if payment record fails
           }
-
-          res.json({
-            id: this.lastID,
-            message: "Subscription created successfully",
-          });
         }
       );
+
+      res.json({
+        message: "Subscription created successfully",
+        subscription_id: this.lastID,
+      });
+    }
+  );
+});
+
+// Get payment history
+app.get("/api/payments", clerkAuthMiddleware, (req, res) => {
+  db.all(
+    "SELECT * FROM payment_history WHERE user_id = ? ORDER BY payment_date DESC",
+    [req.user.id],
+    (err, payments) => {
+      if (err) {
+        console.error("Payment history error:", err);
+        return res
+          .status(500)
+          .json({ error: "Failed to fetch payment history" });
+      }
+      res.json(payments);
     }
   );
 });
@@ -642,7 +662,8 @@ app.put("/api/folders/:id", clerkAuthMiddleware, (req, res) => {
     [name, description, folderId, req.user.id],
     function (err) {
       if (err) return res.status(500).json({ error: "DB error" });
-      if (this.changes === 0) return res.status(404).json({ error: "Folder not found" });
+      if (this.changes === 0)
+        return res.status(404).json({ error: "Folder not found" });
       res.json({ message: "Folder updated successfully" });
     }
   );
@@ -657,7 +678,8 @@ app.delete("/api/folders/:id", clerkAuthMiddleware, (req, res) => {
     [folderId, req.user.id],
     function (err) {
       if (err) return res.status(500).json({ error: "DB error" });
-      if (this.changes === 0) return res.status(404).json({ error: "Folder not found" });
+      if (this.changes === 0)
+        return res.status(404).json({ error: "Folder not found" });
       res.json({ message: "Folder deleted successfully" });
     }
   );
@@ -718,30 +740,35 @@ app.post("/api/folders/:id/stories", clerkAuthMiddleware, (req, res) => {
 });
 
 // Remove story from folder
-app.delete("/api/folders/:id/stories/:storyId", clerkAuthMiddleware, (req, res) => {
-  const folderId = req.params.id;
-  const storyId = req.params.storyId;
+app.delete(
+  "/api/folders/:id/stories/:storyId",
+  clerkAuthMiddleware,
+  (req, res) => {
+    const folderId = req.params.id;
+    const storyId = req.params.storyId;
 
-  // Verify folder belongs to user
-  db.get(
-    "SELECT id FROM folders WHERE id = ? AND user_id = ?",
-    [folderId, req.user.id],
-    (err, folder) => {
-      if (err) return res.status(500).json({ error: "DB error" });
-      if (!folder) return res.status(404).json({ error: "Folder not found" });
+    // Verify folder belongs to user
+    db.get(
+      "SELECT id FROM folders WHERE id = ? AND user_id = ?",
+      [folderId, req.user.id],
+      (err, folder) => {
+        if (err) return res.status(500).json({ error: "DB error" });
+        if (!folder) return res.status(404).json({ error: "Folder not found" });
 
-      db.run(
-        "DELETE FROM folder_stories WHERE folder_id = ? AND story_id = ?",
-        [folderId, storyId],
-        function (err) {
-          if (err) return res.status(500).json({ error: "DB error" });
-          if (this.changes === 0) return res.status(404).json({ error: "Story not in folder" });
-          res.json({ message: "Story removed from folder successfully" });
-        }
-      );
-    }
-  );
-});
+        db.run(
+          "DELETE FROM folder_stories WHERE folder_id = ? AND story_id = ?",
+          [folderId, storyId],
+          function (err) {
+            if (err) return res.status(500).json({ error: "DB error" });
+            if (this.changes === 0)
+              return res.status(404).json({ error: "Story not in folder" });
+            res.json({ message: "Story removed from folder successfully" });
+          }
+        );
+      }
+    );
+  }
+);
 
 // Export user data
 app.get("/api/user/export", clerkAuthMiddleware, (req, res) => {

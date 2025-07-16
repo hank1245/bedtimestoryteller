@@ -29,7 +29,7 @@ export const useSubscription = () => {
   });
 };
 
-// Hook for payment history
+// Hook for payment history (disabled until payment system is ready)
 export const usePaymentHistory = () => {
   const { getToken } = useAuth();
 
@@ -41,6 +41,7 @@ export const usePaymentHistory = () => {
       return fetchPaymentHistory();
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: false, // Disable until payment system is ready
   });
 };
 
@@ -123,9 +124,8 @@ export const useCancelSubscription = () => {
   });
 };
 
-// Hook for creating payment record
+// Hook for creating payment record (disabled until payment system is ready)
 export const useCreatePaymentRecord = () => {
-  const queryClient = useQueryClient();
   const { getToken } = useAuth();
 
   return useMutation({
@@ -135,7 +135,8 @@ export const useCreatePaymentRecord = () => {
       return createPaymentRecord(paymentData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["paymentHistory"] });
+      // Disabled until payment system is ready
+      // queryClient.invalidateQueries({ queryKey: ["paymentHistory"] });
     },
   });
 };

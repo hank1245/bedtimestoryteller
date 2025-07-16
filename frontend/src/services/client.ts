@@ -130,13 +130,18 @@ export async function cancelSubscription() {
 }
 
 export async function fetchPaymentHistory() {
-  const res = await client.get("/payments");
-  return res.data;
+  // Return empty array until payment system is ready
+  return [];
+  // const res = await client.get("/payments");
+  // return res.data;
 }
 
 export async function createPaymentRecord(paymentData: any) {
-  const res = await client.post("/payments", paymentData);
-  return res.data;
+  // Payment system not ready yet
+  console.log("Payment system not implemented yet, data:", paymentData);
+  throw new Error("Payment system not implemented yet");
+  // const res = await client.post("/payments", paymentData);
+  // return res.data;
 }
 
 export async function deleteUserAccount() {
