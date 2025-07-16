@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useStories } from "../hooks/useStories";
-import { useFolders, useCreateFolder, useAddStoryToFolder } from "../hooks/useFolders";
+import {
+  useFolders,
+  useCreateFolder,
+  useAddStoryToFolder,
+} from "../hooks/useFolders";
 import { useToast } from "../stores/toastStore";
 import PageContainer from "../components/shared/PageContainer";
 import TabNavigation from "../components/TabNavigation";
@@ -19,8 +23,7 @@ const ContentWrapper = styled.div`
 `;
 
 const StyledCardHeader = styled(CardHeader)`
-  margin-top: 20px;
-
+  margin-top: 10px;
   @media (max-width: 480px) {
     margin-top: 30px;
   }
@@ -28,17 +31,21 @@ const StyledCardHeader = styled(CardHeader)`
 
 export default function MainPage({ onCreate }: { onCreate: () => void }) {
   const { addToast } = useToast();
-  
+
   // State
-  const [activeTab, setActiveTab] = useState<'all' | 'folders'>('all');
+  const [activeTab, setActiveTab] = useState<"all" | "folders">("all");
   const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<number | null>(null);
   const [selectedStories, setSelectedStories] = useState<number[]>([]);
-  const [folderForm, setFolderForm] = useState({ name: '', description: '' });
+  const [folderForm, setFolderForm] = useState({ name: "", description: "" });
 
   // React Query hooks
-  const { data: stories = [], isLoading: storiesLoading, error: storiesError } = useStories();
+  const {
+    data: stories = [],
+    isLoading: storiesLoading,
+    error: storiesError,
+  } = useStories();
   const { data: folders = [], isLoading: foldersLoading } = useFolders();
   const createFolderMutation = useCreateFolder();
   const addStoryToFolderMutation = useAddStoryToFolder();
@@ -46,36 +53,39 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
   // Event handlers
   const handleCreateFolder = async () => {
     if (!folderForm.name.trim()) {
-      addToast('error', 'Folder name is required');
+      addToast("error", "Folder name is required");
       return;
     }
 
     try {
       await createFolderMutation.mutateAsync(folderForm);
       setShowCreateFolderModal(false);
-      setFolderForm({ name: '', description: '' });
-      addToast('success', 'Folder created successfully');
+      setFolderForm({ name: "", description: "" });
+      addToast("success", "Folder created successfully");
     } catch (error) {
-      addToast('error', 'Failed to create folder');
+      addToast("error", "Failed to create folder");
     }
   };
 
   const handleAddStoriesToFolder = async () => {
     if (!selectedFolder || selectedStories.length === 0) {
-      addToast('error', 'Please select stories to add');
+      addToast("error", "Please select stories to add");
       return;
     }
 
     try {
       for (const storyId of selectedStories) {
-        await addStoryToFolderMutation.mutateAsync({ folderId: selectedFolder, storyId });
+        await addStoryToFolderMutation.mutateAsync({
+          folderId: selectedFolder,
+          storyId,
+        });
       }
       setShowAddStoryModal(false);
       setSelectedStories([]);
       setSelectedFolder(null);
-      addToast('success', 'Stories added to folder successfully');
+      addToast("success", "Stories added to folder successfully");
     } catch (error) {
-      addToast('error', 'Failed to add stories to folder');
+      addToast("error", "Failed to add stories to folder");
     }
   };
 
@@ -85,9 +95,9 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
   };
 
   const toggleStorySelection = (storyId: number) => {
-    setSelectedStories(prev => 
-      prev.includes(storyId) 
-        ? prev.filter(id => id !== storyId)
+    setSelectedStories((prev) =>
+      prev.includes(storyId)
+        ? prev.filter((id) => id !== storyId)
         : [...prev, storyId]
     );
   };
@@ -122,20 +132,19 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
             <span className="emoji-color">📚</span> Your Bedtime Stories
           </CardTitle>
           <CardSubtitle>
-            {activeTab === 'all' 
-              ? 'Here are your previously created stories.' 
-              : 'Organize your stories into folders.'
-            }
+            {activeTab === "all"
+              ? "Here are your previously created stories."
+              : "Organize your stories into folders."}
           </CardSubtitle>
         </StyledCardHeader>
-        
+
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {activeTab === 'all' ? (
-          <StoryList 
-            stories={stories} 
-            loading={storiesLoading} 
-            error={storiesError} 
+        {activeTab === "all" ? (
+          <StoryList
+            stories={stories}
+            loading={storiesLoading}
+            error={storiesError}
           />
         ) : (
           <FolderList
@@ -146,7 +155,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
           />
         )}
       </ContentWrapper>
-      
+
       <Button $primary onClick={onCreate} style={{ bottom: -30 }}>
         Create Another Story
       </Button>

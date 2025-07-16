@@ -9,10 +9,10 @@ export const Card = styled.div`
   box-shadow: var(--shadow-medium);
   position: relative;
   overflow: hidden;
-  height: 800px;
+  height: 768px;
   box-sizing: border-box;
   width: 100%;
-  max-width: 800px;
+  max-width: 768px;
 
   &::before {
     content: "";
@@ -43,7 +43,7 @@ export const Card = styled.div`
 
 export const CardHeader = styled.div`
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 `;
 
 export const CardTitle = styled.h2`

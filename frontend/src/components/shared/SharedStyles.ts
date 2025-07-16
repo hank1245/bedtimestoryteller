@@ -9,7 +9,6 @@ export const ListContainer = styled.div`
 
 export const StoryList = styled.ul`
   flex: 1;
-  max-height: 450px;
   overflow-y: auto;
   padding: 0;
   margin: 0;
@@ -34,7 +33,7 @@ export const StoryList = styled.ul`
   }
 
   @media (min-width: 768px) {
-    max-height: 520px;
+    max-height: 450px;
   }
 
   @media (max-width: 480px) {
@@ -133,9 +132,16 @@ export const HashTag = styled.span<{ $color: string }>`
   font-weight: 500;
   padding: 4px 8px;
   border-radius: 12px;
-  background: ${props => props.$color === 'green' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 193, 7, 0.2)'};
-  color: ${props => props.$color === 'green' ? '#4CAF50' : '#FFC107'};
-  border: 1px solid ${props => props.$color === 'green' ? 'rgba(76, 175, 80, 0.3)' : 'rgba(255, 193, 7, 0.3)'};
+  background: ${(props) =>
+    props.$color === "green"
+      ? "rgba(76, 175, 80, 0.2)"
+      : "rgba(255, 193, 7, 0.2)"};
+  color: ${(props) => (props.$color === "green" ? "#4CAF50" : "#FFC107")};
+  border: 1px solid
+    ${(props) =>
+      props.$color === "green"
+        ? "rgba(76, 175, 80, 0.3)"
+        : "rgba(255, 193, 7, 0.3)"};
   white-space: nowrap;
 `;
 
