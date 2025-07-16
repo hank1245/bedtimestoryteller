@@ -58,6 +58,9 @@ export const CardTitle = styled.h2`
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  @media (max-width: 480px) {
+    font-size: 24px;
+  }
 `;
 
 export const CardSubtitle = styled.p`

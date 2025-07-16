@@ -34,7 +34,7 @@ export const scrollableContainerStyles = css`
   }
 
   @media (max-width: 480px) {
-    max-height: 400px;
+    max-height: 360px;
   }
 `;
 

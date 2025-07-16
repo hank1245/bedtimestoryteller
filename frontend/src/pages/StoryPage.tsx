@@ -277,6 +277,9 @@ const Buttons = styled.div`
   bottom: 20px;
   left: 20px;
   width: calc(100% - 40px);
+
+  @media (max-width: 480px) {
+  }
 `;
 
 export default function StoryPage() {

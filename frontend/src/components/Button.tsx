@@ -50,4 +50,8 @@ export const Button = styled.button<{
         background: rgba(255, 255, 255, 0.15);
       }
     `}
+    @media (max-width: 480px) {
+    padding: ${({ $small }) => ($small ? "8px 12px" : "16px 20px")};
+    font-size: ${({ $small }) => ($small ? "12px" : "14px")};
+  }
 `;

@@ -23,7 +23,7 @@ export const StoryContainer = styled.div`
     0 4px 20px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 480px) {
-    max-height: 68vh;
+    max-height: 58vh;
     padding: 20px;
   }
 
