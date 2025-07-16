@@ -9,6 +9,7 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ToastContainer } from "./components/ToastProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AuthSetup from "./components/AuthSetup";
 import MainPage from "./pages/MainPage";
 import GenerationPage from "./pages/GenerationPage";
 import StoryPage from "./pages/StoryPage";
@@ -114,11 +115,13 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ClerkProvider publishableKey={clerkPublishableKey}>
-        <BrowserRouter>
-          <GlobalStyle />
-          <AppRoutes />
-          <ToastContainer />
-        </BrowserRouter>
+        <AuthSetup>
+          <BrowserRouter>
+            <GlobalStyle />
+            <AppRoutes />
+            <ToastContainer />
+          </BrowserRouter>
+        </AuthSetup>
       </ClerkProvider>
     </QueryClientProvider>
   );

@@ -15,15 +15,31 @@ const client = axios.create({
 
 // 토큰을 저장할 변수
 let authToken: string | null = null;
+let getTokenFunction: (() => Promise<string | null>) | null = null;
 
 // 토큰 설정 함수
 export const setAuthToken = (token: string | null) => {
   authToken = token;
 };
 
+// 토큰 획득 함수 설정
+export const setGetTokenFunction = (getToken: () => Promise<string | null>) => {
+  getTokenFunction = getToken;
+};
+
 // 요청 인터셉터: Bearer 토큰 자동 첨부
 client.interceptors.request.use(
   async (config) => {
+    // 토큰이 없거나 만료된 경우 새로 가져오기
+    if (!authToken && getTokenFunction) {
+      try {
+        const token = await getTokenFunction();
+        setAuthToken(token);
+      } catch (error) {
+        console.error("Failed to get token:", error);
+      }
+    }
+
     // 토큰이 있으면 헤더에 첨부
     if (authToken) {
       config.headers = config.headers || {};
@@ -43,7 +59,23 @@ client.interceptors.request.use(
 // 응답 인터셉터: 에러 로깅 및 공통 처리
 client.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    if (error.response?.status === 401 && getTokenFunction) {
+      // 토큰이 만료된 경우 새로 가져오기
+      try {
+        const newToken = await getTokenFunction();
+        setAuthToken(newToken);
+
+        // 원래 요청 재시도
+        if (error.config && newToken) {
+          error.config.headers["Authorization"] = `Bearer ${newToken}`;
+          return client.request(error.config);
+        }
+      } catch (refreshError) {
+        console.error("Failed to refresh token:", refreshError);
+      }
+    }
+
     if (error.response) {
       console.error("API Error:", error.response.status, error.response.data);
     } else if (error.request) {
@@ -66,7 +98,12 @@ export async function fetchStoryById(id: number) {
   return res.data;
 }
 
-export async function createStory(title: string, story: string, age?: string, length?: string) {
+export async function createStory(
+  title: string,
+  story: string,
+  age?: string,
+  length?: string
+) {
   const res = await client.post("/stories", { title, story, age, length });
   return res.data;
 }
@@ -142,5 +179,4 @@ export async function fetchSubscriptionLimits() {
   return res.data;
 }
 
-// (필요시) story 삭제/수정 함수도 추가 가능
 export default client;

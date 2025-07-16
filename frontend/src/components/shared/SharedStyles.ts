@@ -130,18 +130,9 @@ export const StoryTags = styled.div`
 export const HashTag = styled.span<{ $color: string }>`
   font-size: 12px;
   font-weight: 500;
-  padding: 4px 8px;
+  padding: 2px 4px;
   border-radius: 12px;
-  background: ${(props) =>
-    props.$color === "green"
-      ? "rgba(76, 175, 80, 0.2)"
-      : "rgba(255, 193, 7, 0.2)"};
   color: ${(props) => (props.$color === "green" ? "#4CAF50" : "#FFC107")};
-  border: 1px solid
-    ${(props) =>
-      props.$color === "green"
-        ? "rgba(76, 175, 80, 0.3)"
-        : "rgba(255, 193, 7, 0.3)"};
   white-space: nowrap;
 `;
 

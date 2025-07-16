@@ -1,4 +1,9 @@
-import { StoryItemContainer, StoryContent, StoryTags, HashTag } from "./shared/SharedStyles";
+import {
+  StoryItemContainer,
+  StoryContent,
+  StoryTags,
+  HashTag,
+} from "./shared/SharedStyles";
 
 interface Story {
   id: number;
@@ -16,12 +21,12 @@ interface StoryItemProps {
   isRemoving?: boolean;
 }
 
-export default function StoryItem({ 
-  story, 
-  onClick, 
-  showRemoveButton = false, 
-  onRemove, 
-  isRemoving = false 
+export default function StoryItem({
+  story,
+  onClick,
+  showRemoveButton = false,
+  onRemove,
+  isRemoving = false,
 }: StoryItemProps) {
   return (
     <li
@@ -37,20 +42,14 @@ export default function StoryItem({
     >
       <StoryItemContainer>
         <StoryContent>
-          <div style={{ fontWeight: 600, fontSize: 18 }}>
-            {story.title}
-          </div>
+          <div style={{ fontWeight: 600, fontSize: 18 }}>{story.title}</div>
           <div style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}>
             {new Date(story.created_at).toLocaleString()}
           </div>
         </StoryContent>
         <StoryTags>
-          {story.age && (
-            <HashTag $color="green">#{story.age}</HashTag>
-          )}
-          {story.length && (
-            <HashTag $color="yellow">#{story.length}</HashTag>
-          )}
+          {story.age && <HashTag $color="green">#Age {story.age}</HashTag>}
+          {story.length && <HashTag $color="yellow">#{story.length}</HashTag>}
           {showRemoveButton && onRemove && (
             <button
               onClick={(e) => {
