@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useStories } from "../hooks/useStories";
 import {
   useFolders,
   useCreateFolder,
   useAddStoryToFolder,
+  useDeleteFolder,
 } from "../hooks/useFolders";
 import { useToast } from "../stores/toastStore";
 import PageContainer from "../components/shared/PageContainer";
@@ -12,6 +14,7 @@ import StoryList from "../components/StoryList";
 import FolderList from "../components/FolderList";
 import CreateFolderModal from "../components/modals/CreateFolderModal";
 import AddStoryToFolderModal from "../components/modals/AddStoryToFolderModal";
+import ConfirmationModal from "../components/modals/ConfirmationModal";
 import { Button } from "../components/Button";
 import styled from "styled-components";
 import { CardHeader, CardTitle, CardSubtitle } from "../components/Card";
@@ -31,14 +34,17 @@ const StyledCardHeader = styled(CardHeader)`
 
 export default function MainPage({ onCreate }: { onCreate: () => void }) {
   const { addToast } = useToast();
+  const [searchParams] = useSearchParams();
 
   // State
   const [activeTab, setActiveTab] = useState<"all" | "folders">("all");
   const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
+  const [showDeleteConfirmModal, setShowDeleteConfirmModal] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<number | null>(null);
   const [selectedStories, setSelectedStories] = useState<number[]>([]);
   const [folderForm, setFolderForm] = useState({ name: "", description: "" });
+  const [folderToDelete, setFolderToDelete] = useState<number | null>(null);
 
   // React Query hooks
   const {
@@ -49,6 +55,17 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
   const { data: folders = [], isLoading: foldersLoading } = useFolders();
   const createFolderMutation = useCreateFolder();
   const addStoryToFolderMutation = useAddStoryToFolder();
+  const deleteFolderMutation = useDeleteFolder();
+
+  // Set active tab based on URL parameter
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab === "folders") {
+      setActiveTab("folders");
+    } else {
+      setActiveTab("all");
+    }
+  }, [searchParams]);
 
   // Event handlers
   const handleCreateFolder = async () => {
@@ -108,6 +125,29 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
     setSelectedFolder(null);
   };
 
+  const handleDeleteFolder = (folderId: number) => {
+    setFolderToDelete(folderId);
+    setShowDeleteConfirmModal(true);
+  };
+
+  const confirmDeleteFolder = async () => {
+    if (!folderToDelete) return;
+
+    try {
+      await deleteFolderMutation.mutateAsync(folderToDelete);
+      setShowDeleteConfirmModal(false);
+      setFolderToDelete(null);
+      addToast("success", "Folder deleted successfully");
+    } catch (error) {
+      addToast("error", "Failed to delete folder");
+    }
+  };
+
+  const cancelDeleteFolder = () => {
+    setShowDeleteConfirmModal(false);
+    setFolderToDelete(null);
+  };
+
   // Error handling
   useEffect(() => {
     if (storiesError) {
@@ -152,6 +192,8 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
             loading={foldersLoading}
             onCreateFolder={() => setShowCreateFolderModal(true)}
             onAddStoriesToFolder={handleAddStoriesToFolderClick}
+            onDeleteFolder={handleDeleteFolder}
+            isDeleting={deleteFolderMutation.isPending}
           />
         )}
       </ContentWrapper>
@@ -178,6 +220,17 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
         selectedStories={selectedStories}
         onToggleStory={toggleStorySelection}
         isAdding={addStoryToFolderMutation.isPending}
+      />
+
+      <ConfirmationModal
+        isOpen={showDeleteConfirmModal}
+        onClose={cancelDeleteFolder}
+        onConfirm={confirmDeleteFolder}
+        title="Delete Folder"
+        description="Are you sure you want to delete this folder? This action cannot be undone."
+        confirmText="Delete"
+        isLoading={deleteFolderMutation.isPending}
+        isDanger={true}
       />
 
       {/* 이모지 컬러 강제 스타일 */}

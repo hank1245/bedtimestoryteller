@@ -74,7 +74,9 @@ export default function FolderPage() {
         }}
         topBarProps={{
           variant: "split",
-          leftContent: <BackButton to="/app" text="Back to Stories" />,
+          leftContent: (
+            <BackButton to="/app?tab=folders" text="Back to Folders" />
+          ),
           showSettings: true,
         }}
       >
@@ -94,7 +96,9 @@ export default function FolderPage() {
       }}
       topBarProps={{
         variant: "split",
-        leftContent: <BackButton to="/app" text="Back to Stories" />,
+        leftContent: (
+          <BackButton to="/app?tab=folders" text="Back to Folders" />
+        ),
         showSettings: true,
       }}
     >
@@ -117,6 +121,11 @@ export default function FolderPage() {
             showRemoveButton={true}
             onRemoveStory={handleRemoveStory}
             isRemoving={removeStoryMutation.isPending}
+            emptyStateMessage={{
+              title: "No Stories in This Folder",
+              subtitle:
+                "Add some stories to this folder to organize your collection!",
+            }}
           />
         </ContentWrapper>
       </StoryPageWrapper>

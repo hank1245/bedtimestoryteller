@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { 
-  ListContainer, 
-  StoryList as StyledStoryList, 
-  EmptyStateContainer, 
-  EmptyStateEmoji, 
-  EmptyStateTitle, 
-  EmptyStateSubtitle 
+import {
+  ListContainer,
+  StoryList as StyledStoryList,
+  EmptyStateContainer,
+  EmptyStateEmoji,
+  EmptyStateTitle,
+  EmptyStateSubtitle,
 } from "./shared/SharedStyles";
 import StoryItem from "./StoryItem";
 import StoryLoading from "./StoryLoading";
@@ -25,15 +25,20 @@ interface StoryListProps {
   showRemoveButton?: boolean;
   onRemoveStory?: (storyId: number) => void;
   isRemoving?: boolean;
+  emptyStateMessage?: {
+    title: string;
+    subtitle: string;
+  };
 }
 
-export default function StoryList({ 
-  stories, 
-  loading, 
-  error, 
-  showRemoveButton = false, 
+export default function StoryList({
+  stories,
+  loading,
+  error,
+  showRemoveButton = false,
   onRemoveStory,
-  isRemoving = false 
+  isRemoving = false,
+  emptyStateMessage,
 }: StoryListProps) {
   const navigate = useNavigate();
 
@@ -46,6 +51,12 @@ export default function StoryList({
     });
   };
 
+  const defaultEmptyState = {
+    title: "Your Story Collection Awaits",
+    subtitle:
+      "Create your first magical bedtime story to begin your collection!",
+  };
+
   return (
     <ListContainer>
       {loading ? (
@@ -56,21 +67,23 @@ export default function StoryList({
         <EmptyStateContainer>
           <EmptyStateEmoji>✨</EmptyStateEmoji>
           <EmptyStateTitle>
-            Your Story Collection Awaits
+            {emptyStateMessage?.title || defaultEmptyState.title}
           </EmptyStateTitle>
           <EmptyStateSubtitle>
-            Start your magical journey by creating your first bedtime story!
+            {emptyStateMessage?.subtitle || defaultEmptyState.subtitle}
           </EmptyStateSubtitle>
         </EmptyStateContainer>
       ) : (
         <StyledStoryList>
-          {stories.map((story, index) => (
+          {stories.map((story) => (
             <StoryItem
               key={story.id}
               story={story}
               onClick={() => handleStoryClick(story.id, story.title)}
               showRemoveButton={showRemoveButton}
-              onRemove={onRemoveStory ? () => onRemoveStory(story.id) : undefined}
+              onRemove={
+                onRemoveStory ? () => onRemoveStory(story.id) : undefined
+              }
               isRemoving={isRemoving}
             />
           ))}
