@@ -152,7 +152,7 @@ export default function GenerationPage() {
       addToast("success", "Story created successfully!");
 
       // Navigate to story page with the generated story
-      navigate("/story", {
+      navigate("/app/story", {
         state: {
           id: newStory.id,
           title: response.title,
