@@ -44,7 +44,13 @@ export default function StoryItem({
         <StoryContent>
           <div style={{ fontWeight: 600, fontSize: 18 }}>{story.title}</div>
           <div style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}>
-            {new Date(story.created_at).toLocaleString()}
+            {new Date(story.created_at).toLocaleString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
           </div>
         </StoryContent>
         <StoryTags>

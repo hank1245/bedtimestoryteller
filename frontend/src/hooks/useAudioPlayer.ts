@@ -185,7 +185,9 @@ export const useAudioPlayer = ({
       "URL:",
       savedUrl
     );
-    if (savedUrl && (!currentAudio || selectedVoice !== currentVoice)) {
+
+    // Always try to use saved audio if it exists, regardless of current state
+    if (savedUrl) {
       console.log("📂 Loading saved audio from:", savedUrl);
       try {
         const audioElement = new Audio();
@@ -216,14 +218,28 @@ export const useAudioPlayer = ({
         return;
       } catch (error) {
         console.error("❌ Failed to load saved audio:", error);
-        addToast("warning", "Saved audio failed, generating new one...");
+        addToast(
+          "error",
+          "Unable to load saved audio. Please try again later."
+        );
+        return; // Don't generate new audio on error, just return
       }
     }
 
-    // Check if API key is available
-    if (!import.meta.env.VITE_OPENAI_API_KEY) {
-      console.error("❌ OpenAI API key is not configured");
-      addToast("error", "OpenAI API key is not configured");
+    // Only generate new audio if no saved audio exists
+    if (!savedUrl) {
+      // Check if API key is available
+      if (!import.meta.env.VITE_OPENAI_API_KEY) {
+        console.error("❌ OpenAI API key is not configured");
+        addToast("error", "OpenAI API key is not configured");
+        return;
+      }
+    } else {
+      // If saved audio exists but we reached here, it means there was an error loading it
+      console.log(
+        "❌ Saved audio exists but failed to load, not generating new audio"
+      );
+      addToast("error", "Unable to load audio. Please try again later.");
       return;
     }
 
