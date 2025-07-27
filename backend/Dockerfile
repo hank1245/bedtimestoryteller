@@ -13,11 +13,8 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Create uploads directory and database directory
-RUN mkdir -p uploads data
-
-# Set proper permissions
-RUN chmod 755 uploads data
+# Note: In production, data will be stored in volume-mounted /app/data
+# Development directories will be created by the application if needed
 
 # Expose port
 EXPOSE 4000

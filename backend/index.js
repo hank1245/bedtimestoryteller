@@ -25,9 +25,21 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, "uploads");
+const uploadsDir = 
+  process.env.NODE_ENV === "production"
+    ? path.join("/app/data", "uploads")
+    : path.join(__dirname, "uploads");
+
+// Create data and uploads directories if they don't exist
+if (process.env.NODE_ENV === "production") {
+  const dataDir = "/app/data";
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
+}
+
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
+  fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 // Serve static files from uploads directory
@@ -212,7 +224,9 @@ app.delete("/api/stories/:id", clerkAuthMiddleware, (req, res) => {
                   // Delete all audio files from filesystem
                   audioFiles.forEach((file) => {
                     if (file.audio_url) {
-                      const audioPath = path.join(__dirname, file.audio_url);
+                      const audioPath = process.env.NODE_ENV === "production"
+                        ? path.join("/app/data", file.audio_url)
+                        : path.join(__dirname, file.audio_url);
                       if (fs.existsSync(audioPath)) {
                         fs.unlinkSync(audioPath);
                       }
@@ -221,11 +235,12 @@ app.delete("/api/stories/:id", clerkAuthMiddleware, (req, res) => {
 
                   // Delete legacy audio file if it exists
                   if (story && story.audio_url) {
-                    const audioPath = path.join(__dirname, story.audio_url);
+                    const audioPath = process.env.NODE_ENV === "production"
+                      ? path.join("/app/data", story.audio_url)
+                      : path.join(__dirname, story.audio_url);
                     if (fs.existsSync(audioPath)) {
                       fs.unlinkSync(audioPath);
                     }
-                    ㅐ;
                   }
 
                   res.json({ message: "Story deleted successfully" });
@@ -494,7 +509,9 @@ app.delete("/api/user/account", clerkAuthMiddleware, (req, res) => {
                   // Delete audio files from filesystem
                   audioFiles.forEach((file) => {
                     if (file.audio_url) {
-                      const audioPath = path.join(__dirname, file.audio_url);
+                      const audioPath = process.env.NODE_ENV === "production"
+                        ? path.join("/app/data", file.audio_url)
+                        : path.join(__dirname, file.audio_url);
                       if (fs.existsSync(audioPath)) {
                         fs.unlinkSync(audioPath);
                       }
