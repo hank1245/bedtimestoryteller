@@ -9,6 +9,7 @@ import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
 import { useStory, useDeleteStory } from "../hooks/useStories";
 import { useToast } from "../stores/toastStore";
 import { useAudioPlayer } from "../hooks/useAudioPlayer";
+import { useAudioGenerationStore } from "../stores/audioStore";
 import ThreeBackground from "../components/ThreeBackground";
 
 const StoryPageContainer = styled.div`
@@ -312,7 +313,6 @@ export default function StoryPage() {
 
   // 새로운 오디오 훅 사용
   const {
-    isGeneratingAudio,
     isPlaying,
     currentAudio,
     selectedVoice,
@@ -321,6 +321,9 @@ export default function StoryPage() {
     restartAudio,
     setSelectedVoice,
   } = useAudioPlayer({ voices, storyId, story });
+
+  // 전역 오디오 생성 상태 (다른 페이지에서의 생성 상태 확인용)
+  const { isGeneratingAudio: globalIsGenerating } = useAudioGenerationStore();
 
   const goToHome = () => {
     navigate("/app");
@@ -476,9 +479,9 @@ export default function StoryPage() {
                           );
                         }
                       }}
-                      disabled={isGeneratingAudio}
+                      disabled={globalIsGenerating}
                     >
-                      {isGeneratingAudio ? <LoadingSpinner /> : <Volume2 />}
+                      {globalIsGenerating ? <LoadingSpinner /> : <Volume2 />}
                     </AudioButton>
                   ) : (
                     <>

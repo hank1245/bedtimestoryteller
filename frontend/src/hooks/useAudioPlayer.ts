@@ -6,6 +6,7 @@ import {
 } from "../services/openai-tts";
 import { useUploadAudio } from "./useStories";
 import { useToast } from "../stores/toastStore";
+import { useAudioGenerationStore } from "../stores/audioStore";
 import { useAuth } from "@clerk/clerk-react";
 
 interface Voice {
@@ -24,7 +25,6 @@ export const useAudioPlayer = ({
   storyId,
   story,
 }: UseAudioPlayerProps) => {
-  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
     null
@@ -40,6 +40,13 @@ export const useAudioPlayer = ({
   const uploadAudioMutation = useUploadAudio();
   const { addToast } = useToast();
   const { getToken } = useAuth();
+  
+  // 전역 오디오 생성 상태 관리
+  const { 
+    isGeneratingAudio, 
+    setIsGeneratingAudio, 
+    canGenerateAudio 
+  } = useAudioGenerationStore();
 
   // API URL 환경변수
   const API_BASE_URL =
@@ -155,10 +162,13 @@ export const useAudioPlayer = ({
       isPlaying,
       selectedVoice,
       savedAudioUrls: Object.keys(savedAudioUrls),
+      canGenerate: canGenerateAudio(),
     });
 
-    if (isGeneratingAudio) {
-      console.log("⏸️ Already generating audio, returning");
+    // 전역 상태에서 오디오 생성 가능 여부 확인
+    if (!canGenerateAudio()) {
+      console.log("⏸️ Cannot generate audio - already generating elsewhere");
+      addToast("warning", "Audio is currently being generated. Please wait...");
       return;
     }
 
@@ -243,7 +253,7 @@ export const useAudioPlayer = ({
       return;
     }
 
-    setIsGeneratingAudio(true);
+    setIsGeneratingAudio(true, storyId);
     console.log("🎙️ Starting audio generation...");
 
     try {
@@ -422,7 +432,6 @@ export const useAudioPlayer = ({
 
   return {
     // States
-    isGeneratingAudio,
     isPlaying,
     currentAudio,
     selectedVoice,
