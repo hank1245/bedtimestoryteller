@@ -1,4 +1,5 @@
 # 🌙 Bedtime Storyteller
+<img width="1113" height="872" alt="스크린샷 2025-08-01 오전 8 11 51" src="https://github.com/user-attachments/assets/d3ed7126-a8af-4cfc-8922-d87f424b1620" />
 
 Create magical, personalized bedtime stories for your children with AI. Our app generates custom stories tailored to your child's age, interests, and preferences, then brings them to life with high-quality voice narration.
 
@@ -40,9 +41,6 @@ Transform bedtime into an enchanting experience with stories that are uniquely c
 - **Families** seeking screen-free bonding time
 - **Anyone** who believes in the magic of storytelling
 
-## 🛡️ Safe & Secure
-
-Your family's privacy is our priority. All stories are generated with child-safe content, and your personal information is protected with enterprise-grade security.
 
 ## 💫 Start Creating Magic Tonight
 
