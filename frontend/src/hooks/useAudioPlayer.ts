@@ -69,18 +69,14 @@ export const useAudioPlayer = ({
           );
           if (response.ok) {
             const storyData = await response.json();
-            console.log("📂 Story data received:", storyData);
             if (storyData.audio_urls) {
-              console.log("🎵 Audio URLs found:", storyData.audio_urls);
               // Convert relative URLs to absolute URLs
               const absoluteUrls: Record<string, string> = {};
               Object.entries(storyData.audio_urls).forEach(([voice, url]) => {
                 absoluteUrls[voice] = `${API_BASE_URL}${url}`;
               });
               setSavedAudioUrls(absoluteUrls);
-              console.log("✅ Saved audio URLs updated:", absoluteUrls);
             } else {
-              console.log("ℹ️ No audio URLs found for this story");
             }
           }
         } catch (error) {
@@ -134,18 +130,15 @@ export const useAudioPlayer = ({
   // Safe play function to handle AbortError
   const safePlay = async (audioElement: HTMLAudioElement): Promise<void> => {
     try {
-      console.log("🎵 Attempting to play audio...");
       const playPromise = audioElement.play();
       if (playPromise !== undefined) {
         await playPromise;
-        console.log("✅ Audio playing successfully");
       }
     } catch (error) {
       if (error instanceof Error) {
         console.error("❌ Audio play error:", error.name, error.message);
         // Handle AbortError gracefully (common when user clicks buttons rapidly)
         if (error.name === "AbortError") {
-          console.log("⏹️ Audio play aborted (user interaction)");
           return;
         }
         // Handle other errors
@@ -156,32 +149,21 @@ export const useAudioPlayer = ({
   };
 
   const generateAndPlayAudio = async () => {
-    console.log("🎬 generateAndPlayAudio called", {
-      isGeneratingAudio,
-      currentAudio: !!currentAudio,
-      isPlaying,
-      selectedVoice,
-      savedAudioUrls: Object.keys(savedAudioUrls),
-      canGenerate: canGenerateAudio(),
-    });
 
     // 전역 상태에서 오디오 생성 가능 여부 확인
     if (!canGenerateAudio()) {
-      console.log("⏸️ Cannot generate audio - already generating elsewhere");
       addToast("warning", "Audio is currently being generated. Please wait...");
       return;
     }
 
     // If currently playing the same voice, just toggle play/pause
     if (currentAudio && isPlaying) {
-      console.log("⏯️ Audio already playing, toggling pause");
       await togglePlayPause();
       return;
     }
 
     // If audio exists but not playing, just play it
     if (currentAudio && !isPlaying) {
-      console.log("▶️ Audio exists but not playing, resuming");
       await safePlay(currentAudio);
       setIsPlaying(true);
       return;
@@ -189,16 +171,9 @@ export const useAudioPlayer = ({
 
     // First, try to load saved audio for this voice
     const savedUrl = savedAudioUrls[selectedVoice];
-    console.log(
-      "💾 Checking saved audio for voice:",
-      selectedVoice,
-      "URL:",
-      savedUrl
-    );
 
     // Always try to use saved audio if it exists, regardless of current state
     if (savedUrl) {
-      console.log("📂 Loading saved audio from:", savedUrl);
       try {
         const audioElement = new Audio();
         audioElement.crossOrigin = "anonymous";
@@ -246,22 +221,16 @@ export const useAudioPlayer = ({
       }
     } else {
       // If saved audio exists but we reached here, it means there was an error loading it
-      console.log(
-        "❌ Saved audio exists but failed to load, not generating new audio"
-      );
       addToast("error", "Unable to load audio. Please try again later.");
       return;
     }
 
     setIsGeneratingAudio(true, storyId);
-    console.log("🎙️ Starting audio generation...");
 
     try {
       const cleanText = cleanTextForSpeech(story);
       const selectedVoiceConfig = voices[selectedVoice];
 
-      console.log("🎵 Voice config:", selectedVoiceConfig);
-      console.log("📝 Clean text length:", cleanText.length);
 
       if (!selectedVoiceConfig) {
         throw new Error(`Voice configuration not found for: ${selectedVoice}`);
@@ -278,12 +247,9 @@ export const useAudioPlayer = ({
           "A tone for reading bedtime stories to children. Calm and very slowly, with emotion in each word, pausing for 1.5 second between sentences or paragraphs.",
       });
 
-      console.log("✅ Audio generated from OpenAI");
-      console.log("📦 Audio blob created:", audioBlob.size, "bytes");
 
       // Upload audio to server if storyId exists
       if (storyId) {
-        console.log("⬆️ Uploading audio to server...");
         try {
           const result = await uploadAudioMutation.mutateAsync({
             storyId,
@@ -297,7 +263,6 @@ export const useAudioPlayer = ({
             [selectedVoice]: `${API_BASE_URL}${result.audioUrl}`,
           }));
 
-          console.log("✅ Audio uploaded successfully");
           addToast("success", "Audio saved successfully");
         } catch (error) {
           console.error("❌ Failed to upload audio:", error);
@@ -306,7 +271,6 @@ export const useAudioPlayer = ({
       }
 
       const audioUrl = URL.createObjectURL(audioBlob);
-      console.log("🔗 Audio URL created:", audioUrl);
 
       const audioElement = new Audio();
       audioElement.crossOrigin = "anonymous";
@@ -340,7 +304,6 @@ export const useAudioPlayer = ({
       addToast("error", `Failed to generate audio: ${errorMessage}`);
     } finally {
       setIsGeneratingAudio(false);
-      console.log("🏁 Audio generation completed");
     }
   };
 
@@ -350,12 +313,10 @@ export const useAudioPlayer = ({
     };
 
     const handlePause = () => {
-      console.log("🎵 Audio paused event");
       setIsPlaying(false);
     };
 
     const handlePlay = () => {
-      console.log("🎵 Audio play event");
       setIsPlaying(true);
     };
 
@@ -383,19 +344,12 @@ export const useAudioPlayer = ({
   const togglePlayPause = async () => {
     if (!currentAudio) return;
 
-    console.log("🎵 togglePlayPause called, current state:", {
-      isPlaying,
-      currentTime: currentAudio.currentTime,
-      paused: currentAudio.paused,
-    });
 
     try {
       if (isPlaying) {
-        console.log("⏸️ Pausing audio");
         currentAudio.pause();
         setIsPlaying(false);
       } else {
-        console.log("▶️ Playing audio");
         await safePlay(currentAudio);
         setIsPlaying(true);
       }
@@ -420,7 +374,6 @@ export const useAudioPlayer = ({
   const restartAudio = async () => {
     if (currentAudio) {
       try {
-        console.log("🔄 Restarting audio from beginning");
         currentAudio.currentTime = 0;
         await safePlay(currentAudio);
         setIsPlaying(true);

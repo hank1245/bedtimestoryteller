@@ -31,11 +31,6 @@ export async function generateSpeechWithOpenAI({
   instructions = "A tone for reading bedtime stories to children. Calm and very slowly, with emotion in each word, pausing for 1.5 second between sentences or paragraphs.",
 }: TTSOptions): Promise<Blob> {
   try {
-    console.log("🎵 Generating speech with OpenAI GPT-4o-mini-TTS...", {
-      voice,
-      textLength: text.length,
-      instructions,
-    });
 
     // Using GPT-4o-mini-TTS for cost-effective, high-quality text-to-speech
     const response = await openai.audio.speech.create({
@@ -51,7 +46,6 @@ export async function generateSpeechWithOpenAI({
       type: "audio/mpeg",
     });
 
-    console.log("✅ Speech generated successfully:", audioBlob.size, "bytes");
     return audioBlob;
   } catch (error) {
     console.error("❌ Error generating speech with OpenAI:", error);

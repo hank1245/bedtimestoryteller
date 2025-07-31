@@ -22,7 +22,6 @@ export const useStories = () => {
     queryKey: queryKeys.stories,
     queryFn: async () => {
       const token = await getToken();
-      console.log("useStories - token:", token?.substring(0, 20) + "...");
       setAuthToken(token);
       return fetchStories();
     },

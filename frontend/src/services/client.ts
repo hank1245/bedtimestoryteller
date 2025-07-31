@@ -4,8 +4,6 @@ import axios from "axios";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:4000";
 
-console.log("🌐 API Base URL:", API_BASE_URL);
-console.log("🔧 Environment:", import.meta.env.MODE);
 
 // 백엔드 주소에 맞게 baseURL 설정
 const client = axios.create({
@@ -44,12 +42,6 @@ client.interceptors.request.use(
     if (authToken) {
       config.headers = config.headers || {};
       config.headers["Authorization"] = `Bearer ${authToken}`;
-      console.log(
-        "Request with auth token:",
-        authToken?.substring(0, 20) + "..."
-      );
-    } else {
-      console.log("No auth token available for request");
     }
     return config;
   },
@@ -138,7 +130,6 @@ export async function fetchPaymentHistory() {
 
 export async function createPaymentRecord(paymentData: any) {
   // Payment system not ready yet
-  console.log("Payment system not implemented yet, data:", paymentData);
   throw new Error("Payment system not implemented yet");
   // const res = await client.post("/payments", paymentData);
   // return res.data;

@@ -354,7 +354,6 @@ export default function StoryPage() {
       },
       () => {
         // 취소 버튼 클릭 시 실행되는 함수 (선택사항)
-        console.log("Delete cancelled");
       }
     );
   };
@@ -463,9 +462,6 @@ export default function StoryPage() {
                   {!currentAudio ? (
                     <AudioButton
                       onClick={async () => {
-                        console.log(
-                          "🖱️ Volume button clicked - starting playback"
-                        );
                         try {
                           await generateAndPlayAudio();
                         } catch (error) {

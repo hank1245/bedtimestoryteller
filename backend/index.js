@@ -405,7 +405,6 @@ app.post(
   (req, res) => {
     // This would handle webhook events from payment providers
     // For now, just acknowledge
-    console.log("Payment webhook received");
     res.status(200).send("OK");
   }
 );
