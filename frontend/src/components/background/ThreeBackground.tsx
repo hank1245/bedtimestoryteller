@@ -4,6 +4,12 @@ import { Stars, Sphere } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import styled from "styled-components";
 import type { Points } from "three";
+import { useIsMobile } from "../../hooks/useIsMobile";
+import {
+  MOON_POSITION_TOP_LEFT,
+  STARS_COUNT_DEFAULT,
+  BACKGROUND_INTENSITY_DEFAULT,
+} from "../../constants/background";
 
 const BackgroundContainer = styled.div<{ $intensity?: number }>`
   position: fixed;
@@ -17,7 +23,7 @@ const BackgroundContainer = styled.div<{ $intensity?: number }>`
 `;
 
 function Moon({
-  position = [-12, 10, -12],
+  position = MOON_POSITION_TOP_LEFT,
 }: {
   position?: [number, number, number];
 }) {
@@ -112,19 +118,24 @@ interface ThreeBackgroundProps {
 }
 
 export default function ThreeBackground({
-  intensity = 1,
-  moonPosition = [-12, 10, -12],
-  starsCount = 300,
+  intensity = BACKGROUND_INTENSITY_DEFAULT,
+  moonPosition = MOON_POSITION_TOP_LEFT,
+  starsCount = STARS_COUNT_DEFAULT,
 }: ThreeBackgroundProps) {
+  const isMobile = useIsMobile();
+
+  // Do not render background on mobile widths
+  if (isMobile) return null;
+
   return (
     <BackgroundContainer $intensity={intensity}>
       <Canvas camera={{ position: [0, 0, 10], fov: 50 }}>
         <Scene moonPosition={moonPosition} starsCount={starsCount} />
         <EffectComposer>
           <Bloom
-            intensity={3}
-            luminanceThreshold={0.65}
-            luminanceSmoothing={0.9}
+            intensity={4}
+            luminanceThreshold={0.854}
+            luminanceSmoothing={0.1}
             height={10}
           />
         </EffectComposer>

@@ -8,7 +8,7 @@ import {
   EmptyStateSubtitle,
 } from "../shared/SharedStyles";
 import StoryItem from "./StoryItem";
-import StoryLoading from "../StoryLoading";
+import StoryLoading from "./StoryLoading";
 import { useRoutePrefetch } from "../../hooks/useRoutePrefetch";
 
 interface Story {

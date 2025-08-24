@@ -1,9 +1,9 @@
 import { CardHeader, CardTitle, CardSubtitle } from "../shared/Card";
 import { FormGroup, FormLabel, FormInput } from "../shared/Form";
-import { ChoiceGrid, ChoiceButton } from "../Choice";
+import { ChoiceGrid, ChoiceButton } from "../shared/Choice";
 import { Button } from "../shared/Button";
 import { ButtonWrapper } from "../shared/ButtonWrapper";
-import { ErrorMessage } from "../Feedback";
+import { ErrorMessage } from "../shared/Feedback";
 import { StepProps } from "../../types";
 import BackButton from "../shared/BackButton";
 

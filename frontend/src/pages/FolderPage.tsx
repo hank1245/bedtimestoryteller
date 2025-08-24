@@ -1,3 +1,8 @@
+import {
+  MOON_POSITION_TOP_LEFT,
+  STARS_COUNT_DEFAULT,
+  BACKGROUND_INTENSITY_DEFAULT,
+} from "../constants/background";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import styled from "styled-components";
@@ -68,9 +73,9 @@ export default function FolderPage() {
         title="Error"
         subtitle="Invalid folder ID"
         backgroundProps={{
-          intensity: 0.4,
-          moonPosition: [-10, 10, -12],
-          starsCount: 100,
+          intensity: BACKGROUND_INTENSITY_DEFAULT,
+          moonPosition: MOON_POSITION_TOP_LEFT,
+          starsCount: STARS_COUNT_DEFAULT,
         }}
         topBarProps={{
           variant: "split",
@@ -90,9 +95,9 @@ export default function FolderPage() {
   return (
     <PageContainer
       backgroundProps={{
-        intensity: 0.4,
-        moonPosition: [-10, 10, -12],
-        starsCount: 100,
+        intensity: BACKGROUND_INTENSITY_DEFAULT,
+        moonPosition: MOON_POSITION_TOP_LEFT,
+        starsCount: STARS_COUNT_DEFAULT,
       }}
       topBarProps={{
         variant: "split",

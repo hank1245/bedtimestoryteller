@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Card } from "../components/shared/Card";
 import { Button } from "../components/shared/Button";
 import { StoryContainer } from "../components/story/StoryContainer";
-import StoryLoading from "../components/StoryLoading";
+import StoryLoading from "../components/story/StoryLoading";
 import styled from "styled-components";
 import { useState } from "react";
 import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
@@ -11,13 +11,19 @@ import { useToast } from "../stores/toastStore";
 import { useAudioPlayer } from "../hooks/useAudioPlayer";
 import { useAudioGenerationStore } from "../stores/audioStore";
 import ThreeBackground from "../components/background/ThreeBackground";
+import {
+  BACKGROUND_INTENSITY_DEFAULT,
+  MOON_POSITION_TOP_LEFT_STORY,
+  STARS_COUNT_DEFAULT,
+} from "../constants/background";
+import { media } from "../constants/ui";
 
 const StoryPageContainer = styled.div`
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
 
-  @media (max-width: 480px) {
+  ${media.mobile} {
     max-width: none;
     margin: 0;
     padding: 0;
@@ -44,7 +50,7 @@ const CompactHeader = styled.div`
     text-align: center;
   }
 
-  @media (max-width: 480px) {
+  ${media.mobile} {
     flex-direction: column;
     gap: 12px;
 
@@ -63,14 +69,14 @@ const TopBar = styled.div`
   right: 20px;
   z-index: 10;
 
-  @media (max-width: 480px) {
+  ${media.mobile} {
     top: 16px;
     right: 16px;
   }
 `;
 
 const DeleteButton = styled(Button)`
-  @media (max-width: 480px) {
+  ${media.mobile} {
     position: relative !important;
     top: 47px !important;
   }
@@ -111,7 +117,7 @@ const ControlsContainer = styled.div`
   width: 100%;
   gap: 16px;
 
-  @media (max-width: 768px) {
+  ${media.tablet} {
     flex-direction: column;
     gap: 12px;
   }
@@ -123,7 +129,7 @@ const AudioControls = styled.div`
   align-items: center;
   flex-wrap: wrap;
 
-  @media (max-width: 768px) {
+  ${media.tablet} {
     justify-content: center;
   }
 `;
@@ -256,7 +262,7 @@ const StoryText = styled.div<{ $fontSize: number }>`
     text-indent: 20px;
   }
 
-  @media (max-width: 480px) {
+  ${media.mobile} {
     font-size: ${(props) => Math.max(props.$fontSize - 1, 12)}px;
     line-height: 1.7;
 
@@ -279,7 +285,7 @@ const Buttons = styled.div`
   left: 20px;
   width: calc(100% - 40px);
 
-  @media (max-width: 480px) {
+  ${media.mobile} {
   }
 `;
 
@@ -414,9 +420,9 @@ export default function StoryPage() {
   return (
     <StoryPageContainer>
       <ThreeBackground
-        intensity={0.3}
-        moonPosition={[-10, 10, -15]}
-        starsCount={80}
+        intensity={BACKGROUND_INTENSITY_DEFAULT}
+        moonPosition={MOON_POSITION_TOP_LEFT_STORY}
+        starsCount={STARS_COUNT_DEFAULT}
       />
       <Card>
         {isLoading ? (

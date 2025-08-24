@@ -9,7 +9,7 @@ import {
   EmptyStateSubtitle,
   scrollableContainerStyles,
 } from "./shared/SharedStyles";
-import StoryLoading from "./StoryLoading";
+import StoryLoading from "./story/StoryLoading";
 import { Folder } from "../hooks/useFolders";
 import { useMemo } from "react";
 import { useRoutePrefetch } from "../hooks/useRoutePrefetch";

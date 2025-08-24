@@ -1,3 +1,8 @@
+import {
+  MOON_POSITION_TOP_LEFT,
+  STARS_COUNT_DEFAULT,
+  BACKGROUND_INTENSITY_DEFAULT,
+} from "../constants/background";
 import { useState } from "react";
 import { useClerk } from "@clerk/clerk-react";
 import styled from "styled-components";
@@ -239,9 +244,9 @@ export default function SettingsPage() {
   return (
     <PageContainer
       backgroundProps={{
-        intensity: 0.4,
-        moonPosition: [-10, 10, -12],
-        starsCount: 100,
+        intensity: BACKGROUND_INTENSITY_DEFAULT,
+        moonPosition: MOON_POSITION_TOP_LEFT,
+        starsCount: STARS_COUNT_DEFAULT,
       }}
       topBarProps={{
         variant: "split",

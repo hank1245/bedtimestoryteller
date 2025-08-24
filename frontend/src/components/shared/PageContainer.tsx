@@ -3,6 +3,11 @@ import { Card, CardHeader, CardTitle, CardSubtitle } from "./Card";
 const ThreeBackground = lazy(() => import("../background/ThreeBackground"));
 import TopBar from "./TopBar";
 import { PageWrapper, ContentWrapper, emojiColorCSS } from "./SharedStyles";
+import {
+  BACKGROUND_INTENSITY_DEFAULT,
+  MOON_POSITION_TOP_LEFT,
+  STARS_COUNT_DEFAULT,
+} from "../../constants/background";
 
 interface ThreeBackgroundProps {
   intensity?: number;
@@ -27,10 +32,9 @@ interface PageContainerProps {
 }
 
 const defaultBackgroundProps: ThreeBackgroundProps = {
-  intensity: 0.4,
-  // Place moon top-left by default so it isn't hidden by content
-  moonPosition: [-10, 10, -12],
-  starsCount: 100,
+  intensity: BACKGROUND_INTENSITY_DEFAULT,
+  moonPosition: MOON_POSITION_TOP_LEFT,
+  starsCount: STARS_COUNT_DEFAULT,
 };
 
 export default function PageContainer({

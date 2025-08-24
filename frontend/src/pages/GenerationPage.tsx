@@ -1,10 +1,15 @@
+import {
+  MOON_POSITION_TOP_LEFT,
+  STARS_COUNT_DEFAULT,
+  BACKGROUND_INTENSITY_DEFAULT,
+} from "../constants/background";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FormData, ProgressBarProps, Pronouns, STEPS } from "../types";
 import { generateStoryWithClaude } from "../services/anthropic";
 import styled from "styled-components";
 import { ProgressBarContainer, ProgressDot } from "../components/ProgressBar";
-import StoryLoading from "../components/StoryLoading";
+import StoryLoading from "../components/story/StoryLoading";
 import AgeAndLengthStep from "../components/steps/AgeAndLengthStep";
 import GenderStep from "../components/steps/GenderStep";
 import InterestsStep from "../components/steps/InterestsStep";
@@ -270,9 +275,9 @@ export default function GenerationPage() {
     <GenerationPageContainer>
       <PageContainer
         backgroundProps={{
-          intensity: 0.5,
-          moonPosition: [-10, 10, -12],
-          starsCount: 120,
+          intensity: BACKGROUND_INTENSITY_DEFAULT,
+          moonPosition: MOON_POSITION_TOP_LEFT,
+          starsCount: STARS_COUNT_DEFAULT,
         }}
         topBarProps={{ showSettings: false }}
       >
