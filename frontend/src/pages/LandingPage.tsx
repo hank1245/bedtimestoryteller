@@ -1,9 +1,11 @@
-import { useRef, useEffect, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Stars, Sphere } from "@react-three/drei";
+import { useRef, useEffect } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Stars } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import type { Mesh, Points } from "three";
+// no local three types needed
+import Moon from "../components/three/Moon";
+import PostFX from "../components/three/PostFX";
 
 const fadeIn = keyframes`
   from {
@@ -25,14 +27,7 @@ const float = keyframes`
   }
 `;
 
-const twinkle = keyframes`
-  0%, 100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-  }
-`;
+// twinkle removed along with scroll indicator
 
 const LandingContainer = styled.div`
   position: relative;
@@ -159,23 +154,7 @@ const CanvasContainer = styled.div`
   z-index: 1;
 `;
 
-const ScrollIndicator = styled.div`
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #ffffff;
-  font-size: 0.9rem;
-  animation: ${twinkle} 2s infinite;
-
-  &::after {
-    content: "↓";
-    display: block;
-    text-align: center;
-    margin-top: 0.5rem;
-    animation: ${float} 2s ease-in-out infinite;
-  }
-`;
+// removed scroll indicator for a cleaner hero
 
 const ProcessSection = styled.div`
   margin-bottom: 4rem;
@@ -258,76 +237,85 @@ const ProcessStepText = styled.p`
   }
 `;
 
-function Moon() {
-  const meshRef = useRef<Mesh>(null);
+// Removed nearby floating particles for a calmer hero
 
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = state.clock.elapsedTime * 0.1;
-    }
-  });
-
-  return (
-    <Sphere ref={meshRef} args={[1, 32, 32]} position={[4, 3, -5]}>
-      <meshLambertMaterial color="#f0f0f0" />
-    </Sphere>
+// Footer styles
+const FooterContainer = styled.footer`
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 24px 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.15) 100%
   );
-}
+`;
 
-function FloatingStars() {
-  const starsRef = useRef<Points>(null);
+const FooterInner = styled.div`
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+  color: #d8deea;
+  font-size: 14px;
 
-  const starPositions = useMemo(() => {
-    const positions = new Float32Array(200 * 3);
-    for (let i = 0; i < 200; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
-    }
-    return positions;
-  }, []);
+  a {
+    color: #eaf0ff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+`;
 
-  useFrame((state) => {
-    if (starsRef.current) {
-      starsRef.current.rotation.y = state.clock.elapsedTime * 0.02;
-    }
-  });
+const BackToTopButton = styled.button`
+  margin-top: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 
-  return (
-    <points ref={starsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={200}
-          array={starPositions}
-          itemSize={3}
-          args={[] as any}
-        />
-      </bufferGeometry>
-      <pointsMaterial color="#ffffff" size={0.1} />
-    </points>
-  );
-}
+  &:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.18);
+  }
+`;
 
 function Scene() {
   return (
     <>
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.12} />
       <directionalLight
         position={[10, 10, 5]}
-        intensity={0.8}
+        intensity={0.5}
         color="#ffffff"
       />
+      {/* distant stars only for a calm feel */}
       <Stars
-        radius={100}
-        depth={50}
-        count={5000}
-        factor={4}
+        radius={120}
+        depth={10}
+        count={2800}
+        factor={3.5}
         saturation={0}
         fade
       />
-      <FloatingStars />
-      <Moon />
+      {/* reusable moon with post FX parity to app */}
+      <Moon position={[-6, 7, -14]} />
+      <PostFX
+        bloomIntensity={2.0}
+        luminanceThreshold={0.55}
+        luminanceSmoothing={0.82}
+      />
     </>
   );
 }
@@ -353,6 +341,10 @@ export default function LandingPage() {
     navigate("/login");
   };
 
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <LandingContainer>
       <CanvasContainer
@@ -372,7 +364,10 @@ export default function LandingPage() {
           <br />
           Listen to soothing narration that brings tales to life
         </Subtitle>
-        <ScrollIndicator>Scroll to learn more</ScrollIndicator>
+        {/* Move Create button right below description */}
+        <CreateButton onClick={handleCreateStories} aria-label="Create stories">
+          Create Stories
+        </CreateButton>
       </Section>
 
       <Section index={1}>
@@ -453,17 +448,41 @@ export default function LandingPage() {
             </ProcessStep>
           </ProcessSteps>
         </ProcessSection>
-        <Title style={{ fontSize: "2.5rem", marginBottom: "2rem" }}>
-          Start Your Journey
+        <Title
+          style={{
+            fontSize: "2.5rem",
+            marginBottom: "20px",
+            marginTop: "150px",
+          }}
+        >
+          Start Your Journey!
         </Title>
-        <Subtitle style={{ marginBottom: "3rem" }}>
-          Enter a world of magical storytelling adventures
-        </Subtitle>
-        <CreateButton onClick={handleCreateStories}>
-          Create Stories
-        </CreateButton>
+        <BackToTopButton onClick={handleBackToTop} aria-label="Back to top">
+          ↑ Back to top
+        </BackToTopButton>
+        {/* CTA now lives in the first section; keep section light */}
         <div style={{ paddingBottom: "2rem" }}></div>
       </Section>
+
+      <FooterContainer>
+        <FooterInner>
+          <div>
+            Contact:{" "}
+            <a href="mailto:hank29206880@gmail.com">hank29206880@gmail.com</a>
+          </div>
+          <div>
+            Built by Hank Kim · GitHub:{" "}
+            <a
+              href="https://github.com/hank1245/bedtimestoryteller"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open GitHub repository in a new tab"
+            >
+              hank1245/bedtimestoryteller
+            </a>
+          </div>
+        </FooterInner>
+      </FooterContainer>
     </LandingContainer>
   );
 }
