@@ -1,14 +1,16 @@
 import styled from "styled-components";
 
 export const Card = styled.div`
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
+  /* Make container opaque to avoid translucency */
+  background: rgba(18, 24, 38, 0.95);
+  backdrop-filter: none;
   border: 1px solid var(--card-border);
   border-radius: 24px;
   padding: 32px;
   box-shadow: var(--shadow-medium);
   position: relative;
   overflow: hidden;
+  z-index: 1;
   height: 768px;
   box-sizing: border-box;
   width: 100%;
@@ -35,7 +37,7 @@ export const Card = styled.div`
     margin: 0;
     padding: 24px 16px;
     border-radius: 0;
-    backdrop-filter: blur(10px);
+    backdrop-filter: none;
     border: none;
     max-width: none;
   }

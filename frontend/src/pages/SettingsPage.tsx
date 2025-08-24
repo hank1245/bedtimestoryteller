@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useClerk } from "@clerk/clerk-react";
 import styled from "styled-components";
-import { CardTitle, CardSubtitle } from "../components/Card";
-import { Button } from "../components/Button";
+import { CardTitle, CardSubtitle } from "../components/shared/Card";
+import { Button } from "../components/shared/Button";
 import { useToast } from "../stores/toastStore";
 import PageContainer from "../components/shared/PageContainer";
 import BackButton from "../components/shared/BackButton";
@@ -240,7 +240,7 @@ export default function SettingsPage() {
     <PageContainer
       backgroundProps={{
         intensity: 0.4,
-        moonPosition: [5, 6, -10],
+        moonPosition: [-10, 10, -12],
         starsCount: 100,
       }}
       topBarProps={{

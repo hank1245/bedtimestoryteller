@@ -1,7 +1,7 @@
-import { CardHeader, CardTitle, CardSubtitle } from "../Card";
+import { CardHeader, CardTitle, CardSubtitle } from "../shared/Card";
 import { ChoiceGrid, ChoiceButton } from "../Choice";
-import { Button } from "../Button";
-import { ButtonWrapper } from "../ButtonWrapper";
+import { Button } from "../shared/Button";
+import { ButtonWrapper } from "../shared/ButtonWrapper";
 import { StepProps } from "../../types";
 import { Mars, Venus, NonBinary } from "lucide-react";
 import BackButton from "../shared/BackButton";

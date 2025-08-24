@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
     --accent-pink: #ff6b9d;
     --text-primary: #ffffff;
     --text-secondary: #b8c5d1;
+  --primary-color: #7aa2ff;
     --card-bg: rgba(255, 255, 255, 0.05);
     --card-border: rgba(255, 255, 255, 0.1);
     --button-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

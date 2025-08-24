@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Button } from "./Button";
+import { Button } from "./shared/Button";
 import {
   ListContainer,
   EmptyStateContainer,

@@ -1,14 +1,14 @@
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import styled from "styled-components";
-import { CardHeader, CardTitle, CardSubtitle } from "../components/Card";
+import { CardHeader, CardTitle, CardSubtitle } from "../components/shared/Card";
 import {
   useFolderStories,
   useFolders,
   useRemoveStoryFromFolder,
 } from "../hooks/useFolders";
 import { useToast } from "../stores/toastStore";
-import StoryList from "../components/StoryList";
+import StoryList from "../components/story/StoryList";
 import BackButton from "../components/shared/BackButton";
 import PageContainer from "../components/shared/PageContainer";
 
@@ -69,7 +69,7 @@ export default function FolderPage() {
         subtitle="Invalid folder ID"
         backgroundProps={{
           intensity: 0.4,
-          moonPosition: [5, 6, -10],
+          moonPosition: [-10, 10, -12],
           starsCount: 100,
         }}
         topBarProps={{
@@ -91,7 +91,7 @@ export default function FolderPage() {
     <PageContainer
       backgroundProps={{
         intensity: 0.4,
-        moonPosition: [5, 6, -10],
+        moonPosition: [-10, 10, -12],
         starsCount: 100,
       }}
       topBarProps={{

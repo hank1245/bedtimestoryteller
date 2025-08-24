@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Button } from "../Button";
+import { Button } from "./Button";
 import { useRoutePrefetch } from "../../hooks/useRoutePrefetch";
 
 const TopBarContainer = styled.div<{ $variant: "single" | "split" }>`
@@ -13,7 +13,7 @@ const TopBarContainer = styled.div<{ $variant: "single" | "split" }>`
   top: 20px;
   right: 20px;
   ${(props) => (props.$variant === "split" ? "left: 20px;" : "")}
-  z-index: 10;
+  z-index: 2;
 
   @media (max-width: 480px) {
     top: 16px;

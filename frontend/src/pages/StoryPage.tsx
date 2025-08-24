@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Card } from "../components/Card";
-import { Button } from "../components/Button";
-import { StoryContainer } from "../components/StoryContainer";
+import { Card } from "../components/shared/Card";
+import { Button } from "../components/shared/Button";
+import { StoryContainer } from "../components/story/StoryContainer";
 import StoryLoading from "../components/StoryLoading";
 import styled from "styled-components";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { useStory, useDeleteStory } from "../hooks/useStories";
 import { useToast } from "../stores/toastStore";
 import { useAudioPlayer } from "../hooks/useAudioPlayer";
 import { useAudioGenerationStore } from "../stores/audioStore";
-import ThreeBackground from "../components/ThreeBackground";
+import ThreeBackground from "../components/background/ThreeBackground";
 
 const StoryPageContainer = styled.div`
   width: 100%;
@@ -415,7 +415,7 @@ export default function StoryPage() {
     <StoryPageContainer>
       <ThreeBackground
         intensity={0.3}
-        moonPosition={[3, 6, -15]}
+        moonPosition={[-10, 10, -15]}
         starsCount={80}
       />
       <Card>

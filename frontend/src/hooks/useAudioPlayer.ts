@@ -40,13 +40,9 @@ export const useAudioPlayer = ({
   const uploadAudioMutation = useUploadAudio();
   const { addToast } = useToast();
   const { getToken } = useAuth();
-  
+
   // 전역 오디오 생성 상태 관리
-  const { 
-    isGeneratingAudio, 
-    setIsGeneratingAudio, 
-    canGenerateAudio 
-  } = useAudioGenerationStore();
+  const { setIsGeneratingAudio, canGenerateAudio } = useAudioGenerationStore();
 
   // API URL 환경변수
   const API_BASE_URL =
@@ -149,7 +145,6 @@ export const useAudioPlayer = ({
   };
 
   const generateAndPlayAudio = async () => {
-
     // 전역 상태에서 오디오 생성 가능 여부 확인
     if (!canGenerateAudio()) {
       addToast("warning", "Audio is currently being generated. Please wait...");
@@ -231,7 +226,6 @@ export const useAudioPlayer = ({
       const cleanText = cleanTextForSpeech(story);
       const selectedVoiceConfig = voices[selectedVoice];
 
-
       if (!selectedVoiceConfig) {
         throw new Error(`Voice configuration not found for: ${selectedVoice}`);
       }
@@ -246,7 +240,6 @@ export const useAudioPlayer = ({
         instructions:
           "A tone for reading bedtime stories to children. Calm and very slowly, with emotion in each word, pausing for 1.5 second between sentences or paragraphs.",
       });
-
 
       // Upload audio to server if storyId exists
       if (storyId) {
@@ -343,7 +336,6 @@ export const useAudioPlayer = ({
 
   const togglePlayPause = async () => {
     if (!currentAudio) return;
-
 
     try {
       if (isPlaying) {

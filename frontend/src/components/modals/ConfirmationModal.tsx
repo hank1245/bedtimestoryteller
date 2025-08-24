@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Button } from "../Button";
+import { Button } from "../shared/Button";
 import { Modal, ModalContent } from "../shared/SharedStyles";
 
 const StyledModalContent = styled(ModalContent)`
@@ -58,7 +58,7 @@ export default function ConfirmationModal({
   confirmText = "Confirm",
   cancelText = "Cancel",
   isLoading = false,
-  isDanger = false
+  isDanger = false,
 }: ConfirmationModalProps) {
   if (!isOpen) return null;
 

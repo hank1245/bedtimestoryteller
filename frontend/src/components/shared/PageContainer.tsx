@@ -1,6 +1,6 @@
 import { Suspense, lazy } from "react";
-import { Card, CardHeader, CardTitle, CardSubtitle } from "../Card";
-const ThreeBackground = lazy(() => import("../ThreeBackground"));
+import { Card, CardHeader, CardTitle, CardSubtitle } from "./Card";
+const ThreeBackground = lazy(() => import("../background/ThreeBackground"));
 import TopBar from "./TopBar";
 import { PageWrapper, ContentWrapper, emojiColorCSS } from "./SharedStyles";
 
@@ -28,7 +28,8 @@ interface PageContainerProps {
 
 const defaultBackgroundProps: ThreeBackgroundProps = {
   intensity: 0.4,
-  moonPosition: [5, 6, -10],
+  // Place moon top-left by default so it isn't hidden by content
+  moonPosition: [-10, 10, -12],
   starsCount: 100,
 };
 

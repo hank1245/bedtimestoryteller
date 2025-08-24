@@ -10,7 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Suspense, lazy } from "react";
 import { ToastContainer } from "./components/ToastProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AuthSetup from "./components/AuthSetup";
+import AuthSetup from "./components/shared/AuthSetup";
 import GlobalStyle from "./GlobalStyle";
 import RouteLoader from "./components/RouteLoader";
 import { routeImporters } from "./lib/routeImporters";

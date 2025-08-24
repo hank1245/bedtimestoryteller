@@ -1,5 +1,11 @@
-import { Button } from "../Button";
-import { Modal, ModalContent, Input, TextArea, ModalButtons } from "../shared/SharedStyles";
+import { Button } from "../shared/Button";
+import {
+  Modal,
+  ModalContent,
+  Input,
+  TextArea,
+  ModalButtons,
+} from "../shared/SharedStyles";
 
 interface CreateFolderModalProps {
   isOpen: boolean;
@@ -16,7 +22,7 @@ export default function CreateFolderModal({
   onSubmit,
   formData,
   onFormChange,
-  isCreating
+  isCreating,
 }: CreateFolderModalProps) {
   if (!isOpen) return null;
 
@@ -27,7 +33,9 @@ export default function CreateFolderModal({
   return (
     <Modal onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
-        <h3 style={{ marginTop: 0, color: 'var(--text-primary)' }}>Create New Folder</h3>
+        <h3 style={{ marginTop: 0, color: "var(--text-primary)" }}>
+          Create New Folder
+        </h3>
         <Input
           type="text"
           placeholder="Folder name"
@@ -37,14 +45,16 @@ export default function CreateFolderModal({
         <TextArea
           placeholder="Description (optional)"
           value={formData.description}
-          onChange={(e) => onFormChange({ ...formData, description: e.target.value })}
+          onChange={(e) =>
+            onFormChange({ ...formData, description: e.target.value })
+          }
         />
         <ModalButtons>
           <Button $secondary onClick={onClose}>
             Cancel
           </Button>
           <Button $primary onClick={handleSubmit} disabled={isCreating}>
-            {isCreating ? 'Creating...' : 'Create Folder'}
+            {isCreating ? "Creating..." : "Create Folder"}
           </Button>
         </ModalButtons>
       </ModalContent>

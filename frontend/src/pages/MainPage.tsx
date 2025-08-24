@@ -9,15 +9,15 @@ import {
 } from "../hooks/useFolders";
 import { useToast } from "../stores/toastStore";
 import PageContainer from "../components/shared/PageContainer";
-import TabNavigation from "../components/TabNavigation";
-import StoryList from "../components/StoryList";
+import TabNavigation from "../components/navigation/TabNavigation";
+import StoryList from "../components/story/StoryList";
 import FolderList from "../components/FolderList";
 import CreateFolderModal from "../components/modals/CreateFolderModal";
 import AddStoryToFolderModal from "../components/modals/AddStoryToFolderModal";
 import ConfirmationModal from "../components/modals/ConfirmationModal";
-import { Button } from "../components/Button";
+import { Button } from "../components/shared/Button";
 import styled from "styled-components";
-import { CardHeader, CardTitle, CardSubtitle } from "../components/Card";
+import { CardHeader, CardTitle, CardSubtitle } from "../components/shared/Card";
 import { useRoutePrefetch } from "../hooks/useRoutePrefetch";
 
 const ContentWrapper = styled.div`
@@ -161,7 +161,7 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
     <PageContainer
       backgroundProps={{
         intensity: 0.4,
-        moonPosition: [5, 6, -10],
+        moonPosition: [-10, 10, -12],
         starsCount: 100,
       }}
       topBarProps={{

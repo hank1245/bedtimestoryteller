@@ -1,8 +1,8 @@
-import { CardHeader, CardTitle, CardSubtitle } from "../Card";
-import { FormGroup, FormLabel, FormInput } from "../Form";
+import { CardHeader, CardTitle, CardSubtitle } from "../shared/Card";
+import { FormGroup, FormLabel, FormInput } from "../shared/Form";
 import { ChoiceGrid, ChoiceButton } from "../Choice";
-import { Button } from "../Button";
-import { ButtonWrapper } from "../ButtonWrapper";
+import { Button } from "../shared/Button";
+import { ButtonWrapper } from "../shared/ButtonWrapper";
 import { StepProps } from "../../types";
 import BackButton from "../shared/BackButton";
 import styled from "styled-components";

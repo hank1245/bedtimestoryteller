@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { FormData, ProgressBarProps, Pronouns, STEPS } from "../types";
 import { generateStoryWithClaude } from "../services/anthropic";
 import styled from "styled-components";
-import { Card } from "../components/Card";
 import { ProgressBarContainer, ProgressDot } from "../components/ProgressBar";
 import StoryLoading from "../components/StoryLoading";
 import AgeAndLengthStep from "../components/steps/AgeAndLengthStep";
@@ -214,9 +213,7 @@ export default function GenerationPage() {
             value={formData.age}
             onChange={(value: number) => updateFormData("age", value)}
             lengthValue={formData.length}
-            onLengthChange={(value: string) =>
-              updateFormData("length", value)
-            }
+            onLengthChange={(value: string) => updateFormData("length", value)}
             onNext={nextStep}
             onPrev={goToHome}
             canProceed={canProceed()}
@@ -236,9 +233,7 @@ export default function GenerationPage() {
         return (
           <InterestsStep
             values={formData.interests}
-            onChange={(values: string[]) =>
-              updateFormData("interests", values)
-            }
+            onChange={(values: string[]) => updateFormData("interests", values)}
             onNext={nextStep}
             onPrev={prevStep}
             canProceed={canProceed()}
@@ -276,7 +271,7 @@ export default function GenerationPage() {
       <PageContainer
         backgroundProps={{
           intensity: 0.5,
-          moonPosition: [-4, 7, -12],
+          moonPosition: [-10, 10, -12],
           starsCount: 120,
         }}
         topBarProps={{ showSettings: false }}

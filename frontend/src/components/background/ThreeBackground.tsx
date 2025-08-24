@@ -11,14 +11,13 @@ const BackgroundContainer = styled.div<{ $intensity?: number }>`
   left: 0;
   width: 100%;
   height: 100%;
-  /* Put background above page background but behind main content chrome */
-  z-index: 0;
+  z-index: -1;
   opacity: 1;
   pointer-events: none;
 `;
 
 function Moon({
-  position = [-8, 8, -12],
+  position = [-12, 10, -12],
 }: {
   position?: [number, number, number];
 }) {
@@ -114,7 +113,7 @@ interface ThreeBackgroundProps {
 
 export default function ThreeBackground({
   intensity = 1,
-  moonPosition = [-8, 8, -12],
+  moonPosition = [-12, 10, -12],
   starsCount = 300,
 }: ThreeBackgroundProps) {
   return (
