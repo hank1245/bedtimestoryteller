@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../Button";
+import { useRoutePrefetch } from "../../hooks/useRoutePrefetch";
 
 const TopBarContainer = styled.div<{ $variant: "single" | "split" }>`
   display: flex;
@@ -33,12 +34,20 @@ export default function TopBar({
   showSettings = true,
 }: TopBarProps) {
   const navigate = useNavigate();
+  const settingsPrefetch = useRoutePrefetch("settings");
 
   return (
     <TopBarContainer $variant={variant}>
       {leftContent}
       {showSettings && (
-        <Button $secondary $small onClick={() => navigate("/app/settings")}>
+        <Button
+          $secondary
+          $small
+          onClick={() => navigate("/app/settings")}
+          onMouseEnter={settingsPrefetch.onMouseEnter}
+          onFocus={settingsPrefetch.onFocus}
+          onTouchStart={settingsPrefetch.onTouchStart}
+        >
           Settings
         </Button>
       )}

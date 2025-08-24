@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import styled, { keyframes } from "styled-components";
 import { X, CheckCircle, AlertCircle, Info } from "lucide-react";
 import { useToastStore, ToastType } from "../stores/toastStore";
@@ -169,9 +169,18 @@ export const ToastContainer: React.FC = () => {
   }
 
   return (
-    <ToastContainerStyled>
+    <ToastContainerStyled
+      role="region"
+      aria-live="polite"
+      aria-label="Notifications"
+    >
       {toasts.map((toast) => (
-        <ToastItem key={toast.id} $type={toast.type}>
+        <ToastItem
+          key={toast.id}
+          $type={toast.type}
+          role="status"
+          aria-live="polite"
+        >
           <ToastIcon>{getToastIcon(toast.type)}</ToastIcon>
           <ToastMessage>{toast.message}</ToastMessage>
           {toast.isConfirm ? (

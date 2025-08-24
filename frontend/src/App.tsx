@@ -7,17 +7,14 @@ import {
 } from "react-router-dom";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Suspense, lazy } from "react";
 import { ToastContainer } from "./components/ToastProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthSetup from "./components/AuthSetup";
-import MainPage from "./pages/MainPage";
-import GenerationPage from "./pages/GenerationPage";
-import StoryPage from "./pages/StoryPage";
-import LoginPage from "./pages/LoginPage";
-import SettingsPage from "./pages/SettingsPage";
-import FolderPage from "./pages/FolderPage";
 import GlobalStyle from "./GlobalStyle";
-import LandingPage from "./pages/LandingPage";
+import RouteLoader from "./components/RouteLoader";
+import { routeImporters } from "./lib/routeImporters";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -30,6 +27,14 @@ const queryClient = new QueryClient({
   },
 });
 
+const LandingPage = lazy(routeImporters.root);
+const LoginPage = lazy(routeImporters.login);
+const MainPage = lazy(routeImporters.app);
+const GenerationPage = lazy(routeImporters.create);
+const SettingsPage = lazy(routeImporters.settings);
+const StoryPage = lazy(routeImporters.story);
+const FolderPage = lazy(routeImporters.folder);
+
 function HomeRoute() {
   return (
     <>
@@ -37,7 +42,9 @@ function HomeRoute() {
         <Navigate to="/app" replace />
       </SignedIn>
       <SignedOut>
-        <LandingPage />
+        <Suspense fallback={<RouteLoader text="Loading..." />}>
+          <LandingPage />
+        </Suspense>
       </SignedOut>
     </>
   );
@@ -49,12 +56,21 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomeRoute />} />
-      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/login"
+        element={
+          <Suspense fallback={<RouteLoader text="Opening login..." />}>
+            <LoginPage />
+          </Suspense>
+        }
+      />
       <Route
         path="/app"
         element={
           <ProtectedRoute>
-            <MainPage onCreate={() => navigate("/app/create")} />
+            <Suspense fallback={<RouteLoader text="Loading your stories..." />}>
+              <MainPage onCreate={() => navigate("/app/create")} />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -62,7 +78,9 @@ function AppRoutes() {
         path="/app/create"
         element={
           <ProtectedRoute>
-            <GenerationPage />
+            <Suspense fallback={<RouteLoader text="Preparing studio..." />}>
+              <GenerationPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -70,7 +88,9 @@ function AppRoutes() {
         path="/app/settings"
         element={
           <ProtectedRoute>
-            <SettingsPage />
+            <Suspense fallback={<RouteLoader text="Opening settings..." />}>
+              <SettingsPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -78,7 +98,9 @@ function AppRoutes() {
         path="/app/story"
         element={
           <ProtectedRoute>
-            <StoryPage />
+            <Suspense fallback={<RouteLoader text="Loading story..." />}>
+              <StoryPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -86,7 +108,9 @@ function AppRoutes() {
         path="/app/folder/:folderId"
         element={
           <ProtectedRoute>
-            <FolderPage />
+            <Suspense fallback={<RouteLoader text="Opening folder..." />}>
+              <FolderPage />
+            </Suspense>
           </ProtectedRoute>
         }
       />
@@ -98,7 +122,6 @@ function AppRoutes() {
 export default function App() {
   const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-
   if (!clerkPublishableKey) {
     throw new Error("Missing Clerk Publishable Key");
   }
@@ -109,7 +132,9 @@ export default function App() {
         <AuthSetup>
           <BrowserRouter>
             <GlobalStyle />
-            <AppRoutes />
+            <ErrorBoundary>
+              <AppRoutes />
+            </ErrorBoundary>
             <ToastContainer />
           </BrowserRouter>
         </AuthSetup>

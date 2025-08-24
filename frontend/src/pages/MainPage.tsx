@@ -18,6 +18,7 @@ import ConfirmationModal from "../components/modals/ConfirmationModal";
 import { Button } from "../components/Button";
 import styled from "styled-components";
 import { CardHeader, CardTitle, CardSubtitle } from "../components/Card";
+import { useRoutePrefetch } from "../hooks/useRoutePrefetch";
 
 const ContentWrapper = styled.div`
   flex: 1;
@@ -33,6 +34,7 @@ const StyledCardHeader = styled(CardHeader)`
 `;
 
 export default function MainPage({ onCreate }: { onCreate: () => void }) {
+  const createPrefetch = useRoutePrefetch("create");
   const { addToast } = useToast();
   const [searchParams] = useSearchParams();
 
@@ -198,7 +200,14 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
         )}
       </ContentWrapper>
 
-      <Button $primary onClick={onCreate} style={{ bottom: -30 }}>
+      <Button
+        $primary
+        onClick={onCreate}
+        style={{ bottom: -30 }}
+        onMouseEnter={createPrefetch.onMouseEnter}
+        onFocus={createPrefetch.onFocus}
+        onTouchStart={createPrefetch.onTouchStart}
+      >
         Create Another Story
       </Button>
 

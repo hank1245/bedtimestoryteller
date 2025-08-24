@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, Sphere } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import * as THREE from "three";
+import type { Mesh, Points } from "three";
 
 const fadeIn = keyframes`
   from {
@@ -189,7 +189,7 @@ const ProcessTitle = styled.h2`
   text-align: center;
   margin-bottom: 3rem;
   font-weight: 300;
-  
+
   @media (max-width: 768px) {
     font-size: 2rem;
   }
@@ -199,7 +199,7 @@ const ProcessSteps = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  
+
   @media (max-width: 768px) {
     gap: 1rem;
   }
@@ -214,18 +214,18 @@ const ProcessStep = styled.div`
   border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
-  
+
   &:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateX(10px);
   }
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     text-align: center;
     gap: 1rem;
     padding: 1rem;
-    
+
     &:hover {
       transform: none;
     }
@@ -252,14 +252,14 @@ const ProcessStepText = styled.p`
   font-size: 1.1rem;
   margin: 0;
   line-height: 1.4;
-  
+
   @media (max-width: 768px) {
     font-size: 1rem;
   }
 `;
 
 function Moon() {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -275,7 +275,7 @@ function Moon() {
 }
 
 function FloatingStars() {
-  const starsRef = useRef<THREE.Points>(null);
+  const starsRef = useRef<Points>(null);
 
   const starPositions = useMemo(() => {
     const positions = new Float32Array(200 * 3);
@@ -355,7 +355,11 @@ export default function LandingPage() {
 
   return (
     <LandingContainer>
-      <CanvasContainer ref={containerRef}>
+      <CanvasContainer
+        ref={containerRef}
+        role="presentation"
+        aria-hidden="true"
+      >
         <Canvas camera={{ position: [0, 0, 10], fov: 60 }}>
           <Scene />
         </Canvas>
@@ -376,48 +380,48 @@ export default function LandingPage() {
           <FeatureCard>
             <FeatureTitle>✨ Free Trial</FeatureTitle>
             <FeatureText>
-              Sign up and create up to 5 magical bedtime stories for free. 
-              AI crafts your unique tales with endless possibilities.
+              Sign up and create up to 5 magical bedtime stories for free. AI
+              crafts your unique tales with endless possibilities.
             </FeatureText>
           </FeatureCard>
 
           <FeatureCard>
             <FeatureTitle>🎭 Personalized Stories</FeatureTitle>
             <FeatureText>
-              Choose your characters, settings, and themes. 
-              AI creates completely original stories tailored to your preferences.
+              Choose your characters, settings, and themes. AI creates
+              completely original stories tailored to your preferences.
             </FeatureText>
           </FeatureCard>
 
           <FeatureCard>
             <FeatureTitle>🎵 Audio Narration</FeatureTitle>
             <FeatureText>
-              Listen to your stories with soothing, warm narration. 
-              Perfect for bedtime with calming voice options.
+              Listen to your stories with soothing, warm narration. Perfect for
+              bedtime with calming voice options.
             </FeatureText>
           </FeatureCard>
 
           <FeatureCard>
             <FeatureTitle>📚 Story Library</FeatureTitle>
             <FeatureText>
-              Save and revisit all your created stories. 
-              Build your personal collection of magical tales.
+              Save and revisit all your created stories. Build your personal
+              collection of magical tales.
             </FeatureText>
           </FeatureCard>
 
           <FeatureCard>
             <FeatureTitle>🎯 Age-Appropriate</FeatureTitle>
             <FeatureText>
-              Stories tailored for ages 2-12 with appropriate length and complexity. 
-              Choose from short, medium, or long story formats.
+              Stories tailored for ages 2-12 with appropriate length and
+              complexity. Choose from short, medium, or long story formats.
             </FeatureText>
           </FeatureCard>
 
           <FeatureCard>
             <FeatureTitle>🌟 Multiple Themes</FeatureTitle>
             <FeatureText>
-              From funny adventures to gentle learning tales. 
-              Pick story styles and moral lessons that matter to you.
+              From funny adventures to gentle learning tales. Pick story styles
+              and moral lessons that matter to you.
             </FeatureText>
           </FeatureCard>
         </FeaturesContainer>

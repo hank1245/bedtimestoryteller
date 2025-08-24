@@ -1,5 +1,6 @@
+import { Suspense, lazy } from "react";
 import { Card, CardHeader, CardTitle, CardSubtitle } from "../Card";
-import ThreeBackground from "../ThreeBackground";
+const ThreeBackground = lazy(() => import("../ThreeBackground"));
 import TopBar from "./TopBar";
 import { PageWrapper, ContentWrapper, emojiColorCSS } from "./SharedStyles";
 
@@ -16,7 +17,7 @@ interface PageContainerProps {
   emoji?: string;
   backgroundProps?: ThreeBackgroundProps;
   topBarProps?: {
-    variant?: 'single' | 'split';
+    variant?: "single" | "split";
     leftContent?: React.ReactNode;
     showSettings?: boolean;
   };
@@ -44,39 +45,42 @@ export default function PageContainer({
 }: PageContainerProps) {
   return (
     <>
-      <ThreeBackground {...backgroundProps} />
+      <Suspense fallback={null}>
+        <ThreeBackground {...backgroundProps} />
+      </Suspense>
       <Card>
         <TopBar {...topBarProps} />
-        
+
         <PageWrapper>
           <ContentWrapper>
             {(title || subtitle) && (
               <CardHeader style={{ marginTop: 20 }}>
                 {title && (
                   <CardTitle>
-                    {emoji && <span className="emoji-color">{emoji}</span>} {title}
+                    {emoji && <span className="emoji-color">{emoji}</span>}{" "}
+                    {title}
                   </CardTitle>
                 )}
                 {subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
               </CardHeader>
             )}
-            
+
             {children}
           </ContentWrapper>
-          
+
           {showBottomButton && onBottomButtonClick && bottomButtonText && (
             <button
               onClick={onBottomButtonClick}
-              style={{ 
+              style={{
                 bottom: -30,
-                background: 'var(--primary-color)',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '12px 24px',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: '600'
+                background: "var(--primary-color)",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                padding: "12px 24px",
+                cursor: "pointer",
+                fontSize: "16px",
+                fontWeight: "600",
               }}
             >
               {bottomButtonText}

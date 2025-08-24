@@ -1,9 +1,11 @@
+import { memo } from "react";
 import {
   StoryItemContainer,
   StoryContent,
   StoryTags,
   HashTag,
 } from "./shared/SharedStyles";
+import { useRoutePrefetch } from "../hooks/useRoutePrefetch";
 
 interface Story {
   id: number;
@@ -21,13 +23,14 @@ interface StoryItemProps {
   isRemoving?: boolean;
 }
 
-export default function StoryItem({
+function StoryItem({
   story,
   onClick,
   showRemoveButton = false,
   onRemove,
   isRemoving = false,
 }: StoryItemProps) {
+  const prefetch = useRoutePrefetch("story");
   return (
     <li
       style={{
@@ -39,17 +42,28 @@ export default function StoryItem({
         listStyle: "none",
       }}
       onClick={onClick}
+      onMouseEnter={prefetch.onMouseEnter}
+      onFocus={prefetch.onFocus}
+      onTouchStart={prefetch.onTouchStart}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
     >
       <StoryItemContainer>
         <StoryContent>
           <div style={{ fontWeight: 600, fontSize: 18 }}>{story.title}</div>
           <div style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}>
-            {new Date(story.created_at).toLocaleString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
+            {new Date(story.created_at).toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
             })}
           </div>
         </StoryContent>
@@ -83,3 +97,12 @@ export default function StoryItem({
     </li>
   );
 }
+
+export default memo(StoryItem, (prev, next) => {
+  return (
+    prev.story.id === next.story.id &&
+    prev.story.title === next.story.title &&
+    prev.showRemoveButton === next.showRemoveButton &&
+    prev.isRemoving === next.isRemoving
+  );
+});

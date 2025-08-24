@@ -9,6 +9,7 @@ import {
 } from "./shared/SharedStyles";
 import StoryItem from "./StoryItem";
 import StoryLoading from "./StoryLoading";
+import { useRoutePrefetch } from "../hooks/useRoutePrefetch";
 
 interface Story {
   id: number;
@@ -41,6 +42,7 @@ export default function StoryList({
   emptyStateMessage,
 }: StoryListProps) {
   const navigate = useNavigate();
+  const prefetchStory = useRoutePrefetch("story");
 
   const handleStoryClick = (storyId: number, title: string) => {
     navigate("/app/story", {
@@ -74,7 +76,11 @@ export default function StoryList({
           </EmptyStateSubtitle>
         </EmptyStateContainer>
       ) : (
-        <StyledStoryList>
+        <StyledStoryList
+          onMouseEnter={prefetchStory.onMouseEnter}
+          onFocus={prefetchStory.onFocus}
+          onTouchStart={prefetchStory.onTouchStart}
+        >
           {stories.map((story) => (
             <StoryItem
               key={story.id}

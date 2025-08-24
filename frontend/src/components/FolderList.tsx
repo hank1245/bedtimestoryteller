@@ -11,6 +11,8 @@ import {
 } from "./shared/SharedStyles";
 import StoryLoading from "./StoryLoading";
 import { Folder } from "../hooks/useFolders";
+import { useMemo } from "react";
+import { useRoutePrefetch } from "../hooks/useRoutePrefetch";
 
 const AddFolderButton = styled(Button)`
   margin-bottom: 20px;
@@ -108,6 +110,7 @@ export default function FolderList({
   isDeleting = false,
 }: FolderListProps) {
   const navigate = useNavigate();
+  const prefetchFolder = useRoutePrefetch("folder");
 
   const handleFolderClick = (folderId: number) => {
     navigate(`/app/folder/${folderId}`);
@@ -131,44 +134,62 @@ export default function FolderList({
         </EmptyStateContainer>
       ) : (
         <FolderListContainer>
-          {folders.map((folder) => (
-            <FolderItem
-              key={folder.id}
-              onClick={() => handleFolderClick(folder.id)}
-            >
-              <FolderHeader>
-                <FolderName>{folder.name}</FolderName>
-                <FolderActions>
-                  <AddStoriesButton
-                    $secondary
-                    $small
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onAddStoriesToFolder(folder.id);
-                    }}
-                  >
-                    Add Stories
-                  </AddStoriesButton>
-                  <DeleteButton
-                    $small
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteFolder(folder.id);
-                    }}
-                    disabled={isDeleting}
-                  >
-                    {isDeleting ? "Deleting..." : "Delete"}
-                  </DeleteButton>
-                </FolderActions>
-              </FolderHeader>
-              {folder.description && (
-                <FolderDescription>{folder.description}</FolderDescription>
-              )}
-              <div style={{ fontSize: 12, color: "#aaa", marginTop: 8 }}>
-                Created: {new Date(folder.created_at).toLocaleDateString()}
-              </div>
-            </FolderItem>
-          ))}
+          {useMemo(
+            () =>
+              folders.map((folder) => (
+                <FolderItem
+                  key={folder.id}
+                  onClick={() => handleFolderClick(folder.id)}
+                  onMouseEnter={prefetchFolder.onMouseEnter}
+                  onFocus={prefetchFolder.onFocus}
+                  onTouchStart={prefetchFolder.onTouchStart}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleFolderClick(folder.id);
+                    }
+                  }}
+                >
+                  <FolderHeader>
+                    <FolderName>{folder.name}</FolderName>
+                    <FolderActions>
+                      <AddStoriesButton
+                        $secondary
+                        $small
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onAddStoriesToFolder(folder.id);
+                        }}
+                        onMouseEnter={prefetchFolder.onMouseEnter}
+                        onFocus={prefetchFolder.onFocus}
+                        onTouchStart={prefetchFolder.onTouchStart}
+                      >
+                        Add Stories
+                      </AddStoriesButton>
+                      <DeleteButton
+                        $small
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteFolder(folder.id);
+                        }}
+                        disabled={isDeleting}
+                      >
+                        {isDeleting ? "Deleting..." : "Delete"}
+                      </DeleteButton>
+                    </FolderActions>
+                  </FolderHeader>
+                  {folder.description && (
+                    <FolderDescription>{folder.description}</FolderDescription>
+                  )}
+                  <div style={{ fontSize: 12, color: "#aaa", marginTop: 8 }}>
+                    Created: {new Date(folder.created_at).toLocaleDateString()}
+                  </div>
+                </FolderItem>
+              )),
+            [folders, isDeleting]
+          )}
         </FolderListContainer>
       )}
     </ListContainer>

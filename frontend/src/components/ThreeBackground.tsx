@@ -3,7 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, Sphere } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import styled from "styled-components";
-import * as THREE from "three";
+import type { Points } from "three";
 
 const BackgroundContainer = styled.div<{ $intensity?: number }>`
   position: fixed;
@@ -38,7 +38,7 @@ function Moon({
 }
 
 function FloatingStars({ count = 300 }: { count?: number }) {
-  const starsRef = useRef<THREE.Points>(null);
+  const starsRef = useRef<Points>(null);
 
   const starPositions = useMemo(() => {
     const positions = new Float32Array(count * 3);
