@@ -1,4 +1,5 @@
 import { memo, useEffect, useState } from "react";
+import styled from "styled-components";
 import {
   StoryItemContainer,
   StoryContent,
@@ -23,6 +24,11 @@ interface StoryItemProps {
   onRemove?: () => void;
   isRemoving?: boolean;
 }
+
+// Invisible placeholder that reserves the same space as the visible audio tag
+const AudioBadgePlaceholder = styled(HashTag)`
+  visibility: hidden;
+`;
 
 function StoryItem({
   story,
@@ -99,7 +105,13 @@ function StoryItem({
         <StoryTags>
           {story.age && <HashTag $color="green">#Age {story.age}</HashTag>}
           {story.length && <HashTag $color="yellow">#{story.length}</HashTag>}
-          {hasAudio && <HashTag $color="green">🔊 Audio</HashTag>}
+          {hasAudio ? (
+            <HashTag $color="green">🔊 Audio</HashTag>
+          ) : (
+            <AudioBadgePlaceholder $color="green" aria-hidden>
+              🔊 Audio
+            </AudioBadgePlaceholder>
+          )}
           {showRemoveButton && onRemove && (
             <button
               onClick={(e) => {
