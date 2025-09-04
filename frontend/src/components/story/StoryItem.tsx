@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo } from "react";
 import styled from "styled-components";
 import {
   StoryItemContainer,
@@ -7,7 +7,6 @@ import {
   HashTag,
 } from "../shared/SharedStyles";
 import { useRoutePrefetch } from "../../hooks/useRoutePrefetch";
-import { useAuth } from "@clerk/clerk-react";
 
 interface Story {
   id: number;
@@ -15,6 +14,7 @@ interface Story {
   created_at: string;
   age?: string;
   length?: string;
+  has_audio?: number | boolean; // provided by API list
 }
 
 interface StoryItemProps {
@@ -38,34 +38,7 @@ function StoryItem({
   isRemoving = false,
 }: StoryItemProps) {
   const prefetch = useRoutePrefetch("story");
-  const [hasAudio, setHasAudio] = useState(false);
-  const { getToken } = useAuth();
-
-  useEffect(() => {
-    const abort = new AbortController();
-    const fetchAudioPresence = async () => {
-      try {
-        const token = await getToken();
-        const res = await fetch(
-          `${
-            import.meta.env.VITE_API_BASE_URL || "http://localhost:4000"
-          }/api/stories/${story.id}`,
-          {
-            credentials: "include",
-            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-            signal: abort.signal,
-          }
-        );
-        if (res.ok) {
-          const data = await res.json();
-          const audioUrls = data?.audio_urls || {};
-          setHasAudio(Object.keys(audioUrls).length > 0);
-        }
-      } catch {}
-    };
-    fetchAudioPresence();
-    return () => abort.abort();
-  }, [story.id, getToken]);
+  const hasAudio = Boolean(story.has_audio);
   return (
     <li
       style={{

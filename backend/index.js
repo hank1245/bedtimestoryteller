@@ -76,16 +76,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// List stories for the authenticated user (title만 반환)
+// List stories for the authenticated user + has_audio flag to avoid N+1 requests
 app.get("/api/stories", clerkAuthMiddleware, (req, res) => {
-  db.all(
-    "SELECT id, title, created_at, age, length FROM stories WHERE user_id = ? ORDER BY created_at DESC",
-    [req.user.id],
-    (err, rows) => {
-      if (err) return res.status(500).json({ error: "DB error" });
-      res.json(rows);
-    }
-  );
+  const sql = `
+    SELECT 
+      s.id, s.title, s.created_at, s.age, s.length,
+      EXISTS(SELECT 1 FROM audio_files af WHERE af.story_id = s.id) AS has_audio
+    FROM stories s
+    WHERE s.user_id = ?
+    ORDER BY s.created_at DESC
+  `;
+  db.all(sql, [req.user.id], (err, rows) => {
+    if (err) return res.status(500).json({ error: "DB error" });
+    res.json(rows);
+  });
 });
 
 // Get specific story by ID with audio files

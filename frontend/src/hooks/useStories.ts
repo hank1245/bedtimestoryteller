@@ -26,6 +26,8 @@ export const useStories = () => {
       return fetchStories();
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false, // respect staleTime to avoid flicker on main page
   });
 };
 
@@ -50,7 +52,17 @@ export const useCreateStory = () => {
   const { getToken } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ title, story, age, length }: { title: string; story: string; age?: string; length?: string }) => {
+    mutationFn: async ({
+      title,
+      story,
+      age,
+      length,
+    }: {
+      title: string;
+      story: string;
+      age?: string;
+      length?: string;
+    }) => {
       const token = await getToken();
       setAuthToken(token);
       return createStory(title, story, age, length);
