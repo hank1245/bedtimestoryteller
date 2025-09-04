@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "./Button";
 import { useRoutePrefetch } from "../../hooks/useRoutePrefetch";
+import { useAudioGenerationStore } from "../../stores/audioStore";
 
 const TopBarContainer = styled.div<{ $variant: "single" | "split" }>`
   display: flex;
@@ -22,6 +23,14 @@ const TopBarContainer = styled.div<{ $variant: "single" | "split" }>`
   }
 `;
 
+const RightCluster = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+// Generation badge is rendered near the Folders tab, not in the TopBar.
+
 interface TopBarProps {
   variant?: "single" | "split";
   leftContent?: React.ReactNode;
@@ -35,22 +44,26 @@ export default function TopBar({
 }: TopBarProps) {
   const navigate = useNavigate();
   const settingsPrefetch = useRoutePrefetch("settings");
+  useAudioGenerationStore();
 
   return (
     <TopBarContainer $variant={variant}>
       {leftContent}
-      {showSettings && (
-        <Button
-          $secondary
-          $small
-          onClick={() => navigate("/app/settings")}
-          onMouseEnter={settingsPrefetch.onMouseEnter}
-          onFocus={settingsPrefetch.onFocus}
-          onTouchStart={settingsPrefetch.onTouchStart}
-        >
-          Settings
-        </Button>
-      )}
+      <RightCluster>
+        {showSettings && (
+          <Button
+            $secondary
+            $small
+            onClick={() => navigate("/app/settings")}
+            onMouseEnter={settingsPrefetch.onMouseEnter}
+            onFocus={settingsPrefetch.onFocus}
+            onTouchStart={settingsPrefetch.onTouchStart}
+          >
+            Settings
+          </Button>
+        )}
+        {/* generation badge moved to TabNavigation */}
+      </RightCluster>
     </TopBarContainer>
   );
 }

@@ -72,7 +72,7 @@ export async function generateStoryWithClaude(
 CRITICAL REQUIREMENTS:
 - Create a COMPLETE story with NO placeholders, brackets, or [variables]
 - Use specific names for all characters (e.g., "Luna", "Oliver", "Maya" - NOT "[name]" or "[character]")
-- Use specific locations (e.g., "Moonbeam Village", "Crystal Forest" - NOT "[place]" or "[location]")
+- Use varied, specific locations with natural variety. Avoid reusing the same named setting across different stories. Do not use "Moonbeam Village" unless it is uniquely relevant; prefer fresh settings like seaside towns, snowy valleys, desert oases, cozy mountain cabins, river villages, enchanted orchards, lake islands, coastal lighthouses, or starlit observatories. Never use placeholders like "[place]" or "[location]".
 - Fill in ALL details - the story must be 100% complete and ready to read
 - Do NOT use any brackets [ ] or placeholders anywhere in the story
 - Make the first line ONLY the title of the story (without any markdown headers or extra formatting)

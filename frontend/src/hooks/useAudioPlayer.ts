@@ -18,13 +18,24 @@ interface UseAudioPlayerProps {
   voices: Record<string, Voice>;
   storyId?: string;
   story: string;
+  title?: string;
 }
 
 export const useAudioPlayer = ({
   voices,
   storyId,
   story,
+  title,
 }: UseAudioPlayerProps) => {
+  // Mounted flag to avoid state updates after unmount
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
     null
@@ -36,13 +47,18 @@ export const useAudioPlayer = ({
   );
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
+  const generationCancelledRef = useRef<boolean>(false);
+  // Track which story the currentAudio belongs to, to avoid cross-story reuse
+  const currentAudioStoryIdRef = useRef<string | undefined>(
+    storyId ? String(storyId) : undefined
+  );
 
   const uploadAudioMutation = useUploadAudio();
-  const { addToast } = useToast();
+  const { addToast, addActionToast } = useToast();
   const { getToken } = useAuth();
 
   // 전역 오디오 생성 상태 관리
-  const { setIsGeneratingAudio, canGenerateAudio } = useAudioGenerationStore();
+  const { beginGeneration, endGeneration } = useAudioGenerationStore();
 
   // API URL 환경변수
   const API_BASE_URL =
@@ -83,9 +99,37 @@ export const useAudioPlayer = ({
     checkSavedAudio();
   }, [storyId, API_BASE_URL, getToken]);
 
+  // Reset any existing audio when navigating to a different story
+  useEffect(() => {
+    const sid = storyId ? String(storyId) : undefined;
+    if (currentAudioStoryIdRef.current !== sid) {
+      // Different story now; clean up previous audio element if any
+      if (currentAudio) {
+        try {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+          if (currentAudio.src && currentAudio.src.startsWith("blob:")) {
+            URL.revokeObjectURL(currentAudio.src);
+          }
+        } catch (e) {
+          console.error("Error cleaning audio on story change:", e);
+        }
+      }
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
+      setCurrentAudio(null);
+      setIsPlaying(false);
+      // Update the current story id reference
+      currentAudioStoryIdRef.current = sid;
+    }
+  }, [storyId, currentAudio]);
+
   // Cleanup audio on unmount
   useEffect(() => {
     return () => {
+      generationCancelledRef.current = true;
       if (currentAudio) {
         try {
           currentAudio.pause();
@@ -145,26 +189,30 @@ export const useAudioPlayer = ({
   };
 
   const generateAndPlayAudio = async () => {
-    // 전역 상태에서 오디오 생성 가능 여부 확인
-    if (!canGenerateAudio()) {
-      addToast("warning", "Audio is currently being generated. Please wait...");
-      return;
-    }
-
     // If currently playing the same voice, just toggle play/pause
-    if (currentAudio && isPlaying) {
+    if (
+      currentAudio &&
+      currentAudioStoryIdRef.current ===
+        (storyId ? String(storyId) : undefined) &&
+      isPlaying
+    ) {
       await togglePlayPause();
       return;
     }
 
     // If audio exists but not playing, just play it
-    if (currentAudio && !isPlaying) {
+    if (
+      currentAudio &&
+      currentAudioStoryIdRef.current ===
+        (storyId ? String(storyId) : undefined) &&
+      !isPlaying
+    ) {
       await safePlay(currentAudio);
       setIsPlaying(true);
       return;
     }
 
-    // First, try to load saved audio for this voice
+    // First, try to load saved audio for this voice (allowed even if another generation is in progress)
     const savedUrl = savedAudioUrls[selectedVoice];
 
     // Always try to use saved audio if it exists, regardless of current state
@@ -188,6 +236,7 @@ export const useAudioPlayer = ({
         audioRef.current = audioElement;
         setCurrentAudio(audioElement);
         setCurrentVoice(selectedVoice);
+        currentAudioStoryIdRef.current = storyId ? String(storyId) : undefined;
 
         const cleanup = setupAudioEventListeners(audioElement);
         cleanupRef.current = cleanup;
@@ -208,10 +257,47 @@ export const useAudioPlayer = ({
 
     // Only generate new audio if no saved audio exists
     if (!savedUrl) {
+      // Resolve voice config first
+      const selectedVoiceConfig = voices[selectedVoice];
+      if (!selectedVoiceConfig) {
+        addToast(
+          "error",
+          `Voice configuration not found for: ${selectedVoice}`
+        );
+        return;
+      }
+      // Atomically acquire the global generation lock with story title and voice label
+      const acquired = beginGeneration(
+        storyId,
+        selectedVoice,
+        title,
+        selectedVoiceConfig.name
+      );
+      if (!acquired) {
+        addToast(
+          "warning",
+          "Another audio is being generated. Please wait a moment..."
+        );
+        return;
+      }
+      // Reset any existing audio so Play won't resume an old source
+      if (currentAudio) {
+        try {
+          currentAudio.pause();
+          currentAudio.currentTime = 0;
+        } catch {}
+        if (cleanupRef.current) {
+          cleanupRef.current();
+          cleanupRef.current = null;
+        }
+        setCurrentAudio(null);
+        setIsPlaying(false);
+      }
       // Check if API key is available
       if (!import.meta.env.VITE_OPENAI_API_KEY) {
         console.error("❌ OpenAI API key is not configured");
         addToast("error", "OpenAI API key is not configured");
+        endGeneration();
         return;
       }
     } else {
@@ -219,8 +305,6 @@ export const useAudioPlayer = ({
       addToast("error", "Unable to load audio. Please try again later.");
       return;
     }
-
-    setIsGeneratingAudio(true, storyId);
 
     try {
       const cleanText = cleanTextForSpeech(story);
@@ -230,7 +314,10 @@ export const useAudioPlayer = ({
         throw new Error(`Voice configuration not found for: ${selectedVoice}`);
       }
 
-      addToast("info", "Generating audio...");
+      addToast(
+        "info",
+        `Generating audio in ${selectedVoiceConfig.name} voice...`
+      );
 
       // Generate audio with slow, calm speed optimized for bedtime stories
       const audioBlob = await generateSpeechWithOpenAI({
@@ -241,6 +328,8 @@ export const useAudioPlayer = ({
           "A tone for reading bedtime stories to children. Calm and very slowly, with emotion in each word, pausing for 1.5 second between sentences or paragraphs.",
       });
 
+      const unmounted = !isMountedRef.current || generationCancelledRef.current;
+
       // Upload audio to server if storyId exists
       if (storyId) {
         try {
@@ -250,17 +339,36 @@ export const useAudioPlayer = ({
             voice: selectedVoice,
           });
 
-          // Update saved URLs
-          setSavedAudioUrls((prev) => ({
-            ...prev,
-            [selectedVoice]: `${API_BASE_URL}${result.audioUrl}`,
-          }));
-
-          addToast("success", "Audio saved successfully");
+          // Update saved URLs only if still mounted
+          if (!unmounted) {
+            setSavedAudioUrls((prev) => ({
+              ...prev,
+              [selectedVoice]: `${API_BASE_URL}${result.audioUrl}`,
+            }));
+          }
+          if (!unmounted) {
+            addToast("success", "Audio saved successfully");
+          }
         } catch (error) {
           console.error("❌ Failed to upload audio:", error);
-          addToast("warning", "Audio generated but not saved to server");
+          if (!unmounted) {
+            addToast("warning", "Audio generated but not saved to server");
+          }
         }
+      }
+
+      // If unmounted, stop here after ensuring upload attempt
+      if (unmounted) {
+        if (storyId) {
+          addActionToast(
+            "Audio generation completed",
+            "Open story",
+            { path: "/app/story", state: { id: storyId } },
+            "info",
+            10000
+          );
+        }
+        return;
       }
 
       const audioUrl = URL.createObjectURL(audioBlob);
@@ -280,23 +388,34 @@ export const useAudioPlayer = ({
         audioElement.load();
       });
 
+      if (!isMountedRef.current || generationCancelledRef.current) {
+        // Clean up generated URL if we won't use it
+        try {
+          URL.revokeObjectURL(audioUrl);
+        } catch {}
+        return;
+      }
+
       audioRef.current = audioElement;
       setCurrentAudio(audioElement);
       setCurrentVoice(selectedVoice);
+      currentAudioStoryIdRef.current = storyId ? String(storyId) : undefined;
 
       const cleanup = setupAudioEventListeners(audioElement);
       cleanupRef.current = cleanup;
 
-      await safePlay(audioElement);
-      setIsPlaying(true);
-      addToast("success", "Audio generated and playing");
+      // Do not auto-play after generation; wait for explicit user action
+      setIsPlaying(false);
+      addToast("success", "Audio is ready to play");
     } catch (error) {
       console.error("❌ Error generating audio:", error);
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      addToast("error", `Failed to generate audio: ${errorMessage}`);
+      if (isMountedRef.current && !generationCancelledRef.current) {
+        addToast("error", `Failed to generate audio: ${errorMessage}`);
+      }
     } finally {
-      setIsGeneratingAudio(false);
+      endGeneration();
     }
   };
 

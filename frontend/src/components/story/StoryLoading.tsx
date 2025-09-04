@@ -18,8 +18,14 @@ const LoadingContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  width: 100%;
+  /* Use viewport-based height so we can actually center even if parent lacks explicit height */
+  min-height: 60vh;
   text-align: center;
+
+  @media (max-width: 480px) {
+    min-height: 50vh;
+  }
 `;
 
 const BookEmoji = styled.div`

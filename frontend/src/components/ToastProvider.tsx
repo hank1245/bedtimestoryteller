@@ -2,6 +2,7 @@ import type React from "react";
 import styled, { keyframes } from "styled-components";
 import { X, CheckCircle, AlertCircle, Info } from "lucide-react";
 import { useToastStore, ToastType } from "../stores/toastStore";
+import { useNavigate } from "react-router-dom";
 
 const slideIn = keyframes`
   from {
@@ -146,6 +147,23 @@ const ConfirmButton = styled.button<{ $variant: "confirm" | "cancel" }>`
   }
 `;
 
+const ActionButton = styled.button`
+  background: rgba(59, 130, 246, 0.85);
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+
+  &:hover {
+    background: rgba(59, 130, 246, 1);
+  }
+`;
+
 const getToastIcon = (type: ToastType) => {
   switch (type) {
     case "success":
@@ -163,6 +181,7 @@ const getToastIcon = (type: ToastType) => {
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useToastStore();
+  const navigate = useNavigate();
 
   if (toasts.length === 0) {
     return null;
@@ -198,6 +217,22 @@ export const ToastContainer: React.FC = () => {
                 Cancel
               </ConfirmButton>
             </ConfirmButtons>
+          ) : toast.actionLabel && toast.actionRoute ? (
+            <>
+              <ActionButton
+                onClick={() => {
+                  navigate(toast.actionRoute!.path, {
+                    state: toast.actionRoute!.state,
+                  });
+                  removeToast(toast.id);
+                }}
+              >
+                {toast.actionLabel}
+              </ActionButton>
+              <ToastCloseButton onClick={() => removeToast(toast.id)}>
+                <X />
+              </ToastCloseButton>
+            </>
           ) : (
             <ToastCloseButton onClick={() => removeToast(toast.id)}>
               <X />
