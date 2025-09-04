@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   StoryItemContainer,
   StoryContent,
@@ -6,6 +6,7 @@ import {
   HashTag,
 } from "../shared/SharedStyles";
 import { useRoutePrefetch } from "../../hooks/useRoutePrefetch";
+import { useAuth } from "@clerk/clerk-react";
 
 interface Story {
   id: number;
@@ -31,6 +32,34 @@ function StoryItem({
   isRemoving = false,
 }: StoryItemProps) {
   const prefetch = useRoutePrefetch("story");
+  const [hasAudio, setHasAudio] = useState(false);
+  const { getToken } = useAuth();
+
+  useEffect(() => {
+    const abort = new AbortController();
+    const fetchAudioPresence = async () => {
+      try {
+        const token = await getToken();
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_BASE_URL || "http://localhost:4000"
+          }/api/stories/${story.id}`,
+          {
+            credentials: "include",
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+            signal: abort.signal,
+          }
+        );
+        if (res.ok) {
+          const data = await res.json();
+          const audioUrls = data?.audio_urls || {};
+          setHasAudio(Object.keys(audioUrls).length > 0);
+        }
+      } catch {}
+    };
+    fetchAudioPresence();
+    return () => abort.abort();
+  }, [story.id, getToken]);
   return (
     <li
       style={{
@@ -70,6 +99,7 @@ function StoryItem({
         <StoryTags>
           {story.age && <HashTag $color="green">#Age {story.age}</HashTag>}
           {story.length && <HashTag $color="yellow">#{story.length}</HashTag>}
+          {hasAudio && <HashTag $color="green">🔊 Audio</HashTag>}
           {showRemoveButton && onRemove && (
             <button
               onClick={(e) => {

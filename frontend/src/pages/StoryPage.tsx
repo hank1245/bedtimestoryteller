@@ -134,6 +134,12 @@ const AudioControls = styled.div`
   }
 `;
 
+const AvailabilityHint = styled.span`
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-left: 4px;
+`;
+
 const VoiceSelector = styled.select`
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -186,23 +192,7 @@ const AudioButton = styled.button<{ $isActive?: boolean }>`
   }
 `;
 
-const LoadingSpinner = styled.div`
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid var(--accent-blue);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
+// Removed inline loading spinner in favor of a global generation badge in TopBar
 
 const StoryText = styled.div<{ $fontSize: number }>`
   font-family: verdana, serif;
@@ -322,11 +312,12 @@ export default function StoryPage() {
     isPlaying,
     currentAudio,
     selectedVoice,
+    savedAudioUrls,
     generateAndPlayAudio,
     togglePlayPause,
     restartAudio,
     setSelectedVoice,
-  } = useAudioPlayer({ voices, storyId, story });
+  } = useAudioPlayer({ voices, storyId, story, title });
 
   // 전역 오디오 생성 상태 (다른 페이지에서의 생성 상태 확인용)
   const { isGeneratingAudio: globalIsGenerating } = useAudioGenerationStore();
@@ -464,8 +455,12 @@ export default function StoryPage() {
                     <option value="coral">Coral (Warm Female)</option>
                     <option value="onyx">Onyx (Deep Male)</option>
                   </VoiceSelector>
-
-                  {!currentAudio ? (
+                  <AvailabilityHint>
+                    {savedAudioUrls?.[selectedVoice]
+                      ? "Ready to play"
+                      : "Needs generation"}
+                  </AvailabilityHint>
+                  {!(currentAudio || savedAudioUrls?.[selectedVoice]) ? (
                     <AudioButton
                       onClick={async () => {
                         try {
@@ -481,19 +476,39 @@ export default function StoryPage() {
                           );
                         }
                       }}
-                      disabled={globalIsGenerating}
+                      disabled={
+                        globalIsGenerating && !savedAudioUrls?.[selectedVoice]
+                      }
                     >
-                      {globalIsGenerating ? <LoadingSpinner /> : <Volume2 />}
+                      <>
+                        <Volume2 />
+                      </>
                     </AudioButton>
                   ) : (
                     <>
                       <AudioButton
-                        onClick={togglePlayPause}
+                        onClick={async () => {
+                          if (currentAudio) {
+                            togglePlayPause();
+                          } else {
+                            await generateAndPlayAudio();
+                          }
+                        }}
                         $isActive={isPlaying}
+                        title={isPlaying ? "Pause" : "Play"}
                       >
                         {isPlaying ? <Pause /> : <Play />}
                       </AudioButton>
-                      <AudioButton onClick={restartAudio}>
+                      <AudioButton
+                        onClick={async () => {
+                          if (currentAudio) {
+                            await restartAudio();
+                          } else {
+                            await generateAndPlayAudio();
+                          }
+                        }}
+                        title="Restart"
+                      >
                         <RotateCcw />
                       </AudioButton>
                     </>

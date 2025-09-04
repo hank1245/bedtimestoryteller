@@ -10,6 +10,8 @@ export interface Toast {
   isConfirm?: boolean;
   onConfirm?: () => void;
   onCancel?: () => void;
+  actionLabel?: string;
+  actionRoute?: { path: string; state?: any };
 }
 
 interface ToastStore {
@@ -19,6 +21,13 @@ interface ToastStore {
     message: string,
     onConfirm: () => void,
     onCancel?: () => void
+  ) => void;
+  addActionToast: (
+    message: string,
+    actionLabel: string,
+    actionRoute: { path: string; state?: any },
+    type?: ToastType,
+    duration?: number
   ) => void;
   removeToast: (id: string) => void;
   clearAllToasts: () => void;
@@ -75,6 +84,36 @@ export const useToastStore = create<ToastStore>((set) => ({
     }));
   },
 
+  addActionToast: (
+    message: string,
+    actionLabel: string,
+    actionRoute: { path: string; state?: any },
+    type: ToastType = "info",
+    duration = 8000
+  ) => {
+    const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+    const toast: Toast = {
+      id,
+      type,
+      message,
+      duration,
+      actionLabel,
+      actionRoute,
+    };
+
+    set((state) => ({
+      toasts: [...state.toasts, toast],
+    }));
+
+    if (duration > 0) {
+      setTimeout(() => {
+        set((state) => ({
+          toasts: state.toasts.filter((t) => t.id !== id),
+        }));
+      }, duration);
+    }
+  },
+
   removeToast: (id: string) => {
     set((state) => ({
       toasts: state.toasts.filter((toast) => toast.id !== id),
@@ -88,12 +127,18 @@ export const useToastStore = create<ToastStore>((set) => ({
 
 // Helper hook for easier usage
 export const useToast = () => {
-  const { addToast, addConfirmToast, removeToast, clearAllToasts } =
-    useToastStore();
+  const {
+    addToast,
+    addConfirmToast,
+    addActionToast,
+    removeToast,
+    clearAllToasts,
+  } = useToastStore();
 
   return {
     addToast,
     addConfirmToast,
+    addActionToast,
     removeToast,
     clearAllToasts,
   };

@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { ToastContainer } from "@/components/ToastProvider";
 import { useToastStore } from "@/stores/toastStore";
 import { afterEach } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 
 afterEach(() => {
   useToastStore.getState().clearAllToasts();
@@ -16,7 +17,11 @@ describe("ToastProvider", () => {
       useToastStore.getState().addToast("success", "hello");
     });
 
-    render(<ToastContainer />);
+    render(
+      <MemoryRouter>
+        <ToastContainer />
+      </MemoryRouter>
+    );
 
     // 2) 토스트 컨테이너가 보이고, 메시지가 나타남
     expect(
@@ -39,7 +44,11 @@ describe("ToastProvider", () => {
       useToastStore.getState().addConfirmToast("confirm?", onConfirm, onCancel);
     });
 
-    render(<ToastContainer />);
+    render(
+      <MemoryRouter>
+        <ToastContainer />
+      </MemoryRouter>
+    );
 
     expect(await screen.findByText("confirm?")).toBeInTheDocument();
 
