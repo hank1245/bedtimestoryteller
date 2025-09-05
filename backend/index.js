@@ -713,7 +713,14 @@ app.get("/api/folders/:id/stories", clerkAuthMiddleware, (req, res) => {
   const folderId = req.params.id;
 
   db.all(
-    `SELECT s.id, s.title, s.created_at, s.age, s.length, fs.added_at 
+    `SELECT 
+     s.id, 
+     s.title, 
+     s.created_at, 
+     s.age, 
+     s.length, 
+     fs.added_at,
+     EXISTS(SELECT 1 FROM audio_files af WHERE af.story_id = s.id) AS has_audio
      FROM stories s 
      JOIN folder_stories fs ON s.id = fs.story_id 
      WHERE fs.folder_id = ? AND s.user_id = ? 

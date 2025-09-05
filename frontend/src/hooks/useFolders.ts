@@ -18,6 +18,7 @@ export interface FolderStory {
   age?: string;
   length?: string;
   added_at: string;
+  has_audio?: number | boolean;
 }
 
 // Get all folders
@@ -48,6 +49,9 @@ export const useFolderStories = (folderId: number) => {
       return response.data;
     },
     enabled: !!folderId,
+    staleTime: 5 * 60 * 1000, // keep in sync with main stories to avoid flicker
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 };
 
