@@ -31,11 +31,12 @@ export default function StyleStep({
         <CardTitle>What kind of story tonight?</CardTitle>
         <CardSubtitle>Choose the perfect mood</CardSubtitle>
       </CardHeader>
-      <ChoiceGrid>
+      <ChoiceGrid role="group" aria-label="Select story style">
         {STYLE_OPTIONS.map((option) => (
           <ChoiceButton
             key={option.value}
             $selected={value === option.value}
+            aria-pressed={value === option.value}
             onClick={() => onChange?.(option.value)}
           >
             {option.label}

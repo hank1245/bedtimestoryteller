@@ -199,6 +199,7 @@ export const ToastContainer: React.FC = () => {
           $type={toast.type}
           role="status"
           aria-live="polite"
+          aria-atomic="true"
         >
           <ToastIcon>{getToastIcon(toast.type)}</ToastIcon>
           <ToastMessage>{toast.message}</ToastMessage>
@@ -206,12 +207,14 @@ export const ToastContainer: React.FC = () => {
             <ConfirmButtons>
               <ConfirmButton
                 $variant="confirm"
+                aria-label="Confirm delete"
                 onClick={() => toast.onConfirm?.()}
               >
                 Delete
               </ConfirmButton>
               <ConfirmButton
                 $variant="cancel"
+                aria-label="Cancel"
                 onClick={() => toast.onCancel?.()}
               >
                 Cancel
@@ -220,6 +223,7 @@ export const ToastContainer: React.FC = () => {
           ) : toast.actionLabel && toast.actionRoute ? (
             <>
               <ActionButton
+                aria-label={toast.actionLabel}
                 onClick={() => {
                   navigate(toast.actionRoute!.path, {
                     state: toast.actionRoute!.state,
@@ -229,12 +233,12 @@ export const ToastContainer: React.FC = () => {
               >
                 {toast.actionLabel}
               </ActionButton>
-              <ToastCloseButton onClick={() => removeToast(toast.id)}>
+              <ToastCloseButton aria-label="Dismiss notification" onClick={() => removeToast(toast.id)}>
                 <X />
               </ToastCloseButton>
             </>
           ) : (
-            <ToastCloseButton onClick={() => removeToast(toast.id)}>
+            <ToastCloseButton aria-label="Dismiss notification" onClick={() => removeToast(toast.id)}>
               <X />
             </ToastCloseButton>
           )}

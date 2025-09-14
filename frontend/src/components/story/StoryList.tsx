@@ -60,14 +60,14 @@ export default function StoryList({
   };
 
   return (
-    <ListContainer>
+    <ListContainer aria-live="polite">
       {loading ? (
         <StoryLoading subtext="Loading your magical bedtime stories... Just a moment!" />
       ) : error ? (
-        <p style={{ color: "#e57373" }}>{error.message}</p>
+        <p role="alert" style={{ color: "#e57373" }}>{error.message}</p>
       ) : stories.length === 0 ? (
         <EmptyStateContainer>
-          <EmptyStateEmoji>✨</EmptyStateEmoji>
+          <EmptyStateEmoji aria-hidden>✨</EmptyStateEmoji>
           <EmptyStateTitle>
             {emptyStateMessage?.title || defaultEmptyState.title}
           </EmptyStateTitle>

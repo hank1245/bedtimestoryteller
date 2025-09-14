@@ -85,8 +85,8 @@ export default function StoryLoading({ subtext }: StoryLoadingProps) {
     "We're loading a magical bedtime story just for you. This might take a moment!";
 
   return (
-    <LoadingContainer>
-      <BookEmoji>📚</BookEmoji>
+    <LoadingContainer role="status" aria-live="polite" aria-atomic="true">
+      <BookEmoji aria-hidden>📚</BookEmoji>
       <LoadingText>Creating your story{getDots()}</LoadingText>
       <LoadingSubtext>{subtext || defaultSubtext}</LoadingSubtext>
     </LoadingContainer>

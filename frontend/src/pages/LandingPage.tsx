@@ -29,7 +29,7 @@ const float = keyframes`
 
 // twinkle removed along with scroll indicator
 
-const LandingContainer = styled.div`
+const LandingContainer = styled.main`
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;

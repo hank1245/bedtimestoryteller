@@ -18,7 +18,7 @@ import {
 } from "../constants/background";
 import { media } from "../constants/ui";
 
-const StoryPageContainer = styled.div`
+const StoryPageContainer = styled.main`
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
@@ -409,7 +409,7 @@ export default function StoryPage() {
   };
 
   return (
-    <StoryPageContainer>
+    <StoryPageContainer aria-label="Story page">
       <ThreeBackground
         intensity={BACKGROUND_INTENSITY_DEFAULT}
         moonPosition={MOON_POSITION_TOP_LEFT_STORY}
@@ -433,6 +433,7 @@ export default function StoryPage() {
                     borderRadius: "8px",
                   }}
                   onClick={handleDelete}
+                  aria-label="Delete story"
                   disabled={isDeleting}
                 >
                   {isDeleting ? "Deleting..." : "Delete"}
@@ -443,19 +444,20 @@ export default function StoryPage() {
               <h1>{title}</h1>
               <ControlsContainer>
                 <FontSizeControls>
-                  <button onClick={decreaseFontSize}>A-</button>
+                  <button onClick={decreaseFontSize} aria-label="Decrease font size">A-</button>
                   <span>Font Size</span>
-                  <button onClick={increaseFontSize}>A+</button>
+                  <button onClick={increaseFontSize} aria-label="Increase font size">A+</button>
                 </FontSizeControls>
                 <AudioControls>
                   <VoiceSelector
                     value={selectedVoice}
                     onChange={(e) => setSelectedVoice(e.target.value)}
+                    aria-label="Select narration voice"
                   >
                     <option value="coral">Coral (Warm Female)</option>
                     <option value="onyx">Onyx (Deep Male)</option>
                   </VoiceSelector>
-                  <AvailabilityHint>
+                  <AvailabilityHint aria-live="polite">
                     {savedAudioUrls?.[selectedVoice]
                       ? "Ready to play"
                       : "Needs generation"}
@@ -479,6 +481,7 @@ export default function StoryPage() {
                       disabled={
                         globalIsGenerating && !savedAudioUrls?.[selectedVoice]
                       }
+                      aria-label="Generate and play narration"
                     >
                       <>
                         <Volume2 />
@@ -495,7 +498,8 @@ export default function StoryPage() {
                           }
                         }}
                         $isActive={isPlaying}
-                        title={isPlaying ? "Pause" : "Play"}
+                        aria-label={isPlaying ? "Pause narration" : "Play narration"}
+                        title={isPlaying ? "Pause narration" : "Play narration"}
                       >
                         {isPlaying ? <Pause /> : <Play />}
                       </AudioButton>
@@ -507,7 +511,8 @@ export default function StoryPage() {
                             await generateAndPlayAudio();
                           }
                         }}
-                        title="Restart"
+                        aria-label="Restart narration"
+                        title="Restart narration"
                       >
                         <RotateCcw />
                       </AudioButton>
@@ -516,7 +521,7 @@ export default function StoryPage() {
                 </AudioControls>
               </ControlsContainer>
             </CompactHeader>
-            <StoryContainer>
+            <StoryContainer role="region" aria-label="Story content">
               <StoryText $fontSize={fontSize}>{formatStory(story)}</StoryText>
             </StoryContainer>
             <Buttons>

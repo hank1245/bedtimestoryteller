@@ -35,14 +35,17 @@ export default function LessonStep({
         <CardTitle>Any lesson to share?</CardTitle>
         <CardSubtitle>What would you like your child to learn?</CardSubtitle>
       </CardHeader>
-      {error && <ErrorMessage>{error}</ErrorMessage>}
+      {error && <ErrorMessage role="alert">{error}</ErrorMessage>}
       <FormGroup>
-        <FormLabel>Choose a common value or write your own</FormLabel>
-        <ChoiceGrid>
+        <FormLabel id="lesson-choices-label">
+          Choose a common value or write your own
+        </FormLabel>
+        <ChoiceGrid role="group" aria-labelledby="lesson-choices-label">
           {LESSON_OPTIONS.map((lesson) => (
             <ChoiceButton
               key={lesson}
               $selected={value === lesson}
+              aria-pressed={value === lesson}
               onClick={() => handleLessonChoice(lesson)}
             >
               {lesson}
@@ -51,9 +54,10 @@ export default function LessonStep({
         </ChoiceGrid>
       </FormGroup>
       <FormGroup>
-        <FormLabel>Lesson or Value</FormLabel>
+        <FormLabel htmlFor="lesson-input">Lesson or Value</FormLabel>
         <FormInput
           type="text"
+          id="lesson-input"
           value={value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             onChange?.(e.target.value)

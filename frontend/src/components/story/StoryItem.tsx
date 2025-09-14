@@ -40,75 +40,74 @@ function StoryItem({
   const prefetch = useRoutePrefetch("story");
   const hasAudio = Boolean(story.has_audio);
   return (
-    <li
-      style={{
-        marginBottom: 24,
-        background: "rgba(255,255,255,0.03)",
-        borderRadius: 8,
-        padding: 22,
-        cursor: "pointer",
-        listStyle: "none",
-      }}
-      onClick={onClick}
-      onMouseEnter={prefetch.onMouseEnter}
-      onFocus={prefetch.onFocus}
-      onTouchStart={prefetch.onTouchStart}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick();
-        }
-      }}
-    >
-      <StoryItemContainer>
-        <StoryContent>
-          <div style={{ fontWeight: 600, fontSize: 18 }}>{story.title}</div>
-          <div style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}>
-            {new Date(story.created_at).toLocaleString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </div>
-        </StoryContent>
-        <StoryTags>
-          {story.age && <HashTag $color="green">#Age {story.age}</HashTag>}
-          {story.length && <HashTag $color="yellow">#{story.length}</HashTag>}
-          {hasAudio ? (
-            <HashTag $color="green">🔊 Audio</HashTag>
-          ) : (
-            <AudioBadgePlaceholder $color="green" aria-hidden>
-              🔊 Audio
-            </AudioBadgePlaceholder>
-          )}
-          {showRemoveButton && onRemove && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onRemove();
-              }}
-              disabled={isRemoving}
-              style={{
-                background: "rgba(255, 82, 82, 0.1)",
-                border: "1px solid rgba(255, 82, 82, 0.3)",
-                color: "#ff5252",
-                borderRadius: 6,
-                padding: "4px 8px",
-                fontSize: 12,
-                cursor: "pointer",
-                marginTop: 4,
-                transition: "all 0.3s ease",
-              }}
-            >
-              {isRemoving ? "Removing..." : "Remove"}
-            </button>
-          )}
-        </StoryTags>
-      </StoryItemContainer>
+    <li style={{ listStyle: "none", marginBottom: 24 }}>
+      <button
+        type="button"
+        onClick={onClick}
+        onMouseEnter={prefetch.onMouseEnter}
+        onFocus={prefetch.onFocus}
+        onTouchStart={prefetch.onTouchStart}
+        aria-label={`Open story: ${story.title}`}
+        style={{
+          width: "100%",
+          textAlign: "left",
+          background: "rgba(255,255,255,0.03)",
+          borderRadius: 8,
+          padding: 22,
+          cursor: "pointer",
+          // match previous look (no border on story rows)
+          border: "none",
+        }}
+      >
+        <StoryItemContainer>
+          <StoryContent>
+            <div style={{ fontWeight: 600, fontSize: 18 }}>{story.title}</div>
+            <div style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}>
+              {new Date(story.created_at).toLocaleString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </div>
+          </StoryContent>
+          <StoryTags>
+            {story.age && <HashTag $color="green">#Age {story.age}</HashTag>}
+            {story.length && <HashTag $color="yellow">#{story.length}</HashTag>}
+            {hasAudio ? (
+              <HashTag $color="green" aria-label="Audio available">🔊 Audio</HashTag>
+            ) : (
+              <AudioBadgePlaceholder $color="green" aria-hidden>
+                🔊 Audio
+              </AudioBadgePlaceholder>
+            )}
+            {showRemoveButton && onRemove && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove();
+                }}
+                aria-label={`Remove story: ${story.title}`}
+                disabled={isRemoving}
+                style={{
+                  background: "rgba(255, 82, 82, 0.1)",
+                  border: "1px solid rgba(255, 82, 82, 0.3)",
+                  color: "#ff5252",
+                  borderRadius: 6,
+                  padding: "4px 8px",
+                  fontSize: 12,
+                  cursor: "pointer",
+                  marginTop: 4,
+                  transition: "all 0.3s ease",
+                }}
+              >
+                {isRemoving ? "Removing..." : "Remove"}
+              </button>
+            )}
+          </StoryTags>
+        </StoryItemContainer>
+      </button>
     </li>
   );
 }

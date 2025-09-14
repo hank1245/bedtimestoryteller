@@ -51,6 +51,7 @@ export default function BackButton({
       $secondary
       $small={isSmall}
       onClick={handleClick}
+      aria-label={text || "Back"}
       style={style}
       className={className}
       onMouseEnter={prefetch.onMouseEnter}

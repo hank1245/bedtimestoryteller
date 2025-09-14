@@ -54,6 +54,17 @@ const GlobalStyle = createGlobalStyle`
     z-index: -1;
   }
 
+  /* Accessible focus styles */
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 3px solid #7aa2ff;
+    outline-offset: 2px;
+  }
+
   #root {
     min-height: 100vh;
     display: flex;

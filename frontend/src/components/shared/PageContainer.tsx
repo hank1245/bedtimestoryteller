@@ -50,6 +50,30 @@ export default function PageContainer({
 }: PageContainerProps) {
   return (
     <>
+      {/* Skip link for keyboard users */}
+      <a
+        href="#main-content"
+        style={{
+          position: "absolute",
+          left: "-999px",
+          top: 0,
+          background: "#000",
+          color: "#fff",
+          padding: "8px 12px",
+          borderRadius: 4,
+        }}
+        onFocus={(e) => {
+          // Reveal when focused
+          e.currentTarget.style.left = "16px";
+          e.currentTarget.style.top = "16px";
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.left = "-999px";
+          e.currentTarget.style.top = "0";
+        }}
+      >
+        Skip to main content
+      </a>
       <Suspense fallback={null}>
         <ThreeBackground {...backgroundProps} />
       </Suspense>
@@ -57,7 +81,7 @@ export default function PageContainer({
         <TopBar {...topBarProps} />
 
         <PageWrapper>
-          <ContentWrapper>
+          <ContentWrapper as="main" id="main-content" tabIndex={-1}>
             {(title || subtitle) && (
               <CardHeader style={{ marginTop: 20 }}>
                 {title && (
@@ -76,6 +100,7 @@ export default function PageContainer({
           {showBottomButton && onBottomButtonClick && bottomButtonText && (
             <button
               onClick={onBottomButtonClick}
+              aria-label={bottomButtonText}
               style={{
                 bottom: -30,
                 background: "var(--primary-color)",
