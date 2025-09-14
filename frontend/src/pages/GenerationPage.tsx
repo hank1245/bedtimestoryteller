@@ -294,7 +294,13 @@ export default function GenerationPage() {
 
 function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
   return (
-    <ProgressBarContainer>
+    <ProgressBarContainer
+      role="progressbar"
+      aria-valuemin={1}
+      aria-valuemax={totalSteps}
+      aria-valuenow={currentStep}
+      aria-label={`Step ${currentStep} of ${totalSteps}`}
+    >
       {Array.from({ length: totalSteps }, (_, i) => (
         <ProgressDot
           key={i}

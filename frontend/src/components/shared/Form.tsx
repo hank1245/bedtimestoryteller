@@ -23,8 +23,9 @@ export const FormInput = styled.input`
   &::placeholder {
     color: var(--text-secondary);
   }
-  &:focus {
-    outline: none;
+  &:focus-visible {
+    outline: 3px solid #7aa2ff;
+    outline-offset: 2px;
     border-color: var(--accent-blue);
     box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
   }

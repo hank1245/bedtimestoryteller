@@ -8,17 +8,18 @@ function LoginPage() {
         <Navigate to="/app" replace />
       </SignedIn>
       <SignedOut>
-        <div
+        <main
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             marginTop: 100,
           }}
+          aria-label="Login page"
         >
           <h2>Sign in to continue</h2>
           <SignIn />
-        </div>
+        </main>
       </SignedOut>
     </>
   );

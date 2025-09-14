@@ -188,20 +188,32 @@ export default function MainPage({ onCreate }: { onCreate: () => void }) {
         <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
 
         {activeTab === "all" ? (
-          <StoryList
-            stories={stories}
-            loading={storiesLoading}
-            error={storiesError}
-          />
+          <section
+            role="tabpanel"
+            id="panel-all"
+            aria-labelledby="tab-all"
+          >
+            <StoryList
+              stories={stories}
+              loading={storiesLoading}
+              error={storiesError}
+            />
+          </section>
         ) : (
-          <FolderList
-            folders={folders}
-            loading={foldersLoading}
-            onCreateFolder={() => setShowCreateFolderModal(true)}
-            onAddStoriesToFolder={handleAddStoriesToFolderClick}
-            onDeleteFolder={handleDeleteFolder}
-            isDeleting={deleteFolderMutation.isPending}
-          />
+          <section
+            role="tabpanel"
+            id="panel-folders"
+            aria-labelledby="tab-folders"
+          >
+            <FolderList
+              folders={folders}
+              loading={foldersLoading}
+              onCreateFolder={() => setShowCreateFolderModal(true)}
+              onAddStoriesToFolder={handleAddStoriesToFolderClick}
+              onDeleteFolder={handleDeleteFolder}
+              isDeleting={deleteFolderMutation.isPending}
+            />
+          </section>
         )}
       </ContentWrapper>
 

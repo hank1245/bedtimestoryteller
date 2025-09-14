@@ -21,6 +21,11 @@ export const Button = styled.button<{
   overflow: hidden;
   width: ${({ $small }) => ($small ? "auto" : "100%")};
   margin: ${({ $small }) => ($small ? "0" : "initial")};
+
+  &:focus-visible {
+    outline: 3px solid #7aa2ff;
+    outline-offset: 2px;
+  }
   ${({ $primary }) =>
     $primary &&
     css`

@@ -40,12 +40,13 @@ export default function InterestsStep({
         <CardTitle>What does your child love?</CardTitle>
         <CardSubtitle>Select all that apply</CardSubtitle>
       </CardHeader>
-      <ChoiceGrid>
+      <ChoiceGrid role="group" aria-label="Select interests">
         {INTEREST_OPTIONS.map((interest) => (
           <ChoiceButton
             key={interest}
             $multiple
             $selected={values?.includes(interest)}
+            aria-pressed={values?.includes(interest)}
             onClick={() => toggleInterest(interest)}
           >
             {interest}

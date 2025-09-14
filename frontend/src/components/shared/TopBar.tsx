@@ -4,7 +4,7 @@ import { Button } from "./Button";
 import { useRoutePrefetch } from "../../hooks/useRoutePrefetch";
 import { useAudioGenerationStore } from "../../stores/audioStore";
 
-const TopBarContainer = styled.div<{ $variant: "single" | "split" }>`
+const TopBarContainer = styled.header<{ $variant: "single" | "split" }>`
   display: flex;
   justify-content: ${(props) =>
     props.$variant === "split" ? "space-between" : "flex-end"};
@@ -47,9 +47,9 @@ export default function TopBar({
   useAudioGenerationStore();
 
   return (
-    <TopBarContainer $variant={variant}>
+    <TopBarContainer $variant={variant} aria-label="Top bar">
       {leftContent}
-      <RightCluster>
+      <RightCluster role="group" aria-label="Top bar actions">
         {showSettings && (
           <Button
             $secondary
@@ -58,6 +58,7 @@ export default function TopBar({
             onMouseEnter={settingsPrefetch.onMouseEnter}
             onFocus={settingsPrefetch.onFocus}
             onTouchStart={settingsPrefetch.onTouchStart}
+            aria-label="Open settings"
           >
             Settings
           </Button>

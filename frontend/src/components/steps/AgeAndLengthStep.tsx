@@ -39,6 +39,7 @@ export default function AgeAndLengthStep({
   onPrev,
   canProceed,
 }: AgeAndLengthStepProps) {
+  const ageInputId = "age-input";
   return (
     <AgeAndLengthStepWrapper>
       <ContentWrapper>
@@ -47,23 +48,27 @@ export default function AgeAndLengthStep({
           <CardSubtitle>Let's personalize your story</CardSubtitle>
         </CardHeader>
         <FormGroup>
-          <FormLabel>Child's Age</FormLabel>
+          <FormLabel htmlFor={ageInputId}>Child's Age</FormLabel>
           <FormInput
             type="number"
             min="2"
             max="12"
             value={value}
+            id={ageInputId}
             onChange={(e) => onChange?.(parseInt(e.target.value))}
             placeholder="Enter age (2-12)"
           />
         </FormGroup>
         <FormGroup>
-          <FormLabel>How long do you want your story to be?</FormLabel>
-          <ChoiceGrid>
+          <FormLabel id="length-label">
+            How long do you want your story to be?
+          </FormLabel>
+          <ChoiceGrid role="group" aria-labelledby="length-label">
             {LengthOptions.map((option) => (
               <ChoiceButton
                 key={option.value}
                 $selected={lengthValue === option.value}
+                aria-pressed={lengthValue === option.value}
                 onClick={() => onLengthChange?.(option.value)}
               >
                 <div>

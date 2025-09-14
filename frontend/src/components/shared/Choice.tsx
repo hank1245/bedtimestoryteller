@@ -31,8 +31,9 @@ export const ChoiceButton = styled.button<{
   min-height: ${({ $large }) => ($large ? "160px" : "60px")};
   position: ${({ $multiple }) => ($multiple ? "relative" : "static")};
 
-  &:focus {
-    outline: none;
+  &:focus-visible {
+    outline: 3px solid #7aa2ff;
+    outline-offset: 2px;
   }
 
   ${({ $selected, $multiple }) =>

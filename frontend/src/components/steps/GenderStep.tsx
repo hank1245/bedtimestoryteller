@@ -68,12 +68,13 @@ export default function GenderStep({
         <CardTitle>Tell us about your child</CardTitle>
         <CardSubtitle>This helps us personalize the story</CardSubtitle>
       </CardHeader>
-      <ChoiceGrid $large>
+      <ChoiceGrid $large role="group" aria-label="Select child's gender">
         {options.map((option) => (
           <StyledChoiceButton
             key={option}
             $selected={value === option}
             $large
+            aria-pressed={value === option}
             onClick={() => onChange?.(option)}
           >
             <IconContainer>

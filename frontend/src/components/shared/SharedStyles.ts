@@ -177,8 +177,9 @@ export const Input = styled.input`
   font-size: 16px;
   margin-bottom: 16px;
 
-  &:focus {
-    outline: none;
+  &:focus-visible {
+    outline: 3px solid #7aa2ff;
+    outline-offset: 2px;
     border-color: var(--primary-color);
   }
 `;
@@ -195,8 +196,9 @@ export const TextArea = styled.textarea`
   resize: vertical;
   min-height: 80px;
 
-  &:focus {
-    outline: none;
+  &:focus-visible {
+    outline: 3px solid #7aa2ff;
+    outline-offset: 2px;
     border-color: var(--primary-color);
   }
 `;
