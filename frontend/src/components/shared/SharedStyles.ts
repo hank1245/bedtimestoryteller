@@ -140,7 +140,17 @@ export const HashTag = styled.span<{ $color: string }>`
   font-weight: 500;
   padding: 2px 4px;
   border-radius: 12px;
-  color: ${(props) => (props.$color === "green" ? "#4CAF50" : "#FFC107")};
+  color: ${({ $color }) => {
+    if ($color === "green") {
+      return "#4CAF50";
+    }
+
+    if ($color === "blue") {
+      return "var(--accent-blue)";
+    }
+
+    return "#FFC107";
+  }};
   white-space: nowrap;
 `;
 

@@ -27,7 +27,7 @@ export const useStories = () => {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
-    refetchOnMount: false, // respect staleTime to avoid flicker on main page
+    refetchOnMount: true, // allow invalidated data to refresh when returning to the app
   });
 };
 

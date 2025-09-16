@@ -30,6 +30,18 @@ const AudioBadgePlaceholder = styled(HashTag)`
   visibility: hidden;
 `;
 
+const StoryTitle = styled.div`
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-primary);
+`;
+
+const StoryMeta = styled.div`
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+`;
+
 function StoryItem({
   story,
   onClick,
@@ -61,8 +73,8 @@ function StoryItem({
       >
         <StoryItemContainer>
           <StoryContent>
-            <div style={{ fontWeight: 600, fontSize: 18 }}>{story.title}</div>
-            <div style={{ fontSize: 14, color: "#aaa", marginTop: 2 }}>
+            <StoryTitle>{story.title}</StoryTitle>
+            <StoryMeta>
               {new Date(story.created_at).toLocaleString("en-US", {
                 year: "numeric",
                 month: "short",
@@ -70,15 +82,15 @@ function StoryItem({
                 hour: "2-digit",
                 minute: "2-digit",
               })}
-            </div>
+            </StoryMeta>
           </StoryContent>
           <StoryTags>
             {story.age && <HashTag $color="green">#Age {story.age}</HashTag>}
             {story.length && <HashTag $color="yellow">#{story.length}</HashTag>}
             {hasAudio ? (
-              <HashTag $color="green" aria-label="Audio available">🔊 Audio</HashTag>
+              <HashTag $color="blue" aria-label="Audio available">🔊 Audio</HashTag>
             ) : (
-              <AudioBadgePlaceholder $color="green" aria-hidden>
+              <AudioBadgePlaceholder $color="blue" aria-hidden>
                 🔊 Audio
               </AudioBadgePlaceholder>
             )}

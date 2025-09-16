@@ -1,4 +1,4 @@
-const MEASUREMENT_ID = "G-6EN5R981LP";
+import { MEASUREMENT_ID } from "@/constants/analytics";
 
 let analyticsInitialized = false;
 
@@ -49,9 +49,6 @@ export const trackCustomEvent = (
 
   window.gtag("event", eventName, params);
 };
-
-// Example usage:
-// trackCustomEvent("button_click", { label: "cta", location: "hero" });
 
 declare global {
   interface Window {
