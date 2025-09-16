@@ -1,4 +1,4 @@
-const MEASUREMENT_ID = "G-6EN5R981LP";
+import { MEASUREMENT_ID } from "@/constants/analytics";
 
 let analyticsInitialized = false;
 

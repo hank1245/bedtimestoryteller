@@ -1,0 +1,1 @@
+export const MEASUREMENT_ID = "G-6EN5R981LP";
