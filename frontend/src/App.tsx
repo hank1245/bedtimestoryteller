@@ -4,10 +4,11 @@ import {
   Route,
   Navigate,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { ToastContainer } from "./components/ToastProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AuthSetup from "./components/shared/AuthSetup";
@@ -15,6 +16,7 @@ import GlobalStyle from "./GlobalStyle";
 import RouteLoader from "./components/RouteLoader";
 import { routeImporters } from "./lib/routeImporters";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { trackPageView } from "./services/analytics";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -52,6 +54,11 @@ function HomeRoute() {
 
 function AppRoutes() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(`${location.pathname}${location.search}`);
+  }, [location.pathname, location.search]);
 
   return (
     <Routes>

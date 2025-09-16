@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import * as Sentry from "@sentry/react";
 
 const Wrapper = styled.div`
   display: flex;
@@ -45,9 +46,12 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return { hasError: true };
   }
 
-  componentDidCatch(error: unknown) {
+  componentDidCatch(error: unknown, errorInfo: React.ErrorInfo) {
     // eslint-disable-next-line no-console
     console.error("App error boundary caught: ", error);
+    Sentry.captureException(error, {
+      extra: errorInfo,
+    });
   }
 
   handleRetry = () => {
