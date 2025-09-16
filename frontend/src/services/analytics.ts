@@ -50,9 +50,6 @@ export const trackCustomEvent = (
   window.gtag("event", eventName, params);
 };
 
-// Example usage:
-// trackCustomEvent("button_click", { label: "cta", location: "hero" });
-
 declare global {
   interface Window {
     dataLayer?: any[];
